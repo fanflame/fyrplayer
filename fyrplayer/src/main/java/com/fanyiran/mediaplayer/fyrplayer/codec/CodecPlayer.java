@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 
 import com.fanyiran.mediaplayer.fyrplayer.FyrPlayer;
@@ -21,6 +22,8 @@ import java.nio.ByteBuffer;
 public abstract class CodecPlayer implements FyrPlayer {
     private static final String TAG = "CodecPlayer";
     protected static final int TIMEOUT_US = 10000;
+    protected static final int WHAT_START = 1;
+    protected static final int WHAT_DECODE_RENDER = 2;
 
     protected PlayerConfig config;
     protected volatile int playStatus = PLAY_STATUS_NOT_PLAYING;
@@ -29,6 +32,38 @@ public abstract class CodecPlayer implements FyrPlayer {
     protected MediaExtractor mediaExtractor;
     protected int repeatedCount = 0;
     protected MediaFormat mediaFormat;
+    VideoHandler handler;
+    protected long frameDuration;
+
+    private class VideoHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case WHAT_START:
+                    start();
+                    break;
+                case WHAT_DECODE_RENDER:
+                    if (playStatus == PLAY_STATUS_RELEASE) {
+                        return;
+                    }
+                    if (PLAY_STATUS_PAUSE == playStatus) {
+                        nextDecodeRender();
+                        return;
+                    }
+                    decodeRender();
+                    nextDecodeRender();
+                    break;
+                default:
+
+            }
+        }
+    }
+
+    private void nextDecodeRender() {
+        if (playStatus != PLAY_STATUS_RELEASE) {
+            handler.sendEmptyMessageDelayed(WHAT_DECODE_RENDER, frameDuration);
+        }
+    }
 
     @Override
     public void readVideoInfo(String videoFile) {
@@ -56,14 +91,36 @@ public abstract class CodecPlayer implements FyrPlayer {
         config.getExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                startRun();
+                try {
+                    Looper.prepare();
+                } catch (RuntimeException e) {
+                    onError(PLAY_STATUS_THREAD_LOOPER_ERROR);
+                    return;
+                }
+//                inputAvilable = true;
+                handler = new VideoHandler();
+                handler.sendEmptyMessage(WHAT_START);
+                Looper.loop();
+                if (mediaExtractor != null) {
+                    mediaExtractor.release();
+                }
+                mediaExtractor = null;
+                if (mediaCodec != null) {
+                    mediaCodec.release();
+                }
+                mediaCodec = null;
+                playStatus = PLAY_STATUS_RELEASE;
             }
         });
         return true;
     }
 
-    protected abstract void startRun();
+    protected abstract void start();
+    protected abstract void decodeRender();
 
+    public void handleDecodeRender() {
+        handler.sendEmptyMessage(WHAT_DECODE_RENDER);
+    }
     @Override
     public void pause() {
         playStatus = PLAY_STATUS_PAUSE;
@@ -133,5 +190,15 @@ public abstract class CodecPlayer implements FyrPlayer {
         mediaCodec.stop();
         mediaCodec.configure(mediaFormat, config.getSurface(), null, 0);
         mediaCodec.start();
+    }
+
+    @CallSuper
+    @Override
+    public void release() {
+        if (handler != null) {
+            handler.removeMessages(WHAT_START);
+            handler.removeMessages(WHAT_DECODE_RENDER);
+            handler.getLooper().quit();
+        }
     }
 }

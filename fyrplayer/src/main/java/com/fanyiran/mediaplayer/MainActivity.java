@@ -11,6 +11,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.fanyiran.mediaplayer.fyrplayer.PlayerManager;
@@ -62,13 +64,30 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(Environment.getExternalStorageDirectory(), "1.mp4");
         PlayerConfig config = new PlayerConfig.PlayerConifgBuild()
                 .surface(surface)
-                .frameRate(10)
-                .setPlayRepeatTime(3)
+//                .frameRate(10)
+//                .setPlayRepeatTime(3)
                 .setUrl(file.getAbsolutePath())
                 .setOnPlayCallback(new OnPlayCallback() {
                     @Override
-                    public void onGetVideoInfo(VideoInfo videoInfo) {
+                    public void onGetVideoInfo(final VideoInfo videoInfo) {
                         LogUtil.v(TAG,videoInfo.toString());
+                        surfaceView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) surfaceView.getLayoutParams();
+//                                layoutParams.width = videoInfo.getWidth();
+//                                layoutParams.height = videoInfo.getHeight();
+                                int width = surfaceView.getWidth();
+                                int height = surfaceView.getHeight();
+                                if (videoInfo.getWidth() < width && videoInfo.getHeight() < height) {
+                                    if ((videoInfo.getWidth()/(videoInfo.getHeight() * 1.f)) > (width / (height * 1.f))) {
+                                        layoutParams.width = width;
+                                        layoutParams.height = (int)((width / (videoInfo.getWidth() *1.f)) * videoInfo.getHeight());
+                                    }
+                                }
+                                surfaceView.setLayoutParams(layoutParams);
+                            }
+                        });
                     }
 
                     @Override

@@ -10,20 +10,20 @@ import com.fanyiran.mediaplayer.fyrplayer.PlayerConfig;
 import com.fanyiran.utils.LogUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class CodecPlayerAsync extends CodecPlayer {
     private static final String TAG = "CodecPlayerAsync";
-    private long frameDuration;
     private int sampleDataSize;
-    private long lastRenderTime;
     private int renderCount;
     private int decodeCount;
-    private long startTime;
+    private ArrayList<OutputBufferInfo> bufferInfos;
 
     @Override
-    protected void startRun() {
+    protected void start() {
         repeatedCount = 0;
         mediaExtractor = new MediaExtractor();
+        bufferInfos = new ArrayList<>();
         try {
             mediaExtractor.setDataSource(config.getUrl());
             int videoTrack = getVideoTrack(mediaExtractor);
@@ -47,44 +47,18 @@ public class CodecPlayerAsync extends CodecPlayer {
                         return;
                     }
                     decodeCount++;
-//                    while (System.nanoTime() - startTime < mediaExtractor.getSampleTime()) {
-//                        try {
-//                            Thread.sleep((mediaExtractor.getSampleTime() - (System.nanoTime() - startTime))/1000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
                     mediaCodec.queueInputBuffer(index, 0, sampleDataSize, mediaExtractor.getSampleTime(), 0);
                     mediaExtractor.advance();
                 }
 
                 @Override
                 public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
-//                    if (System.currentTimeMillis() - lastRenderTime < frameDuration) {
-//                        LogUtil.v(TAG,"jump render");
-//                        mediaCodec.releaseOutputBuffer(index, false);
-//                        return;
-//                    }
-                    lastRenderTime = System.currentTimeMillis();
-                    if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                        if (config.getPlayRepeatTime() == PlayerConfig.REPEATE_INFINITE) {
-                            // TODO: 2019-06-24 继续从头开始播放
-                            playStatus = PLAY_STATUS_PLAYING;
-                            seekTo(0);
-                        } else if (repeatedCount++ == config.getPlayRepeatTime()) {
-                            playStatus = PLAY_STATUS_FINISHED;
-                            LogUtil.v(TAG, "renderFrameCount:" + renderCount);
-                            onFinish();
-                        } else {
-                            // TODO: 2019-06-24 继续从头开始播放
-                            playStatus = PLAY_STATUS_PLAYING;
-                            seekTo(0);
-                        }
-                    } else {
-                        playStatus = PLAY_STATUS_PLAYING;
-                    }
-                    renderCount++;
-                    mediaCodec.releaseOutputBuffer(index, info.presentationTimeUs);
+                    MediaCodec.BufferInfo infoClone = new MediaCodec.BufferInfo();
+                    infoClone.flags = info.flags;
+                    infoClone.size = info.size;
+                    infoClone.presentationTimeUs = info.presentationTimeUs;
+                    infoClone.offset = info.offset;
+                    bufferInfos.add(new OutputBufferInfo(index,infoClone));
                 }
 
                 @Override
@@ -117,11 +91,11 @@ public class CodecPlayerAsync extends CodecPlayer {
                 return;
             }
             mediaCodec.start();
-            startTime = System.nanoTime();
             playStatus = PLAY_STATUS_PLAYING;
             onStart();
 
             frameDuration = 1000 / videoInfo.getFrameRate();
+            handleDecodeRender();
         } catch (IOException e) {
             e.printStackTrace();
             playStatus = PLAY_CODE_UNKNOW_ERROR;
@@ -130,7 +104,46 @@ public class CodecPlayerAsync extends CodecPlayer {
     }
 
     @Override
-    public void release() {
-
+    protected void decodeRender() {
+        if (bufferInfos.size() < 1) {
+            return;
+        }
+        OutputBufferInfo outputBufferInfo = bufferInfos.remove(0);
+        MediaCodec.BufferInfo info = outputBufferInfo.bufferInfo;
+        int index = outputBufferInfo.index;
+        if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+            if (config.getPlayRepeatTime() == PlayerConfig.REPEATE_INFINITE) {
+                playStatus = PLAY_STATUS_PLAYING;
+                seekTo(0);
+            } else if (repeatedCount++ == config.getPlayRepeatTime()) {
+                playStatus = PLAY_STATUS_FINISHED;
+                LogUtil.v(TAG, "renderFrameCount:" + renderCount);
+                onFinish();
+            } else {
+                playStatus = PLAY_STATUS_PLAYING;
+                seekTo(0);
+            }
+        } else {
+            playStatus = PLAY_STATUS_PLAYING;
+        }
+        renderCount++;
+        LogUtil.v(TAG,"presentationTImeUs:"+info.presentationTimeUs);
+        mediaCodec.releaseOutputBuffer(index, info.presentationTimeUs);
     }
+
+    @Override
+    public void release() {
+        super.release();
+    }
+
+    class OutputBufferInfo {
+        public OutputBufferInfo(int index, MediaCodec.BufferInfo bufferInfo) {
+            this.index = index;
+            this.bufferInfo = bufferInfo;
+        }
+
+        int index;
+        MediaCodec.BufferInfo bufferInfo;
+    }
+
 }

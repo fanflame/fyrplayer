@@ -3,11 +3,6 @@ package com.fanyiran.mediaplayer.fyrplayer.codec;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-
-import androidx.annotation.NonNull;
 
 import com.fanyiran.mediaplayer.fyrplayer.PlayerConfig;
 import com.fanyiran.utils.LogUtil;
@@ -17,9 +12,6 @@ import java.nio.ByteBuffer;
 
 public class CodecPlayerSync extends CodecPlayer {
     private static final String TAG = "CodecPlayerSync";
-    private static final int WHAT_START = 1;
-    private static final int WHAT_DECODE_RENDER = 2;
-    private VideoHandler handler;
 
     ///////////////////////////////////////////////////////////////////////////
     // decode & render start
@@ -29,66 +21,13 @@ public class CodecPlayerSync extends CodecPlayer {
     private int sampleDataSize;
     private int index;
     protected boolean inputAvilable = true;
-    protected long frameDuration;
     private int renderCount;
     ///////////////////////////////////////////////////////////////////////////
     // decode & render end
     ///////////////////////////////////////////////////////////////////////////
 
-    private class VideoHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case WHAT_START:
-                    start();
-                    break;
-                case WHAT_DECODE_RENDER:
-                    if (playStatus == PLAY_STATUS_RELEASE) {
-                        return;
-                    }
-                    if (PLAY_STATUS_PAUSE == playStatus) {
-                        nextDecodeRender();
-                        return;
-                    }
-                    decode();
-                    render();
-                    nextDecodeRender();
-                    break;
-                default:
-
-            }
-        }
-    }
-
     @Override
-    protected void startRun() {
-        try {
-            Looper.prepare();
-        } catch (RuntimeException e) {
-            onError(PLAY_STATUS_THREAD_LOOPER_ERROR);
-            return;
-        }
-        inputAvilable = true;
-        handler = new VideoHandler();
-        handler.sendEmptyMessage(WHAT_START);
-        Looper.loop();
-        if (mediaExtractor != null) {
-            mediaExtractor.release();
-        }
-        mediaExtractor = null;
-        if (mediaCodec != null) {
-            mediaCodec.release();
-        }
-        mediaCodec = null;
-        playStatus = PLAY_STATUS_RELEASE;
-    }
-    private void nextDecodeRender() {
-        if (playStatus != PLAY_STATUS_RELEASE) {
-            handler.sendEmptyMessageDelayed(WHAT_DECODE_RENDER, frameDuration);
-        }
-    }
-
-    private void start() {
+    protected void start() {
         repeatedCount = 0;
         mediaExtractor = new MediaExtractor();
         try {
@@ -101,8 +40,6 @@ public class CodecPlayerSync extends CodecPlayer {
             }
             mediaExtractor.selectTrack(videoTrack);
             mediaFormat = mediaExtractor.getTrackFormat(videoTrack);
-            mediaFormat.setInteger(MediaFormat.KEY_WIDTH, 16);
-            mediaFormat.setInteger(MediaFormat.KEY_HEIGHT, 32);
 //            mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL,0);
             onGetVideoInfo(mediaFormat, config.getUrl());
 //            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 10);
@@ -121,12 +58,18 @@ public class CodecPlayerSync extends CodecPlayer {
             inputBuffers = mediaCodec.getInputBuffers();
             info = new MediaCodec.BufferInfo();
             frameDuration = 1000 / videoInfo.getFrameRate();
-            handler.sendEmptyMessage(WHAT_DECODE_RENDER);
+            handleDecodeRender();
         } catch (IOException e) {
             e.printStackTrace();
             playStatus = PLAY_CODE_UNKNOW_ERROR;
             onError(PLAY_CODE_UNKNOW_ERROR);
         }
+    }
+
+    @Override
+    protected void decodeRender() {
+        decode();
+        render();
     }
 
     private void decode() {
@@ -158,7 +101,7 @@ public class CodecPlayerSync extends CodecPlayer {
                 case MediaCodec.INFO_TRY_AGAIN_LATER:
                     LogUtil.v(TAG, "MediaCodec.INFO_TRY_AGAIN_LATER");
                     break;
-                case MediaCodec.BUFFER_FLAG_CODEC_CONFIG:
+                case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
                     LogUtil.v(TAG, "MediaCodec.BUFFER_FLAG_CODEC_CONFIG");
                     break;
                 default:
@@ -196,10 +139,6 @@ public class CodecPlayerSync extends CodecPlayer {
         if (mediaCodec != null) {
             mediaCodec.stop();
         }
-        if (handler != null) {
-            handler.removeMessages(WHAT_START);
-            handler.removeMessages(WHAT_DECODE_RENDER);
-            handler.getLooper().quit();
-        }
+        super.release();
     }
 }
