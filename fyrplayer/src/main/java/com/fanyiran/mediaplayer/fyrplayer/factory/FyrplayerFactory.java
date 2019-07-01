@@ -8,6 +8,6 @@ public class FyrplayerFactory implements iFyrplayerFactory{
 
     @Override
     public FyrPlayer createFryPlayer() {
-        return new CodecPlayerAsync();
+        return new CodecPlayerSync();
     }
 }

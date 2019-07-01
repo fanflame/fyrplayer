@@ -128,7 +128,7 @@ public class CodecPlayerSync extends CodecPlayer {
             mediaCodec.releaseOutputBuffer(outputBufferStatus, info.size != 0);
             inputAvilable = true;
             if (renderCount > 90) {
-                seekTo(6000 * 1000);
+                seekTo(6);
                 renderCount = 0;
             }
         }

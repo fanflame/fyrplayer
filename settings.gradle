@@ -1,2 +1,2 @@
-include ':app', ':fyrplayer'
+include ':app', ':fyrplayer', ':fyrrecorder'
 rootProject.name='ffmpegvideo'
