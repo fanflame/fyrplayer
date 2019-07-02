@@ -187,9 +187,10 @@ public abstract class CodecPlayer implements FyrPlayer {
     @Override
     public void seekTo(long seekTime) {
         mediaExtractor.seekTo(seekTime * 1000, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
-        mediaCodec.stop();
-        mediaCodec.configure(mediaFormat, config.getSurface(), null, 0);
-        mediaCodec.start();
+//        mediaCodec.stop();
+//        mediaCodec.configure(mediaFormat, config.getSurface(), null, 0);
+//        mediaCodec.start();
+        mediaCodec.flush();
     }
 
     @CallSuper

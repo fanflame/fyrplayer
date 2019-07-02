@@ -13,11 +13,9 @@ import java.io.IOException;
 
 public class MediaRecorderImpl extends IRecorderAbstract {
     private MediaRecorder mediaRecorder;
-    private RecorderConfig recorderConfig;
 
     @Override
     public void init(RecorderConfig config) {
-        this.recorderConfig = config;
         setupMediaRecorder();
         super.init(config);
     }
