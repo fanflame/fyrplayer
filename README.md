@@ -16,7 +16,7 @@ todo
 attention:
 - 使用MediaRecorder录制比例必须是内部支持的比例，而且像素大小有限制，太大不能拍摄
 - createCaptureSession第一个参数surface出入个数有限制，在华为honor max8 最多支持4个
-- 使用MediaRecorder录制得到的视频帧率，码率与设置的不同。why? 需要结合硬件平台设置？
+- 使用MediaRecorder录制得到的视频帧率，码率与设置的不同。why? 需要结合硬件平台设置？codec与muxer的呢需要特定分辨率？
 
 
 
