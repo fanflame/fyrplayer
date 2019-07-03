@@ -46,7 +46,7 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
             LogUtil.v(TAG, "surfaceChanged");
             //todo 修改大小
             cameraConfig.addSurfaceHolder(getHolder().getSurface());
-            camera = RecorderManager.getInstance().createCamera(cameraConfig);
+            camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceHolder.class);
             camera.preview();
         }
 

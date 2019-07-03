@@ -42,7 +42,7 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
             directDrawer = new DirectDrawer(textureId);
 
             cameraConfig.addSurfaceHolder(new Surface(surfaceTexture));
-            camera = RecorderManager.getInstance().createCamera(cameraConfig);
+            camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
             camera.preview();
         }
 

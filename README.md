@@ -6,7 +6,7 @@ todo
 - 处理声音
 - 在线播放：mp4,hls,dash等
 - 特效处理：滤镜，美颜等
-- MediaCodec，MediaMuxer录制视频
+- MediaCodec，MediaMuxer录制视频播放不了
 - ffmpeg + x264录制
 - openGL添加水印
 - ffmpeg添加水印

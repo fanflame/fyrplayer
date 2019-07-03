@@ -61,15 +61,12 @@ public class Camera2Impl implements ICamera {
     private String cameraFrontId;
     private String currentCameraId;
     private CaptureRequest.Builder builder;
-    private Size mPreviewSize;
     private IRecorder iRecorder;
 
     private HandlerThread handlerThread;
     private Handler backgroundHandler;
 
-    /**
-     * The {@link android.util.Size} of video recording.
-     */
+    private Size mPreviewSize;
     private Size mVideoSize;
     private ImageReader mImageReader;
 
@@ -93,8 +90,8 @@ public class Camera2Impl implements ICamera {
                 if (map == null) {
                     continue;
                 }
-                mVideoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
-                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
+                mVideoSize = chooseVideoSize(map.getOutputSizes(cameraConfig.getRecorderClass()));
+                mPreviewSize = chooseOptimalSize(map.getOutputSizes(cameraConfig.getPreviewClass()),
                         cameraConfig.getTargetResolution().getWidth(),
                         cameraConfig.getTargetResolution().getHeight(),
                         mVideoSize);
@@ -297,37 +294,30 @@ public class Camera2Impl implements ICamera {
     private CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
-            LogUtil.v(TAG, "onCaptureStarted");
         }
 
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
-            LogUtil.v(TAG, "onCaptureProgressed");
         }
 
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-            LogUtil.v(TAG, "onCaptureCompleted");
         }
 
         @Override
         public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
-            LogUtil.v(TAG, "onCaptureFailed");
         }
 
         @Override
         public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session, int sequenceId, long frameNumber) {
-            LogUtil.v(TAG, "onCaptureSequenceCompleted");
         }
 
         @Override
         public void onCaptureSequenceAborted(@NonNull CameraCaptureSession session, int sequenceId) {
-            LogUtil.v(TAG, "onCaptureSequenceAborted");
         }
 
         @Override
         public void onCaptureBufferLost(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull Surface target, long frameNumber) {
-            LogUtil.v(TAG, "onCaptureBufferLost");
         }
     };
 
@@ -342,13 +332,13 @@ public class Camera2Impl implements ICamera {
      * @param aspectRatio The aspect ratio
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
-    private static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
+    private Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
         // Collect the supported resolutions that are at least as big as the autoPreview Surface
         List<Size> bigEnough = new ArrayList<>();
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
-            LogUtil.v(TAG, String.format("preview suport width:%s,height%s", option.getWidth(), option.getHeight()));
+            LogUtil.v(TAG, String.format(cameraConfig.getPreviewClass().getName()+" suport width:%s,height%s", option.getWidth(), option.getHeight()));
             if (option.getHeight() == option.getWidth() * h / w &&
                     option.getWidth() >= width && option.getHeight() >= height) {
                 bigEnough.add(option);
@@ -385,9 +375,9 @@ public class Camera2Impl implements ICamera {
      * @param choices The list of available sizes
      * @return The video size
      */
-    private static Size chooseVideoSize(Size[] choices) {
+    private Size chooseVideoSize(Size[] choices) {
         for (Size size : choices) {
-            LogUtil.v(TAG, String.format("MediaRecorder suport width:%s,height%s", size.getWidth(), size.getHeight()));
+            LogUtil.v(TAG, String.format(cameraConfig.getRecorderClass().getName()+" suport width:%s,height%s", size.getWidth(), size.getHeight()));
             if (size.getWidth() == size.getHeight() * 4 / 3 && size.getWidth() <= 1080) {
                 return size;
             }

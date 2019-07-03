@@ -14,6 +14,8 @@ import java.util.ArrayList;
 public class CameraConfig {
 
     private final CameraConfigBuilder builder;
+    private Class recorderClass;
+    private Class previewClass;
 
     public CameraConfig(CameraConfigBuilder cameraConfigBuilder) {
         this.builder = cameraConfigBuilder;
@@ -80,6 +82,22 @@ public class CameraConfig {
 
     public RecorderConfig getRecorderConfig() {
         return builder.recorderConfig;
+    }
+
+    public void setRecorderClass(Class recorderClass) {
+        this.recorderClass = recorderClass;
+    }
+
+    public void setPreviewClass(Class previewClass) {
+        this.previewClass = previewClass;
+    }
+
+    public Class getRecorderClass() {
+        return recorderClass;
+    }
+
+    public Class getPreviewClass() {
+        return previewClass;
     }
 
     public static class CameraConfigBuilder {

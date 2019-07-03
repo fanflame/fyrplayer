@@ -32,7 +32,7 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 // TODO: 2019-07-03 surface这么构造出来，什么原理？
                 cameraConfig.addSurfaceHolder(new Surface(getSurfaceTexture()));
-                camera = RecorderManager.getInstance().createCamera(cameraConfig);
+                camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
                 camera.preview();
             }
 

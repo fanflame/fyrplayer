@@ -4,4 +4,6 @@ import com.fanyiran.fyrrecorder.recorder.IRecorder;
 
 public interface IRecorderFactory {
     IRecorder createRecorder();
+
+    Class getRecorderClass();
 }

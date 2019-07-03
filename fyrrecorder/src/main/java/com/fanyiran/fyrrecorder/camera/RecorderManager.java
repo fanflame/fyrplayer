@@ -16,6 +16,7 @@ public class RecorderManager {
     public ICameraFactory cameraFactory;
     public IRecorderFactory iRecorderFactory;
 
+
     private RecorderManager() {
     }
 
@@ -23,12 +24,26 @@ public class RecorderManager {
         this.cameraFactory = cameraFactory;
     }
 
+
     public void setiRecorderFactory(IRecorderFactory iRecorderFactory) {
         this.iRecorderFactory = iRecorderFactory;
     }
 
-    public ICamera createCamera(CameraConfig cameraConfig) {
-        return getCameraFactory().createCamera(cameraConfig);
+
+    /**
+     * @param cameraConfig
+     * @param previewClass previewClass如何传参：
+     *                     GLSurfaceView使用SurfaceTexture.class
+     *                     TextureView使用SurfaceTexture.class
+     *                     SurfaceView使用SurfaceHolder.class
+     *
+     * @return
+     */
+
+    // TODO: 2019-07-03  previewClass的检测使用注解 | 编译时检测
+    public ICamera createCamera(CameraConfig cameraConfig,Class previewClass) {
+        return getCameraFactory().createCamera(cameraConfig,getiRecorderFactory().getRecorderClass(),
+                previewClass);
     }
 
     public IRecorder createRecorder() {
