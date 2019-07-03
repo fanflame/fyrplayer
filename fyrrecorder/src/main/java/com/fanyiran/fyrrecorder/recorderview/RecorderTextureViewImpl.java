@@ -26,9 +26,11 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     }
 
     private void init() {
+        // TODO: 2019-07-03 需要开启硬件加速？
         setSurfaceTextureListener(new SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                // TODO: 2019-07-03 surface这么构造出来，什么原理？
                 cameraConfig.addSurfaceHolder(new Surface(getSurfaceTexture()));
                 camera = RecorderManager.getInstance().createCamera(cameraConfig);
                 camera.preview();
