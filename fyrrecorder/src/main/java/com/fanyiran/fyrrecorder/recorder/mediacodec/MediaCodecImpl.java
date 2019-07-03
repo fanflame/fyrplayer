@@ -37,13 +37,14 @@ public class MediaCodecImpl extends IRecorderAbstract {
         format.setInteger(MediaFormat.KEY_FRAME_RATE, config.frameRate);
         format.setInteger(MediaFormat.KEY_WIDTH, config.videSize.getWidth());
         format.setInteger(MediaFormat.KEY_HEIGHT, config.videSize.getHeight());
-
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, config.encodingBitRate);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, config.iFrameInterval);
+        //以上参数必须设置否则crash,KEY_I_FRAME_INTERVAL如果不设置，视频录制结果会比较模糊
 
         String type = format.getString(MediaFormat.KEY_MIME);
+        // TODO: 2019-07-02 以下代码支持
 //        MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
 //        String supportCodec = null;
 //        for (MediaCodecInfo codecInfo : mediaCodecList.getCodecInfos()) {

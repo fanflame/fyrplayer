@@ -11,6 +11,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         RecorderManager.getInstance().setCameraFactory(new Camera2Factory());
-        RecorderManager.getInstance().setiRecorderFactory(new MediaCodecFactory());
+//        RecorderManager.getInstance().setiRecorderFactory(new MediaCodecFactory());
     }
 }

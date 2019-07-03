@@ -172,8 +172,8 @@ public class Camera2Impl implements ICamera {
         setupImageReader();
         try {
             final ArrayList<Surface> surfaces = new ArrayList<>();
-            for (SurfaceHolder surfaceHolder : cameraConfig.getSurface()) {
-                surfaces.add(surfaceHolder.getSurface());
+            for (Surface surface : cameraConfig.getSurface()) {
+                surfaces.add(surface);
             }
             surfaces.add(mImageReader.getSurface());
             cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
@@ -200,7 +200,6 @@ public class Camera2Impl implements ICamera {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -234,8 +233,8 @@ public class Camera2Impl implements ICamera {
         getiRecorder().init(cameraConfig.getRecorderConfig());
         try {
             final ArrayList<Surface> surfaces = new ArrayList<>();
-            for (SurfaceHolder surfaceHolder : cameraConfig.getSurface()) {
-                surfaces.add(surfaceHolder.getSurface());
+            for (Surface surface : cameraConfig.getSurface()) {
+                surfaces.add(surface);
             }
             surfaces.add(getiRecorder().getSurface());
             cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
@@ -344,11 +343,12 @@ public class Camera2Impl implements ICamera {
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
     private static Size chooseOptimalSize(Size[] choices, int width, int height, Size aspectRatio) {
-        // Collect the supported resolutions that are at least as big as the preview Surface
+        // Collect the supported resolutions that are at least as big as the autoPreview Surface
         List<Size> bigEnough = new ArrayList<>();
         int w = aspectRatio.getWidth();
         int h = aspectRatio.getHeight();
         for (Size option : choices) {
+            LogUtil.v(TAG, String.format("preview suport width:%s,height%s", option.getWidth(), option.getHeight()));
             if (option.getHeight() == option.getWidth() * h / w &&
                     option.getWidth() >= width && option.getHeight() >= height) {
                 bigEnough.add(option);
@@ -359,7 +359,7 @@ public class Camera2Impl implements ICamera {
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
-            LogUtil.v(TAG, "Couldn't find any suitable preview size");
+            LogUtil.v(TAG, "Couldn't find any suitable autoPreview size");
             return choices[0];
         }
     }
@@ -420,13 +420,13 @@ public class Camera2Impl implements ICamera {
                     bitmap = drawTextToCenter(bitmap,
                             "这是水印", 16, Color.RED);
                     // 获取到画布
-                    Canvas canvas = cameraConfig.getSurface().get(0).lockCanvas();
-                    if (canvas == null) {
-                        img.close();
-                        return;
-                    }
-                    canvas.drawBitmap(bitmap, 0, 0, new Paint());
-                    cameraConfig.getSurface().get(0).unlockCanvasAndPost(canvas);
+//                    Canvas canvas = cameraConfig.getSurface().get(0).lockCanvas();
+//                    if (canvas == null) {
+//                        img.close();
+//                        return;
+//                    }
+//                    canvas.drawBitmap(bitmap, 0, 0, new Paint());
+//                    cameraConfig.getSurface().get(0).unlockCanvasAndPost(canvas);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

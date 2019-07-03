@@ -16,8 +16,8 @@ public class MediaRecorderImpl extends IRecorderAbstract {
 
     @Override
     public void init(RecorderConfig config) {
-        setupMediaRecorder();
         super.init(config);
+        setupMediaRecorder();
     }
 
     @Override
@@ -67,7 +67,6 @@ public class MediaRecorderImpl extends IRecorderAbstract {
             mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
             mediaRecorder.setVideoFrameRate(recorderConfig.frameRate);
             File outputFile = recorderConfig.outputFile;
-            FileUtils.createFile(outputFile);
             mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
             mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
 //            int rotation = ((Activity) recorderConfig.getContext()).getWindowManager().getDefaultDisplay().getRotation();

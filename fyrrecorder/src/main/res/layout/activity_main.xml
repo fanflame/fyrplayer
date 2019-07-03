@@ -6,7 +6,7 @@
     tools:context=".MainActivity">
 
 
-    <SurfaceView
+    <com.fanyiran.fyrrecorder.recorderview.RecorderTextureViewImpl
         android:id="@+id/textureView"
         android:layout_width="@dimen/previewWidth"
         android:layout_height="@dimen/previewWidth" />

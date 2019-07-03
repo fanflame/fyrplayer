@@ -1,13 +1,12 @@
 package com.fanyiran.fyrrecorder.camera;
 
 import android.content.Context;
-import android.media.MediaRecorder;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
+import com.fanyiran.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,8 +43,15 @@ public class CameraConfig {
         return builder.iCameraListener;
     }
 
-    public ArrayList<SurfaceHolder> getSurface() {
+    public ArrayList<Surface> getSurface() {
         return builder.surfaces;
+    }
+
+    public void addSurfaceHolder(Surface surface) {
+        if (builder.surfaces == null) {
+            builder.surfaces = new ArrayList<>();
+        }
+        builder.surfaces.add(surface);
     }
 
 //    public int getOutputFormat() {
@@ -83,7 +89,7 @@ public class CameraConfig {
         private Rational targetAspectRatio;
         private Context context;
         private ICameraListener iCameraListener;
-        private ArrayList<SurfaceHolder> surfaces;
+        private ArrayList<Surface> surfaces;
         private RecorderConfig recorderConfig;
 
         public CameraConfigBuilder() {
@@ -94,6 +100,9 @@ public class CameraConfig {
             // TODO: 2019-06-27 checkout params
             if (recorderConfig.outputFile == null) {
                 throw new IllegalArgumentException("output file is null");
+            }
+            if (!FileUtils.createFile(recorderConfig.outputFile)) {
+                throw new IllegalStateException("video file create failed!");
             }
             return new CameraConfig(this);
         }
@@ -128,7 +137,7 @@ public class CameraConfig {
             return this;
         }
 
-        public CameraConfigBuilder setSurfaces(ArrayList<SurfaceHolder> surfaces) {
+        public CameraConfigBuilder setSurfaces(ArrayList<Surface> surfaces) {
             this.surfaces = surfaces;
             return this;
         }
