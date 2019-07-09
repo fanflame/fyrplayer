@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 ./fyrrecorder/build
-./fyrplayer/build
+fyrrecorder/build

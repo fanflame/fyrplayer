@@ -13,18 +13,12 @@ import java.nio.ByteBuffer;
 public class CodecPlayerSync extends CodecPlayer {
     private static final String TAG = "CodecPlayerSync";
 
-    ///////////////////////////////////////////////////////////////////////////
-    // decode & render start
-    ///////////////////////////////////////////////////////////////////////////
     private ByteBuffer[] inputBuffers;
     private MediaCodec.BufferInfo info;
     private int sampleDataSize;
     private int index;
     protected boolean inputAvilable = true;
     private int renderCount;
-    ///////////////////////////////////////////////////////////////////////////
-    // decode & render end
-    ///////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void start() {
