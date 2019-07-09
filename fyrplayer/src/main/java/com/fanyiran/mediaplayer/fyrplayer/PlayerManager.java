@@ -9,7 +9,7 @@ public class PlayerManager {
     private static final String TAG = "PlayerManager";
 
     private iFyrplayerFactory iFyrplayerFactory;
-    private FyrPlayer fyrPlayer;
+    private IFyrPlayer IFyrPlayer;
     public static PlayerManager getInstance() {
         return ourInstance;
     }
@@ -25,32 +25,32 @@ public class PlayerManager {
         if (iFyrplayerFactory == null) {
             iFyrplayerFactory = new FyrplayerFactory();
         }
-        fyrPlayer = iFyrplayerFactory.createFryPlayer();
+        IFyrPlayer = iFyrplayerFactory.createFryPlayer();
     }
 
     public void setPlayerConfig(PlayerConfig config) {
-        fyrPlayer.setConfig(config);
+        IFyrPlayer.setConfig(config);
     }
 
     public boolean play() {
-        boolean play = fyrPlayer.play();
+        boolean play = IFyrPlayer.play();
         LogUtil.v(TAG,"play result:"+play);
         return play;
     }
 
     public boolean isPlaying() {
-        return fyrPlayer.isPlaying();
+        return IFyrPlayer.isPlaying();
     }
 
     public void resume() {
-        fyrPlayer.resume();
+        IFyrPlayer.resume();
     }
 
     public void pause() {
-        fyrPlayer.pause();
+        IFyrPlayer.pause();
     }
 
     public void release() {
-        fyrPlayer.release();
+        IFyrPlayer.release();
     }
 }

@@ -3,24 +3,19 @@ package com.fanyiran.mediaplayer.fyrplayer.codec;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
-import android.nfc.Tag;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.CallSuper;
-import androidx.annotation.NonNull;
 
-import com.fanyiran.mediaplayer.fyrplayer.FyrPlayer;
+import com.fanyiran.mediaplayer.fyrplayer.IFyrPlayer;
 import com.fanyiran.mediaplayer.fyrplayer.PlayerConfig;
 import com.fanyiran.mediaplayer.fyrplayer.VideoInfo;
 import com.fanyiran.utils.LogUtil;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
-public abstract class CodecPlayer implements FyrPlayer {
-    private static final String TAG = "CodecPlayer";
+public abstract class CodecPlayerAbstract implements IFyrPlayer {
+    private static final String TAG = "CodecPlayerAbstract";
     protected static final int TIMEOUT_US = 10000;
     protected static final int WHAT_START = 1;
     protected static final int WHAT_DECODE_RENDER = 2;

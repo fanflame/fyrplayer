@@ -12,7 +12,7 @@ import com.fanyiran.utils.LogUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CodecPlayerAsync extends CodecPlayer {
+public class CodecPlayerAsync extends CodecPlayerAbstract {
     private static final String TAG = "CodecPlayerAsync";
     private int sampleDataSize;
     private int renderCount;

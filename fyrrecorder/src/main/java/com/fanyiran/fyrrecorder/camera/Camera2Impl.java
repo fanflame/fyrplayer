@@ -29,6 +29,7 @@ import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -37,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
+import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.utils.FileUtils;
 import com.fanyiran.utils.LogUtil;
 
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -86,6 +89,10 @@ public class Camera2Impl implements ICamera {
                     cameraFrontId = cameraId;
                     continue;
                 }
+                // TODO: 2019-07-03 预览画面帧率也有限制？
+                Range<Integer>[] ranges = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+                LogUtil.v(TAG,"fps rangs:"+ Arrays.toString(ranges));
+
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 if (map == null) {
                     continue;
@@ -176,9 +183,13 @@ public class Camera2Impl implements ICamera {
             cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
+                    if (getiRecorder().getStatus() == IRecorderAbstract.RECORD_STATUS_RELEASE) {
+                        return;
+                    }
                     previewSession = session;
                     try {
                         builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+//                        builder.set();
                         for (Surface surface : surfaces) {
                             builder.addTarget(surface);
                         }
@@ -214,9 +225,17 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void release() {
+        if (previewSession != null) {
+            try {
+                previewSession.stopRepeating();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
         if (cameraDevice != null) {
             cameraDevice.close();
         }
+        getiRecorder().release();
     }
 
     @Override
@@ -233,7 +252,8 @@ public class Camera2Impl implements ICamera {
             for (Surface surface : cameraConfig.getSurface()) {
                 surfaces.add(surface);
             }
-            surfaces.add(getiRecorder().getSurface());
+//            surfaces.add(getiRecorder().getSurface());
+            surfaces.add(mImageReader.getSurface());
             cameraDevice.createCaptureSession(surfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -268,10 +288,10 @@ public class Camera2Impl implements ICamera {
             previewSession.close();
             previewSession = null;
         }
-        if (mImageReader != null) {
-            mImageReader.close();
-            mImageReader = null;
-        }
+//        if (mImageReader != null) {
+//            mImageReader.close();
+//            mImageReader = null;
+//        }
     }
 
     @Override
@@ -389,7 +409,7 @@ public class Camera2Impl implements ICamera {
     private void setupImageReader() {
         //2代表ImageReader中最多可以获取两帧图像流
         mImageReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(),
-                ImageFormat.JPEG, 2);
+                ImageFormat.YUV_420_888, 2);
         mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
@@ -397,28 +417,31 @@ public class Camera2Impl implements ICamera {
 //                    case STATE_PREVIEW:
                 //这里一定要调用reader.acquireNextImage()和img.close方法否则不会一直回掉了
                 Image img = reader.acquireNextImage();
-                try {
-                    Image.Plane[] planes = img.getPlanes();
-                    ByteBuffer buffer = planes[0].getBuffer();
-                    buffer.rewind();
-                    byte[] data = new byte[buffer.capacity()];
-                    buffer.get(data);
-
-                    //从byte数组得到Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                    //得到的图片是我们的预览图片的大小进行一个缩放到水印图片里面可以完全显示
-                    bitmap = drawTextToCenter(bitmap,
-                            "这是水印", 16, Color.RED);
-                    // 获取到画布
-//                    Canvas canvas = cameraConfig.getSurface().get(0).lockCanvas();
-//                    if (canvas == null) {
-//                        img.close();
-//                        return;
-//                    }
-//                    canvas.drawBitmap(bitmap, 0, 0, new Paint());
-//                    cameraConfig.getSurface().get(0).unlockCanvasAndPost(canvas);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (getiRecorder().getStatus() == IRecorderAbstract.RECORD_STATUS_START) {
+                    try {
+                        LogUtil.v(TAG,"imageformat:"+img.getFormat());
+                        Image.Plane[] planes = img.getPlanes();
+                        ByteBuffer buffer = planes[0].getBuffer();
+                        buffer.rewind();
+                        byte[] data = new byte[buffer.capacity()];
+                        buffer.get(data);
+                        getiRecorder().receiveData(data);
+    //                    //从byte数组得到Bitmap
+    //                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+    //                    //得到的图片是我们的预览图片的大小进行一个缩放到水印图片里面可以完全显示
+    //                    bitmap = drawTextToCenter(bitmap,
+    //                            "这是水印", 16, Color.RED);
+                        // 获取到画布
+    //                    Canvas canvas = cameraConfig.getSurface().get(0).lockCanvas();
+    //                    if (canvas == null) {
+    //                        img.close();
+    //                        return;
+    //                    }
+    //                    canvas.drawBitmap(bitmap, 0, 0, new Paint());
+    //                    cameraConfig.getSurface().get(0).unlockCanvasAndPost(canvas);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 img.close();
             }

@@ -12,4 +12,6 @@ public interface IRecorder {
     int getStatus();
 
     Surface getSurface();
+
+    void receiveData(byte[] data);
 }

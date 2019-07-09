@@ -11,7 +11,7 @@ todo
 - openGL添加水印
 - ffmpeg添加水印
 - MediaCodec添加水印
-
+- 视频合并
 
 attention:
 - 使用MediaRecorder录制比例必须是内部支持的比例，而且像素大小有限制，太大不能拍摄
@@ -23,3 +23,5 @@ attention:
 
 MediaRecorderImpl
 - 只支持在预览的时候添加水印，不支持视频录制的时候添加水印
+
+

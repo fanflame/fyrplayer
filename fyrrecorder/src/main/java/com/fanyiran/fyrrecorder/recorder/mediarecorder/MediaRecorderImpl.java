@@ -56,6 +56,11 @@ public class MediaRecorderImpl extends IRecorderAbstract {
         return mediaRecorder.getSurface();
     }
 
+    @Override
+    public void receiveData(byte[] data) {
+
+    }
+
     private void setupMediaRecorder() {
         if (mediaRecorder == null) {
             mediaRecorder = new MediaRecorder();

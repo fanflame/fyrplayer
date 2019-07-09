@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onStopClick(View view) {
         cameraView.stopRecord();
+        cameraView.release();
     }
 
     public void onSwitchCameraClick(View view) {

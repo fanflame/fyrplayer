@@ -10,7 +10,7 @@ import com.fanyiran.utils.LogUtil;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class CodecPlayerSync extends CodecPlayer {
+public class CodecPlayerSync extends CodecPlayerAbstract {
     private static final String TAG = "CodecPlayerSync";
 
     private ByteBuffer[] inputBuffers;

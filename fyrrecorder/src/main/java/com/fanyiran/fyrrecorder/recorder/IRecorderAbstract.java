@@ -3,16 +3,16 @@ package com.fanyiran.fyrrecorder.recorder;
 import androidx.annotation.CallSuper;
 
 public abstract class IRecorderAbstract implements IRecorder {
-    public int RECORD_STATUS_DEFAULT = 0;
-    public int RECORD_STATUS_INIT = 1;
-    public int RECORD_STATUS_START = 2;
-    public int RECORD_STATUS_STOP = 3;
-    public int RECORD_STATUS_PAUSE = 4;
-    public int RECORD_STATUS_PLAYING = 5;
-    public int RECORD_STATUS_ERROR = 6;
-    public int RECORD_STATUS_RELEASE = 7;
+    public static int RECORD_STATUS_DEFAULT = 0;
+    public static int RECORD_STATUS_INIT = 1;
+    public static int RECORD_STATUS_START = 2;
+    public static int RECORD_STATUS_STOP = 3;
+    public static int RECORD_STATUS_PAUSE = 4;
+    public static int RECORD_STATUS_PLAYING = 5;
+    public static int RECORD_STATUS_ERROR = 6;
+    public static int RECORD_STATUS_RELEASE = 7;
 
-    private int status = RECORD_STATUS_DEFAULT;
+    private volatile int status = RECORD_STATUS_DEFAULT;
     protected RecorderConfig recorderConfig;
 
     @CallSuper

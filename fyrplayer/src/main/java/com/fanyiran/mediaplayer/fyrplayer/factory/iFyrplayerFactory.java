@@ -1,7 +1,7 @@
 package com.fanyiran.mediaplayer.fyrplayer.factory;
 
-import com.fanyiran.mediaplayer.fyrplayer.FyrPlayer;
+import com.fanyiran.mediaplayer.fyrplayer.IFyrPlayer;
 
 public interface iFyrplayerFactory {
-    FyrPlayer createFryPlayer();
+    IFyrPlayer createFryPlayer();
 }

@@ -147,4 +147,9 @@ public class MediaCodecImpl extends IRecorderAbstract {
 
         return mediaCodec.createInputSurface();
     }
+
+    @Override
+    public void receiveData(byte[] data) {
+
+    }
 }

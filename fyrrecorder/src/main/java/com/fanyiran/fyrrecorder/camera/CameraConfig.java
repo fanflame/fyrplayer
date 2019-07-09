@@ -9,6 +9,7 @@ import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
 import com.fanyiran.utils.FileUtils;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class CameraConfig {
@@ -38,7 +39,7 @@ public class CameraConfig {
     }
 
     public Context getContext() {
-        return builder.context;
+        return builder.context.get();
     }
 
     public ICameraListener getiCameraListener() {
@@ -105,7 +106,7 @@ public class CameraConfig {
         private boolean useFlash;
         private Size targetResolution;
         private Rational targetAspectRatio;
-        private Context context;
+        private WeakReference<Context> context;
         private ICameraListener iCameraListener;
         private ArrayList<Surface> surfaces;
         private RecorderConfig recorderConfig;
@@ -118,6 +119,9 @@ public class CameraConfig {
             // TODO: 2019-06-27 checkout params
             if (recorderConfig.outputFile == null) {
                 throw new IllegalArgumentException("output file is null");
+            }
+            if (context == null) {
+                throw new IllegalArgumentException("context file is null");
             }
             if (!FileUtils.createFile(recorderConfig.outputFile)) {
                 throw new IllegalStateException("video file create failed!");
@@ -146,7 +150,7 @@ public class CameraConfig {
         }
 
         public CameraConfigBuilder setContext(Context context) {
-            this.context = context;
+            this.context = new WeakReference<>(context);
             return this;
         }
 

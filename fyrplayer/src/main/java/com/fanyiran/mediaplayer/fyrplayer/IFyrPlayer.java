@@ -1,6 +1,6 @@
 package com.fanyiran.mediaplayer.fyrplayer;
 
-public interface FyrPlayer {
+public interface IFyrPlayer {
     int PLAY_STATUS_NOT_PLAYING = 0;
     int PLAY_STATUS_PLAYING = 1;
     int PLAY_STATUS_FINISHED = 2;
