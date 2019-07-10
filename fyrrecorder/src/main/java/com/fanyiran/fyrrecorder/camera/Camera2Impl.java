@@ -29,6 +29,7 @@ import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Message;
 import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
@@ -53,6 +54,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Camera2Impl implements ICamera {
+    private static final int WHAT_INIT = 0;
+    private static final int WHAT_PREVIEW = 1;
+    private static final int WHAT_RESMUE = 2;
+    private static final int WHAT_PAUSE = 3;
+    private static final int WHAT_STOP = 4;
+    private static final int WHAT_RELEASE = 5;
+
     private static final String TAG = "Camera2Impl";
     private static final String CAMERA_THREAD = "CAMERA_THREAD";
     private CameraConfig cameraConfig;
@@ -76,7 +84,10 @@ public class Camera2Impl implements ICamera {
     @Override
     public void setConfig(CameraConfig cameraConfig) {
         this.cameraConfig = cameraConfig;
-        init();
+        handlerThread = new HandlerThread(CAMERA_THREAD);
+        handlerThread.start();
+        backgroundHandler = new Handler(handlerThread.getLooper(),callback);
+        backgroundHandler.sendEmptyMessage(WHAT_INIT);
     }
 
     private void init() {
@@ -110,14 +121,55 @@ public class Camera2Impl implements ICamera {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        handlerThread = new HandlerThread(CAMERA_THREAD);
-        handlerThread.start();
-        backgroundHandler = new Handler(handlerThread.getLooper());
+    }
+
+    private Handler.Callback callback = new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case WHAT_INIT:
+                    init();
+                    break;
+                case WHAT_PREVIEW:
+                    previewInner();
+                    break;
+                case WHAT_PAUSE:
+                    getiRecorder().pause();
+                    break;
+                case WHAT_RESMUE:
+                    getiRecorder().resume();
+                    break;
+                case WHAT_STOP:
+                    getiRecorder().stopRecord();
+                    closePreviewSession();
+                    startPreview();
+                    break;
+                case WHAT_RELEASE:
+                    if (previewSession != null) {
+                        try {
+                            previewSession.stopRepeating();
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (cameraDevice != null) {
+                        cameraDevice.close();
+                    }
+                    getiRecorder().release();
+                    handlerThread.getLooper().quitSafely();
+                    break;
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public void preview() {
+        backgroundHandler.sendEmptyMessage(WHAT_PREVIEW);
     }
 
     @RequiresPermission(android.Manifest.permission.CAMERA)
-    @Override
-    public void preview() {
+    private void previewInner() {
         try {
             cameraManager.openCamera(currentCameraId, new CameraDevice.StateCallback() {
                 @Override
@@ -225,18 +277,7 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void release() {
-        // TODO: 2019-07-10 使用handlerpost 来解决线程问题
-        if (previewSession != null) {
-            try {
-                previewSession.stopRepeating();
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        if (cameraDevice != null) {
-            cameraDevice.close();
-        }
-        getiRecorder().release();
+        backgroundHandler.sendEmptyMessage(WHAT_RELEASE);
     }
 
     @Override
@@ -297,19 +338,17 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void pauseRecord() {
-        getiRecorder().pause();
+        backgroundHandler.sendEmptyMessage(WHAT_PAUSE);
     }
 
     @Override
     public void resumeRecord() {
-        getiRecorder().resume();
+        backgroundHandler.sendEmptyMessage(WHAT_RESMUE);
     }
 
     @Override
     public void stopRecord() {
-        getiRecorder().stopRecord();
-        closePreviewSession();
-        startPreview();
+        backgroundHandler.sendEmptyMessage(WHAT_STOP);
     }
 
     private CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {

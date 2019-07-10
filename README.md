@@ -12,6 +12,8 @@ todo
 - ffmpeg添加水印
 - MediaCodec添加水印
 - 视频合并
+- 视频旋转
+- 视频颜色不正确
 
 attention:
 - 使用MediaRecorder录制比例必须是内部支持的比例，而且像素大小有限制，太大不能拍摄
