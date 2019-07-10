@@ -13,6 +13,6 @@
 .externalNativeBuild
 .cxx
 ./fyrrecorder/build
-fyrrecorder/build/intermediates
-fyrrecorder/build/generated
-ffmpeglib/build
+/fyrrecorder/build/intermediates/incremental/
+/fyrrecorder/build
+/ffmpeglib/build

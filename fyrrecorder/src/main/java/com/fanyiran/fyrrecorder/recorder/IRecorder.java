@@ -13,5 +13,5 @@ public interface IRecorder {
 
     Surface getSurface();
 
-    void receiveData(byte[] data);
+    void receiveData(byte[] dataY, byte[] dataU, byte[] dataV);
 }

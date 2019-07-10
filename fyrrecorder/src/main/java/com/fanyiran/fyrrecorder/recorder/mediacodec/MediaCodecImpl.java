@@ -2,10 +2,8 @@ package com.fanyiran.fyrrecorder.recorder.mediacodec;
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.Surface;
@@ -14,10 +12,8 @@ import androidx.annotation.NonNull;
 
 import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
-import com.fanyiran.utils.LogUtil;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 
 public class MediaCodecImpl extends IRecorderAbstract {
@@ -149,7 +145,7 @@ public class MediaCodecImpl extends IRecorderAbstract {
     }
 
     @Override
-    public void receiveData(byte[] data) {
+    public void receiveData(byte[] dataY, byte[] dataU, byte[] dataV) {
 
     }
 }

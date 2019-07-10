@@ -56,13 +56,13 @@ public class FFmpegImpl extends IRecorderAbstract {
     }
 
     @Override
-    public void receiveData(byte[] data) {
-        encode(data,0);
+    public void receiveData(byte[] dataY, byte[] dataU, byte[] dataV) {
+        encode(dataY,dataU,dataV);
     }
 
     native int nativeInit(RecorderConfig config);
     native void nativeStartRecord();
-    native void encode(byte[] data,int length);
+    native void encode(byte[] data,byte[] dataU, byte[] dataV);
     native void nativeStopRecord();
     native void nativeResume();
     native void nativePause();

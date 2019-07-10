@@ -3,10 +3,8 @@ package com.fanyiran.fyrrecorder.recorder.mediarecorder;
 import android.media.MediaRecorder;
 import android.view.Surface;
 
-import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
-import com.fanyiran.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +55,7 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     }
 
     @Override
-    public void receiveData(byte[] data) {
+    public void receiveData(byte[] dataY, byte[] dataU, byte[] dataV) {
 
     }
 

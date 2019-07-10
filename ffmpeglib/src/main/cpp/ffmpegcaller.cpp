@@ -42,7 +42,9 @@ volatile int status = STATUS_UNKNOW;
 
 void get_config(JNIEnv *env, jobject config);
 
-void encode(AVCodecContext *pContext, AVFrame *pFrame, AVPacket *pPacket, FILE * out_file);
+void encode(AVCodecContext *pContext, AVFrame *pFrame, AVPacket *pPacket, FILE *out_file);
+
+void rotateY(jbyte *y);
 
 extern "C" JNIEXPORT jint JNICALL
 Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_nativeInit(JNIEnv *env, jobject thiz,
@@ -73,7 +75,7 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_nativeInit(JNIEnv *env,
     }
     ret = avcodec_open2(codec_context, codec, NULL);
     if (ret < 0) {
-        LOGI("codec open failed :%s",av_err2str(ret));
+        LOGI("codec open failed :%s", av_err2str(ret));
         return -4;
     }
     const char *file_path = env->GetStringUTFChars(path, 0);
@@ -90,7 +92,7 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_nativeInit(JNIEnv *env,
     frame->width = codec_context->width;
     ret = av_frame_get_buffer(frame, 0);
     if (ret < 0) {
-        LOGI("av_frame_get_buffer :%s",av_err2str(ret));
+        LOGI("av_frame_get_buffer :%s", av_err2str(ret));
         return -6;
     }
     status = STATUS_INIT;
@@ -137,39 +139,74 @@ void encode(AVCodecContext *pContext, AVFrame *pFrame, AVPacket *pPacket, FILE *
     }
     ret = avcodec_send_frame(pContext, pFrame);
     if (ret < 0) {
-        LOGI("avcodec_send_frame :%s",av_err2str(ret));
+        LOGI("avcodec_send_frame :%s", av_err2str(ret));
         return;
     }
     while (ret >= 0) {
         ret = avcodec_receive_packet(pContext, pPacket);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
-            LOGI("avcodec_receive_packet :%s",av_err2str(ret));
+            LOGI("avcodec_receive_packet :%s", av_err2str(ret));
             return;
         } else if (ret < 0) {
             LOGI("error during encoding");
             return;
         }
         fwrite(pPacket->data, 1, packet->size, out_file);
-        LOGI("fwirte something size:%d",packet->size);
+        LOGI("fwirte something size:%d", packet->size);
         av_packet_unref(pPacket);
     }
 }
 
+uint8_t* rotateY(uint8_t *y) {
+    int length = width * height;
+    uint8_t y_temp[length];
+    memset(y_temp,0,length);
+    int index = 0;
+    for (int w = 0; w < width; ++w) {
+        for (int h = height - 1; h >= 0; --h) {
+            y_temp[index] = y[w + h*width];
+            index++;
+        }
+    }
+    return y_temp;
+}
 
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_encode(JNIEnv *env, jobject instance,
-                                                                jbyteArray data,jint length) {
+                                                                jbyteArray dataY_,
+                                                                jbyteArray dataU_,
+                                                                jbyteArray dataV_) {
     if (status != STATUS_START) {
         return;
     }
+    jbyte *data_y = env->GetByteArrayElements(dataY_, NULL);
+    jbyte *data_u = env->GetByteArrayElements(dataU_, NULL);
+    jbyte *data_v = env->GetByteArrayElements(dataV_, NULL);
+
     ret = av_frame_make_writable(frame);
     if (ret < 0) {
-        LOGI("av_frame_make_writable :%s",av_err2str(ret));
+        LOGI("av_frame_make_writable :%s", av_err2str(ret));
     }
-    jbyte* jbyte1 = env->GetByteArrayElements(data,0);
-    int x, y;
-    frame->data[0] = reinterpret_cast<uint8_t *>(jbyte1);
+//    int x, y;
+//    uint8_t *y = reinterpret_cast<uint8_t *>(data_y);
+//    int length = width * height;
+//    uint8_t y_temp[length];
+//    memset(y_temp,0,length);
+//    int index = 0;
+//    for (int w = 0; w < width; ++w) {
+//        for (int h = height - 1; h >= 0; --h) {
+//            y_temp[index] = y[w + h*width];
+//            index++;
+//        }
+//    }
+//    frame->data[0] = y_temp;
+
+
+    frame->data[1] = reinterpret_cast<uint8_t *>(data_y);
+    frame->data[1] = reinterpret_cast<uint8_t *>(data_u);
+    frame->data[2] = reinterpret_cast<uint8_t *>(data_v);
+
 //    for (y = 0; y < codec_context->height; y++) {
 //        for (x = 0; x < codec_context->width; x++) {
 //            frame->data[0][y * frame->linesize[0] + x] = static_cast<uint8_t>(x + y +
@@ -189,6 +226,10 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_encode(JNIEnv *env, job
     frame->pts = frame_count;
     encode(codec_context, frame, packet, out_file);
     frame_count++;
+
+    env->ReleaseByteArrayElements(dataY_, data_y, 0);
+    env->ReleaseByteArrayElements(dataU_, data_u, 0);
+    env->ReleaseByteArrayElements(dataV_, data_v, 0);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -219,4 +260,3 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_nativeRelease(JNIEnv *e
     av_frame_free(&frame);
     av_packet_free(&packet);
 }
-

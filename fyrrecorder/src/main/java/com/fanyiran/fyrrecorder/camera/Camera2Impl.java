@@ -225,6 +225,7 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void release() {
+        // TODO: 2019-07-10 使用handlerpost 来解决线程问题
         if (previewSession != null) {
             try {
                 previewSession.stopRepeating();
@@ -423,9 +424,34 @@ public class Camera2Impl implements ICamera {
                         Image.Plane[] planes = img.getPlanes();
                         ByteBuffer buffer = planes[0].getBuffer();
                         buffer.rewind();
-                        byte[] data = new byte[buffer.capacity()];
-                        buffer.get(data);
-                        getiRecorder().receiveData(data);
+                        byte[] dataY = new byte[buffer.capacity()];
+                        buffer.get(dataY);
+
+                        buffer = planes[1].getBuffer();
+                        buffer.rewind();
+                        int pixelStride = planes[1].getPixelStride();
+                        byte[] dataU = new byte[buffer.capacity()/pixelStride];
+                        if (pixelStride != 1) {// TODO: 2019-07-10 planes[1].getRowStride()?
+                            for (int i = 0; i < dataU.length; i++) {
+                                dataU[i] = buffer.get(i * pixelStride + 1);
+                            }
+                        } else {
+                            buffer.get(dataU);
+                        }
+
+                        buffer = planes[2].getBuffer();
+                        buffer.rewind();
+                        pixelStride = planes[2].getPixelStride();
+                        byte[] dataV = new byte[buffer.capacity()/pixelStride];
+                        if (pixelStride != 1) {
+                            for (int i = 0; i < dataU.length; i++) {
+                                dataV[i] = buffer.get(i * pixelStride + 1);
+                            }
+                        } else {
+                            buffer.get(dataV);
+                        }
+                        getiRecorder().receiveData(dataY,dataU,dataV);
+
     //                    //从byte数组得到Bitmap
     //                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
     //                    //得到的图片是我们的预览图片的大小进行一个缩放到水印图片里面可以完全显示
