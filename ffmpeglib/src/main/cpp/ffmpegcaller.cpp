@@ -203,7 +203,7 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_encode(JNIEnv *env, job
 //    frame->data[0] = y_temp;
 
 
-    frame->data[1] = reinterpret_cast<uint8_t *>(data_y);
+    frame->data[0] = reinterpret_cast<uint8_t *>(data_y);
     frame->data[1] = reinterpret_cast<uint8_t *>(data_u);
     frame->data[2] = reinterpret_cast<uint8_t *>(data_v);
 
