@@ -5,7 +5,7 @@ import androidx.annotation.CallSuper;
 public abstract class IRecorderAbstract implements IRecorder {
     public static int RECORD_STATUS_DEFAULT = 0;
     public static int RECORD_STATUS_INIT = 1;
-    public static int RECORD_STATUS_START = 2;
+    public static int RECORD_STATUS_START_RECORD = 2;
     public static int RECORD_STATUS_STOP = 3;
     public static int RECORD_STATUS_PAUSE = 4;
     public static int RECORD_STATUS_PLAYING = 5;
@@ -28,7 +28,7 @@ public abstract class IRecorderAbstract implements IRecorder {
     @CallSuper
     @Override
     public void startRecord() {
-        status = RECORD_STATUS_START;
+        status = RECORD_STATUS_START_RECORD;
     }
 
     @CallSuper

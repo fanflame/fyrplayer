@@ -2,23 +2,18 @@ package com.fanyiran.fyrrecorder.camera;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
 import android.graphics.Typeface;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
@@ -26,26 +21,20 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
-import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
-import com.fanyiran.utils.FileUtils;
 import com.fanyiran.utils.LogUtil;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,10 +45,11 @@ import java.util.List;
 public class Camera2Impl implements ICamera {
     private static final int WHAT_INIT = 0;
     private static final int WHAT_PREVIEW = 1;
-    private static final int WHAT_RESMUE = 2;
-    private static final int WHAT_PAUSE = 3;
-    private static final int WHAT_STOP = 4;
-    private static final int WHAT_RELEASE = 5;
+    private static final int WHAT_START_RECORD = 2;
+    private static final int WHAT_RESMUE = 3;
+    private static final int WHAT_PAUSE = 4;
+    private static final int WHAT_STOP = 5;
+    private static final int WHAT_RELEASE = 6;
 
     private static final String TAG = "Camera2Impl";
     private static final String CAMERA_THREAD = "CAMERA_THREAD";
@@ -132,6 +122,10 @@ public class Camera2Impl implements ICamera {
                     break;
                 case WHAT_PREVIEW:
                     previewInner();
+                    break;
+                case WHAT_START_RECORD:
+                    closePreviewSession();
+                    record();
                     break;
                 case WHAT_PAUSE:
                     getiRecorder().pause();
@@ -241,7 +235,6 @@ public class Camera2Impl implements ICamera {
                     previewSession = session;
                     try {
                         builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-//                        builder.set();
                         for (Surface surface : surfaces) {
                             builder.addTarget(surface);
                         }
@@ -264,6 +257,7 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void switchCamera() {
+        // TODO: 2019-07-10 切换camera可以继续录制 ？
         if (cameraDevice != null) {
             cameraDevice.close();
         }
@@ -282,8 +276,7 @@ public class Camera2Impl implements ICamera {
 
     @Override
     public void startRecord() {
-        closePreviewSession();
-        record();
+        backgroundHandler.sendEmptyMessage(WHAT_START_RECORD);
     }
 
     private void record() {
@@ -457,7 +450,7 @@ public class Camera2Impl implements ICamera {
 //                    case STATE_PREVIEW:
                 //这里一定要调用reader.acquireNextImage()和img.close方法否则不会一直回掉了
                 Image img = reader.acquireNextImage();
-                if (getiRecorder().getStatus() == IRecorderAbstract.RECORD_STATUS_START) {
+                if (getiRecorder().getStatus() == IRecorderAbstract.RECORD_STATUS_START_RECORD) {
                     try {
                         LogUtil.v(TAG,"imageformat:"+img.getFormat());
                         Image.Plane[] planes = img.getPlanes();
@@ -472,7 +465,7 @@ public class Camera2Impl implements ICamera {
                         byte[] dataU = new byte[buffer.capacity()/pixelStride];
                         if (pixelStride != 1) {// TODO: 2019-07-10 planes[1].getRowStride()?
                             for (int i = 0; i < dataU.length; i++) {
-                                dataU[i] = buffer.get(i * pixelStride + 1);
+                                dataU[i] = buffer.get(i * pixelStride + 2);
                             }
                         } else {
                             buffer.get(dataU);
@@ -484,7 +477,7 @@ public class Camera2Impl implements ICamera {
                         byte[] dataV = new byte[buffer.capacity()/pixelStride];
                         if (pixelStride != 1) {
                             for (int i = 0; i < dataU.length; i++) {
-                                dataV[i] = buffer.get(i * pixelStride + 1);
+                                dataV[i] = buffer.get(i * pixelStride + 2);
                             }
                         } else {
                             buffer.get(dataV);
