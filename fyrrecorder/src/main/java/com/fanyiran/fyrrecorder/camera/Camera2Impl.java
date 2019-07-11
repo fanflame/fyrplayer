@@ -70,6 +70,10 @@ public class Camera2Impl implements ICamera {
     private Size mPreviewSize;
     private Size mVideoSize;
     private ImageReader mImageReader;
+    private long lastSycPreviewFpsTime;
+    private volatile long previewCount;
+    private volatile long previewTimePassed;
+
 
     @Override
     public void setConfig(CameraConfig cameraConfig) {
@@ -344,6 +348,14 @@ public class Camera2Impl implements ICamera {
         backgroundHandler.sendEmptyMessage(WHAT_STOP);
     }
 
+    @Override
+    public int getPreviewFps() {
+        if (previewTimePassed == 0) {
+            return 0;
+        }
+        return (int) (previewCount/previewTimePassed);
+    }
+
     private CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
@@ -446,6 +458,17 @@ public class Camera2Impl implements ICamera {
         mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
             @Override
             public void onImageAvailable(ImageReader reader) {
+                if (lastSycPreviewFpsTime == 0) {
+                    lastSycPreviewFpsTime = System.currentTimeMillis();
+                }
+                if (System.currentTimeMillis() - lastSycPreviewFpsTime >= 1000) {
+                    previewTimePassed++;
+                    lastSycPreviewFpsTime = System.currentTimeMillis();
+                } else {
+                    previewCount++;
+                    LogUtil.v(TAG,"fps increase");
+                }
+
 //                switch (mState) {
 //                    case STATE_PREVIEW:
                 //这里一定要调用reader.acquireNextImage()和img.close方法否则不会一直回掉了
@@ -464,7 +487,7 @@ public class Camera2Impl implements ICamera {
                         int pixelStride = planes[1].getPixelStride();
                         byte[] dataU = new byte[buffer.capacity()/pixelStride];
                         if (pixelStride != 1) {// TODO: 2019-07-10 planes[1].getRowStride()?
-                            for (int i = 0; i < dataU.length; i++) {
+                            for (int i = 0; i < dataU.length; i++) {// TODO: 2019-07-11 为啥要这么获取uv值？
                                 dataU[i] = buffer.get(i * pixelStride + 2);
                             }
                         } else {

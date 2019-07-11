@@ -127,4 +127,9 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
     public void stopRecord() {
         camera.stopRecord();
     }
+
+    @Override
+    public int getPreviewFps() {
+        return camera.getPreviewFps();
+    }
 }

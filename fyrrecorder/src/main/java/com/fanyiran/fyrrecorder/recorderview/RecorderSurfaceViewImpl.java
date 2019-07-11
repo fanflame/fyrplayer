@@ -96,4 +96,12 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
     public void stopRecord() {
         camera.stopRecord();
     }
+
+    @Override
+    public int getPreviewFps() {
+        if (camera == null) {
+            return 0;
+        }
+        return camera.getPreviewFps();
+    }
 }

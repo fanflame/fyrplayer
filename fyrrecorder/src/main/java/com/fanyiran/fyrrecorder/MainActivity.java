@@ -4,9 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Rational;
 import android.util.Size;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,12 +23,16 @@ import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final int WHAT_PREVIEW_FPS = 1;
     private static final int REQUEST_CODE = 458;
     private static final String TAG = "MainActivity";
+    private TextView tvPreviewFps;
     private IRecorderView cameraView;
     private String[] permissions = new String[]{Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
             ,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    private static Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         cameraView = findViewById(R.id.textureView);
+        tvPreviewFps = findViewById(R.id.tvPreviewFps);
+        handler = new Handler(callback);
 
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(permissions,REQUEST_CODE);
@@ -40,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
         }
         preview();
     }
+
+    Handler.Callback callback = new Handler.Callback() {
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case WHAT_PREVIEW_FPS:
+                    tvPreviewFps.setText(String.format("preview fps:%d",cameraView.getPreviewFps()));
+                    handler.sendEmptyMessageDelayed(WHAT_PREVIEW_FPS,1000);
+                    break;
+            }
+            return true;
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -76,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .build();
         cameraView.autoPreview(cameraConfig);
+        handler.sendEmptyMessage(WHAT_PREVIEW_FPS);
     }
 
     @Override

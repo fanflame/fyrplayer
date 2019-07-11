@@ -10,4 +10,6 @@ public interface IRecorderView {
     void pauseRecord();
     void resumeRecord();
     void stopRecord();
+    // for debug
+    int getPreviewFps();
 }

@@ -11,4 +11,5 @@ public interface ICamera {
     void pauseRecord();
     void resumeRecord();
     void stopRecord();
+    int getPreviewFps();
 }

@@ -65,8 +65,8 @@ Java_com_fanyiran_fyrrecorder_recorder_ffmpeg_FFmpegImpl_nativeInit(JNIEnv *env,
     codec_context->bit_rate = encoding_bit_rate;
     codec_context->width = width;
     codec_context->height = height;
-    codec_context->time_base = (AVRational) {1, 25};
-    codec_context->framerate = (AVRational) {25, 1};
+    codec_context->time_base = (AVRational) {1, frame_rate};
+    codec_context->framerate = (AVRational) {frame_rate, 1};
     codec_context->gop_size = 10;
     codec_context->max_b_frames = 1;
     codec_context->pix_fmt = AV_PIX_FMT_YUV420P;

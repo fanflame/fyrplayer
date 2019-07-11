@@ -91,4 +91,9 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     public void stopRecord() {
         camera.stopRecord();
     }
+
+    @Override
+    public int getPreviewFps() {
+        return camera.getPreviewFps();
+    }
 }
