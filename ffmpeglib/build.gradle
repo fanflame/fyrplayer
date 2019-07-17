@@ -41,3 +41,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }
+
+//task ndkBuild(type: Exec) {
+//    commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath, 'clean','all', 'NDK_DEBUG=1'
+//}
+//tasks.withType(JavaCompile) {
+//    compileTask -> compileTask.dependsOn ndkBuild
+//}

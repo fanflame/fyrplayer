@@ -242,6 +242,8 @@ public class Camera2Impl implements ICamera {
                         for (Surface surface : surfaces) {
                             builder.addTarget(surface);
                         }
+                        // TODO: 2019-07-11 可以控制预览帧率？
+//                        builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,);
                         session.setRepeatingRequest(builder.build(), captureCallback, backgroundHandler);
                     } catch (CameraAccessException e) {
                         LogUtil.v(TAG, e.getMessage());
