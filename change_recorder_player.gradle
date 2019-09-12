@@ -1,0 +1,8 @@
+task change(){result->
+    def file = rootProject.file("gradle.properties")
+    def fileProperty = new Properties()
+    fileProperty.load(new FileInputStream(file))
+    fileProperty.setProperty(usringRecoder,result)
+
+
+}

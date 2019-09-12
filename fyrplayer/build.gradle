@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+ext.usringRecoder = true
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.0"
@@ -20,11 +22,18 @@ android {
         }
     }
 
+    externalNativeBuild {
+        cmake {
+            path file("src/main/cpp/ffmpegplayer/CMakeLists.txt")
+        }
+    }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.github.fanflame:libutil:1.0.6'
+    implementation 'com.github.fanflame:libutil:1.0.8'
+    implementation project(path: ':ffmpeglib')
 }

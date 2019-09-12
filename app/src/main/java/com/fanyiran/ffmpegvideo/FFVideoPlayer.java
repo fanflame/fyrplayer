@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 
 import com.fanyiran.ffmpegvideo.utils.DefaultExecutor;
 
+import java.io.File;
 import java.util.concurrent.Executor;
 
 public class FFVideoPlayer extends SurfaceView {

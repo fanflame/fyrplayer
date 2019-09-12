@@ -2,11 +2,11 @@
 // Created by fanyiran on 2019-07-15.
 //
 
-#include <ffmpeg_helper.h>
 #include "ffmpeg_helper.h"
-#include "include/libavcodec/avcodec.h"
-#include "include/libavformat/avformat.h"
-#include "include/libavutil/frame.h"
+#include "ffmpeg_helper.h"
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/frame.h"
 #include <strings.h>
 
 FFmpegHelper::FFmpegHelper(FFmpegConfig config) {

@@ -27,11 +27,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path file("src/main/cpp/CMakeLists.txt")
-        }
-    }
+
+//    externalNativeBuild {
+//        cmake {
+////            if(usringRecoder.toBoolean()){
+//                path file("src/main/cpp/CMakeLists.txt")
+////            }else {
+////                path file("src/main/cpp/player/CMakeLists.txt")
+////            }
+//        }
+//    }
 
 }
 

@@ -1,10 +1,14 @@
 包含播放器以及拍摄器
 
  
- 
-todo
+播放器todo
 - 处理声音
 - 在线播放：mp4,hls,dash等
+- 播放速度
+
+拍摄器todo
+
+- 处理声音
 - 特效处理：滤镜，美颜等
 - MediaCodec，MediaMuxer录制视频播放不了
 - ffmpeg + x264录制
@@ -13,11 +17,6 @@ todo
 - MediaCodec添加水印
 - 视频合并
 - 视频旋转
-- 视频颜色不正确
-- 播放速度
-- 不能被手机上默认播放器识别
-
-
 
 
 attention:

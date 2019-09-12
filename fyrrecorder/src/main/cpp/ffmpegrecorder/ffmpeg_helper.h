@@ -4,9 +4,9 @@
 #include "ffmpeg_config.h"
 
 extern "C" {
-#include <include/libavcodec/avcodec.h>
-#include <include/libavutil/frame.h>
-#include <include/libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavutil/frame.h>
+#include <libavformat/avformat.h>
 };
 
 #ifndef FFMPEGVIDEO_FFMPEG_HELPER_H
