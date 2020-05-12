@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 import com.fanyiran.fcamera.camera.factory.CameraFactory;
 import com.fanyiran.fcamera.camera.factory.ICameraFactory;
 
+import java.io.File;
+
 public class CameraManager extends CameraBase {
     private ICamera cameraImpl;
     public ICameraFactory cameraFactory;
@@ -40,6 +42,16 @@ public class CameraManager extends CameraBase {
     @Override
     public int getCameraCount(@ICameraNumber int orientation) {
         return cameraImpl.getCameraCount(orientation);
+    }
+
+    @Override
+    public int getCurrentPreviewFps() {
+        return cameraImpl.getCurrentPreviewFps();
+    }
+
+    @Override
+    public void setPreviewFps(int minFps, int maxFps) {
+        cameraImpl.setPreviewFps(minFps, maxFps);
     }
 
     @Override
@@ -81,6 +93,11 @@ public class CameraManager extends CameraBase {
     @Override
     public boolean switchCamera() {
         return cameraImpl.switchCamera();
+    }
+
+    @Override
+    public void takePicture(File picFile) {
+        cameraImpl.takePicture(picFile);
     }
 
     @Override

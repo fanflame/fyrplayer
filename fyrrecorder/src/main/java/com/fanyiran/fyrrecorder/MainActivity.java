@@ -3,6 +3,7 @@ package com.fanyiran.fyrrecorder;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Size;
@@ -16,6 +17,8 @@ import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fyrrecorder.recorderview.IRecorderView;
 import com.fanyiran.utils.ToastUtils;
+
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -81,9 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void preview() {
         CameraConfig cameraConfig = new CameraConfig.Builder()
-//                .setContext(this)
+                .context(this)
 //                .setTargetResolution(new Size(640,640))
                 .setPreviewSize(new Size(320, 640))
+                .previewMaxFps(30)
+                .previewMinFps(10)
 //                .setVideoSize(new Size(640,640))
 //                .setEncodingBitRate(100000)
 //                .setVideoIFrameInterval(1)
@@ -121,5 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSwitchCameraClick(View view) {
         iRecorderView.switchCamera();
+    }
+
+    public void onSnapClick(View view) {
+        File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format("%d.jpg", System.currentTimeMillis()));
+        iRecorderView.takePicture(file);
     }
 }

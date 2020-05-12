@@ -5,14 +5,18 @@ import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.util.Size;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
 import com.fanyiran.utils.LogUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
+
 
 @SuppressWarnings("deprecation")
 public class CameraImpl extends CameraBase {
@@ -24,7 +28,12 @@ public class CameraImpl extends CameraBase {
 
     private Camera currentCamera;
     private int currentCameraId = -1;
+    private long lastFpsTimes;
     private int fps;
+    private boolean isTakePic;
+    private boolean isPreviewing;
+
+    private OrientationEventListener orientationEventListener;
 
     @Override
     public void init(Activity activity) {
@@ -35,7 +44,7 @@ public class CameraImpl extends CameraBase {
         for (int i = 0; i < cameraNum; i++) {
             cameraInfo = new Camera.CameraInfo();
             try {
-                Camera.getCameraInfo(cameraNum, cameraInfo);
+                Camera.getCameraInfo(i, cameraInfo);
             } catch (RuntimeException e) {
                 e.printStackTrace();
                 continue;
@@ -60,6 +69,32 @@ public class CameraImpl extends CameraBase {
                 return cameraBackCount;
         }
         return 0;
+    }
+
+    @Override
+    public int getCurrentPreviewFps() {
+        return fps;
+    }
+
+    @Override
+    public void setPreviewFps(int minFps, int maxFps) {
+        checkCurrentCamera();
+        int[] properPreviewFps = getProperPreviewFps(minFps, maxFps);
+        LogUtil.v(TAG, String.format("preview fps:%d,%d", properPreviewFps[0], properPreviewFps[1]));
+        Camera.Parameters parameters = currentCamera.getParameters();
+        parameters.setPreviewFpsRange(properPreviewFps[0], properPreviewFps[1]);
+        currentCamera.setParameters(parameters);
+    }
+
+    private int[] getProperPreviewFps(int minFps, int maxFps) {
+        // TODO: 2020/5/12  获取最佳预览fps
+        List<int[]> supportedPreviewFpsRange = currentCamera.getParameters().getSupportedPreviewFpsRange();
+        for (int[] fps : supportedPreviewFpsRange) {
+            if (fps[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] == minFps * 1000) {
+                return fps;
+            }
+        }
+        return supportedPreviewFpsRange.get(0);
     }
 
     @Override
@@ -150,6 +185,7 @@ public class CameraImpl extends CameraBase {
 
     @Override
     public void setPreviewSize(Size size) {
+        checkCurrentCamera();
 //        Size previewSize = getPreviewSize(size);
         Size previewSize = getProperPreviewSize(size);
         LogUtil.v(TAG, previewSize + "");
@@ -166,6 +202,7 @@ public class CameraImpl extends CameraBase {
     }
 
     private Size getProperPreviewSize(Size exceptSize) {
+        // TODO: 2020/5/12 获取最佳预览大小
         int orientation = getActivity().getWindowManager().getDefaultDisplay().getOrientation();
         if (orientation == 0 || orientation == 180) {
 
@@ -186,30 +223,19 @@ public class CameraImpl extends CameraBase {
         return null;
     }
 
-    private boolean openInner(int currentCameraId) {
+    private boolean openInner(int tempCameraId) {
         try {
             //On some devices, this method may take a long time to complete
-            currentCamera = Camera.open(currentCameraId);
+            currentCamera = Camera.open(tempCameraId);
         } catch (RuntimeException e) {
             e.printStackTrace();
             return false;
         }
+        currentCameraId = tempCameraId;
         currentCamera.setErrorCallback(new Camera.ErrorCallback() {
 
             @Override
             public void onError(int error, Camera camera) {
-
-            }
-        });
-        currentCamera.setOneShotPreviewCallback(new Camera.PreviewCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
-
-            }
-        });
-        currentCamera.setPreviewCallback(new Camera.PreviewCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
 
             }
         });
@@ -224,6 +250,7 @@ public class CameraImpl extends CameraBase {
 
     @Override
     public boolean preview(SurfaceTexture surface) {
+        checkCurrentCamera();
         surfaceReference = new WeakReference<Object>(surface);
         try {
             currentCamera.setPreviewTexture(surface);
@@ -231,13 +258,45 @@ public class CameraImpl extends CameraBase {
             e.printStackTrace();
             return false;
         }
+        pveviewInner();
+        return true;
+    }
+
+    private void pveviewInner() {
+        currentCamera.setPreviewCallback(new Camera.PreviewCallback() {
+            @Override
+            public void onPreviewFrame(byte[] data, Camera camera) {
+                fps++;
+                if (System.currentTimeMillis() - lastFpsTimes > 1000) {
+                    lastFpsTimes = System.currentTimeMillis();
+                    fps = 0;
+                }
+            }
+        });
+        if (getActivity() != null && orientationEventListener == null) {
+            orientationEventListener = new OrientationEventListener(getActivity()) {
+                @Override
+                public void onOrientationChanged(int orientation) {
+                    CameraImpl.this.onOrientationChanged(orientation);
+                }
+            };
+        }
+        orientationEventListener.enable();
+        isPreviewing = true;
         currentCamera.startPreview();
         setCameraDisplayOrientation();
-        return true;
+    }
+
+    private void checkCurrentCamera() {
+        if (currentCamera == null) {
+            throw new IllegalStateException("camera is null");
+        }
     }
 
     @Override
     public boolean preview(SurfaceHolder holder) {
+        checkTakingPic();
+        checkCurrentCamera();
         surfaceReference = new WeakReference<Object>(holder);
         try {
             currentCamera.setPreviewDisplay(holder);
@@ -245,27 +304,82 @@ public class CameraImpl extends CameraBase {
             e.printStackTrace();
             return false;
         }
-        currentCamera.startPreview();
-        setCameraDisplayOrientation();
+        pveviewInner();
         return true;
+    }
+
+    private void checkTakingPic() {
+        if (isTakePic) {
+            throw new IllegalStateException("camera is takingPic");
+        }
     }
 
     @Override
     public boolean switchCamera() {
-        if (currentCamera != null) {
-            currentCamera.release();
-        }
-        if (currentCameraId == -1) {
+        int tempId = currentCameraId;
+        release();
+        if (tempId == -1) {
             if (!open(true)) {
                 return false;
             }
             return previewInner();
         } else {
-            currentCameraId = (currentCameraId + 1) % cameraNum;
-            if (!openInner(currentCameraId)) {
+            tempId = (tempId + 1) % cameraNum;
+            LogUtil.v(TAG, String.format("switchCamera cameraId:%d", tempId));
+            if (!openInner(tempId)) {
                 return false;
             }
             return previewInner();
+        }
+    }
+
+    @Override
+    public void takePicture(final File picFile) {
+        checkPreviewing();
+        checkCurrentCamera();
+        isTakePic = true;
+        List<Camera.Size> supportedPictureSizes = currentCamera.getParameters().getSupportedPictureSizes();
+        for (Camera.Size supportedPictureSize : supportedPictureSizes) {
+            LogUtil.v(TAG, String.format("supportPicSize:%d;%d", supportedPictureSize.width, supportedPictureSize.height));
+        }
+        Camera.Parameters parameters = currentCamera.getParameters();
+        parameters.setPictureSize(supportedPictureSizes.get(0).width, supportedPictureSizes.get(0).height);
+        currentCamera.setParameters(parameters);
+        try {
+            currentCamera.takePicture(null, null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    savePicFiles(picFile, data);
+                    isTakePic = false;
+                }
+            });
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void savePicFiles(File picFile, byte[] data) {
+        if (!picFile.exists()) {
+            try {
+                picFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                // TODO: 2020/5/12 创建文件失败
+            }
+        }
+        int off = 0;
+        int remainSize = data.length;
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(picFile);
+            fileOutputStream.write(data, off, remainSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkPreviewing() {
+        if (!isPreviewing) {
+            throw new IllegalStateException("take picture must");
         }
     }
 
@@ -285,11 +399,39 @@ public class CameraImpl extends CameraBase {
         return false;
     }
 
+    public void onOrientationChanged(int orientation) {
+        if (currentCameraId == -1) {
+            return;
+        }
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return;
+        Camera.CameraInfo info =
+                new Camera.CameraInfo();
+        Camera.getCameraInfo(currentCameraId, info);
+        orientation = (orientation + 45) / 90 * 90;
+        int rotation = 0;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            rotation = (info.orientation - orientation + 360) % 360;
+        } else {  // back-facing camera
+            rotation = (info.orientation + orientation) % 360;
+        }
+        Camera.Parameters parameters = currentCamera.getParameters();
+        parameters.setRotation(rotation);
+        currentCamera.setParameters(parameters);
+    }
+
     @Override
     public void release() {
+        LogUtil.v(TAG, "release");
         if (currentCamera != null) {
+            currentCamera.setPreviewCallback(null);
             currentCamera.release();
+            currentCamera = null;
+        }
+        if (orientationEventListener != null) {
+            orientationEventListener.disable();
         }
         currentCameraId = -1;
+        isPreviewing = false;
+        isTakePic = false;
     }
 }

@@ -10,6 +10,8 @@ import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.CameraManager;
 import com.fanyiran.utils.LogUtil;
 
+import java.io.File;
+
 public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderView {
     private static final String TAG = "RecorderSurfaceViewImpl";
     private CameraConfig cameraConfig;
@@ -26,6 +28,7 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
     }
 
     private void init() {
+        CameraManager.getInstance().init((Activity) getContext());
         getHolder().addCallback(holderCallBack);
     }
 
@@ -33,9 +36,9 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             LogUtil.v(TAG, "surfaceCreated");
-            CameraManager.getInstance().init((Activity) getContext());
             CameraManager.getInstance().open(true);
             CameraManager.getInstance().setPreviewSize(cameraConfig.getPreviewSize());
+            CameraManager.getInstance().setPreviewFps(cameraConfig.getPreviewMinFps(), cameraConfig.getPreviewMaxFps());
 //            CameraManager.getInstance().setPreviewOrientation(100);
             init = true;
         }
@@ -98,10 +101,14 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 
     @Override
     public int getPreviewFps() {
-//        if (camera == null) {
-            return 0;
-//        }
-//        return camera.getPreviewFps();
+        return init ? CameraManager.getInstance().getCurrentPreviewFps() : 0;
+    }
+
+    @Override
+    public void takePicture(File file) {
+        if (init) {
+            CameraManager.getInstance().takePicture(file);
+        }
     }
 
     @Override

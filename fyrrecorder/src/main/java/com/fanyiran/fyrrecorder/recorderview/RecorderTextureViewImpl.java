@@ -8,6 +8,8 @@ import android.view.TextureView;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.CameraManager;
+
+import java.io.File;
 //import com.fanyiran.fcamera.camera.RecorderManager;
 
 public class RecorderTextureViewImpl extends TextureView implements IRecorderView {
@@ -108,5 +110,10 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     public int getPreviewFps() {
 //        return camera.getPreviewFps();
         return 0;
+    }
+
+    @Override
+    public void takePicture(File file) {
+
     }
 }

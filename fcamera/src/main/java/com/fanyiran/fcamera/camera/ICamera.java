@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 
 import androidx.annotation.IntDef;
 
+import java.io.File;
+
 public interface ICamera {
     int CAMERA_ALL = 0;
     int CAMERA_FRONT = 1;
@@ -25,6 +27,10 @@ public interface ICamera {
 
     int getCameraCount(@ICameraNumber int orientation);
 
+    int getCurrentPreviewFps();
+
+    void setPreviewFps(int minFps, int maxFps);
+
     int getOrientation(int cameraId);
 
     //    void setPreviewOrientation(int degree);
@@ -38,5 +44,7 @@ public interface ICamera {
     boolean preview(SurfaceHolder holder);
 
     boolean switchCamera();
+
+    void takePicture(File picFile);
     void release();
 }

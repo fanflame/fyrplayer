@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
 
+import java.io.File;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -140,4 +142,10 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
 //        return camera.getPreviewFps();
         return 0;
     }
+
+    @Override
+    public void takePicture(File file) {
+
+    }
+
 }
