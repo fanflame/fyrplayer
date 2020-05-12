@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
+import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 
 import java.io.File;
 
@@ -123,6 +124,11 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
     }
 
     @Override
+    public void startPreview() {
+
+    }
+
+    @Override
     public void pauseRecord() {
 //        camera.pauseRecord();
     }
@@ -144,8 +150,7 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
     }
 
     @Override
-    public void takePicture(File file) {
+    public void takePicture(File file, OnTakePicCallBack onTakePicCallBack) {
 
     }
-
 }

@@ -7,7 +7,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
-import com.fanyiran.fcamera.camera.CameraManager;
+import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
+import com.fanyiran.fyrrecorder.recorder.irecordermanager.IRecorderManager;
+import com.fanyiran.fyrrecorder.recorder.irecordermanager.MediaRecorderCameraManager;
 import com.fanyiran.utils.LogUtil;
 
 import java.io.File;
@@ -15,7 +17,8 @@ import java.io.File;
 public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderView {
     private static final String TAG = "RecorderSurfaceViewImpl";
     private CameraConfig cameraConfig;
-    private boolean init;
+    private IRecorderManager recorderManager;
+    private boolean initCamera;
 
     public RecorderSurfaceViewImpl(Context context) {
         super(context);
@@ -28,7 +31,8 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
     }
 
     private void init() {
-        CameraManager.getInstance().init((Activity) getContext());
+        recorderManager = new MediaRecorderCameraManager();
+        recorderManager.init((Activity) getContext());
         getHolder().addCallback(holderCallBack);
     }
 
@@ -36,11 +40,8 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             LogUtil.v(TAG, "surfaceCreated");
-            CameraManager.getInstance().open(true);
-            CameraManager.getInstance().setPreviewSize(cameraConfig.getPreviewSize());
-            CameraManager.getInstance().setPreviewFps(cameraConfig.getPreviewMinFps(), cameraConfig.getPreviewMaxFps());
-//            CameraManager.getInstance().setPreviewOrientation(100);
-            init = true;
+            recorderManager.openCamera(true, cameraConfig);
+            initCamera = true;
         }
 
         @Override
@@ -50,14 +51,15 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 //            cameraConfig.addSurfaceHolder();
 //            cameraConfig.getRecorderConfig().surface = getHolder().getSurface();
 //            CameraManager.getInstance().preview(getHolder().getSurface());
-            CameraManager.getInstance().preview(getHolder());
+            recorderManager.startPreview(getHolder());
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             LogUtil.v(TAG, "surfaceDestroyed");
-            CameraManager.getInstance().release();
-            init = false;
+            recorderManager.stopPreview();
+            recorderManager.release();
+            initCamera = false;
         }
     };
 
@@ -71,22 +73,27 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 
     @Override
     public void switchCamera() {
-        CameraManager.getInstance().switchCamera();
+        recorderManager.switchCamera();
     }
 
     @Override
     public void release() {
-        CameraManager.getInstance().release();
+        recorderManager.release();
     }
 
     @Override
     public void startRecord() {
-//        CameraManager.getInstance().startRecord();
+        recorderManager.startRecord();
+    }
+
+    @Override
+    public void startPreview() {
+        recorderManager.startPreview(getHolder());
     }
 
     @Override
     public void pauseRecord() {
-//        camera.pauseRecord();
+//        recorderManager.pauseRecord();
     }
 
     @Override
@@ -96,28 +103,28 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 
     @Override
     public void stopRecord() {
-//        camera.stopRecord();
+        recorderManager.stopRecord();
     }
 
     @Override
     public int getPreviewFps() {
-        return init ? CameraManager.getInstance().getCurrentPreviewFps() : 0;
+        return initCamera ? recorderManager.getCurrentPreviewFps() : 0;
     }
 
     @Override
-    public void takePicture(File file) {
-        if (init) {
-            CameraManager.getInstance().takePicture(file);
+    public void takePicture(File file, OnTakePicCallBack callBack) {
+        if (initCamera) {
+            recorderManager.takePicture(file, callBack);
         }
     }
 
     @Override
     public int getOrientation(int cameraId) {
-        return CameraManager.getInstance().getOrientation(cameraId);
+        return recorderManager.getOrientation(cameraId);
     }
 
     @Override
     public int getCameraCount(int orientation) {
-        return init ? CameraManager.getInstance().getCameraCount(orientation) : 0;
+        return initCamera ? recorderManager.getCameraCount(orientation) : 0;
     }
 }

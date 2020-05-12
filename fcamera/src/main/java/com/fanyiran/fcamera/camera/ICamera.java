@@ -8,6 +8,8 @@ import android.view.SurfaceHolder;
 
 import androidx.annotation.IntDef;
 
+import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
+
 import java.io.File;
 
 public interface ICamera {
@@ -43,8 +45,10 @@ public interface ICamera {
 
     boolean preview(SurfaceHolder holder);
 
+    void stopPreview();
+
     boolean switchCamera();
 
-    void takePicture(File picFile);
+    void takePicture(File picFile, OnTakePicCallBack onTakePicCallBack);
     void release();
 }

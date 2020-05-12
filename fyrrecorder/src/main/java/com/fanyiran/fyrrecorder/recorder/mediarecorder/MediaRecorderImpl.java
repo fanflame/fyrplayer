@@ -5,11 +5,14 @@ import android.view.Surface;
 
 import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
+import com.fanyiran.utils.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
 
+@SuppressWarnings("deprecation")
 public class MediaRecorderImpl extends IRecorderAbstract {
+    private static final String TAG = "MediaRecorderImpl";
     private MediaRecorder mediaRecorder;
 
     @Override
@@ -20,7 +23,7 @@ public class MediaRecorderImpl extends IRecorderAbstract {
 
     @Override
     public void startRecord() {
-        record();
+        mediaRecorder.start();
         super.startRecord();
     }
 
@@ -28,9 +31,8 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     public void stopRecord() {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
-            mediaRecorder.release();
-            mediaRecorder = null;
         }
+        recorderConfig.camera.unlock();
         super.stopRecord();
     }
 
@@ -47,6 +49,8 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     @Override
     public void release() {
         super.release();
+        mediaRecorder.reset();
+        mediaRecorder.release();
     }
 
     @Override
@@ -62,29 +66,34 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     private void setupMediaRecorder() {
         if (mediaRecorder == null) {
             mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+            recorderConfig.camera.unlock();
+            mediaRecorder.setCamera(recorderConfig.camera);
+            mediaRecorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
+                @Override
+                public void onError(MediaRecorder mr, int what, int extra) {
+                    LogUtil.v(TAG, String.format("error what:%d;extra:%d", what, extra));
+                }
+            });
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+            mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mediaRecorder.setOutputFormat(recorderConfig.outputFormat);
             mediaRecorder.setVideoEncoder(recorderConfig.videoEncoder);
             mediaRecorder.setAudioEncoder(recorderConfig.audioEncoder);
-            mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
+//            mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
             mediaRecorder.setVideoFrameRate(recorderConfig.frameRate);
             File outputFile = recorderConfig.outputFile;
             mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
-            mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
+//            mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
 //            int rotation = ((Activity) recorderConfig.getContext()).getWindowManager().getDefaultDisplay().getRotation();
         }
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
+            LogUtil.v(TAG, e.getMessage());
             e.printStackTrace();
 //            onCameraError(2);
             setStatusError();
             return;
         }
-    }
-
-    private void record() {
-        mediaRecorder.start();
     }
 }

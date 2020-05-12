@@ -9,6 +9,7 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.utils.LogUtil;
 
 import java.io.File;
@@ -308,6 +309,17 @@ public class CameraImpl extends CameraBase {
         return true;
     }
 
+    @Override
+    public void stopPreview() {
+        if (currentCamera != null) {
+            try {
+                currentCamera.stopPreview();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void checkTakingPic() {
         if (isTakePic) {
             throw new IllegalStateException("camera is takingPic");
@@ -334,7 +346,7 @@ public class CameraImpl extends CameraBase {
     }
 
     @Override
-    public void takePicture(final File picFile) {
+    public void takePicture(final File picFile, final OnTakePicCallBack onTakePicCallBack) {
         checkPreviewing();
         checkCurrentCamera();
         isTakePic = true;
@@ -349,8 +361,12 @@ public class CameraImpl extends CameraBase {
             currentCamera.takePicture(null, null, null, new Camera.PictureCallback() {
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
+                    // TODO: 2020/5/12 左右反转
                     savePicFiles(picFile, data);
                     isTakePic = false;
+                    if (onTakePicCallBack != null) {
+                        onTakePicCallBack.onTakePicCallBack(picFile);
+                    }
                 }
             });
         } catch (RuntimeException e) {
@@ -433,5 +449,9 @@ public class CameraImpl extends CameraBase {
         currentCameraId = -1;
         isPreviewing = false;
         isTakePic = false;
+    }
+
+    public Camera getCurrentCamera() {
+        return currentCamera;
     }
 }

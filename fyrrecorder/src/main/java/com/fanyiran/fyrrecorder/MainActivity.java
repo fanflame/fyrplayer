@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
+import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.fyrrecorder.recorderview.IRecorderView;
 import com.fanyiran.utils.ToastUtils;
 
@@ -79,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // TODO: 2019-07-01 stoppreview
     }
 
     private void preview() {
@@ -130,6 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void onSnapClick(View view) {
         File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.format("%d.jpg", System.currentTimeMillis()));
-        iRecorderView.takePicture(file);
+        iRecorderView.takePicture(file, new OnTakePicCallBack() {
+
+            @Override
+            public void onTakePicCallBack(File picFile) {
+                iRecorderView.startPreview();
+            }
+        });
     }
 }
