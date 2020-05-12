@@ -1,4 +1,4 @@
-package com.fanyiran.fyrrecorder.camera;
+package com.fanyiran.fcamera.camera;
 
 public interface ICameraListener {
     int ERROR = 1;

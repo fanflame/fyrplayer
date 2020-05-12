@@ -2,6 +2,7 @@ package com.fanyiran.fyrrecorder.recorder;
 
 import android.media.MediaRecorder;
 import android.util.Size;
+import android.view.Surface;
 
 import java.io.File;
 
@@ -14,5 +15,6 @@ public class RecorderConfig {
     public int frameRate = 30;
     public File outputFile;
     public Size videSize;
+    public Surface surface;
     public OnPlayErrorListener onPlayErrorListener;
 }

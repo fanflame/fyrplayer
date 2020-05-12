@@ -14,6 +14,7 @@ import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
 
 import java.io.IOException;
+import java.util.concurrent.SynchronousQueue;
 
 
 public class MediaCodecImpl extends IRecorderAbstract {
@@ -24,12 +25,13 @@ public class MediaCodecImpl extends IRecorderAbstract {
     private Handler handler;
     private int trackId;
     private boolean muxerStarted = false;
+    private SynchronousQueue<byte[]> cameraData;
 
     @Override
     public void init(RecorderConfig config) {
         super.init(config);
         MediaFormat format = new MediaFormat();
-        format.setString(MediaFormat.KEY_MIME, MediaFormat.MIMETYPE_VIDEO_MPEG4);
+        format.setString(MediaFormat.KEY_MIME, MediaFormat.MIMETYPE_VIDEO_AVC);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, config.frameRate);
         format.setInteger(MediaFormat.KEY_WIDTH, config.videSize.getWidth());
         format.setInteger(MediaFormat.KEY_HEIGHT, config.videSize.getHeight());
@@ -74,11 +76,34 @@ public class MediaCodecImpl extends IRecorderAbstract {
         handler = new Handler(handlerThread.getLooper());
         mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         mediaCodec.setCallback(callback, handler);
+        trackId = mediaMuxer.addTrack(format);
     }
 
     private MediaCodec.Callback callback = new MediaCodec.Callback() {
+//        private byte[] lastBytes;
+//        private int offSet;
+
         @Override
         public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
+//            ByteBuffer inputBuffer = codec.getInputBuffer(index);
+//            if (lastBytes == null || offSet >= lastBytes.length) {
+//                try {
+//                    lastBytes = cameraData.take();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            int size = lastBytes.length - offSet;
+//            int queueSize;
+//            if (size - inputBuffer.remaining() > 0) {
+//                inputBuffer.put(lastBytes, offSet, queueSize = inputBuffer.remaining());
+//                offSet += inputBuffer.remaining();
+//            } else {
+//                inputBuffer.put(lastBytes, offSet, queueSize = size);
+//                offSet = lastBytes.length;
+//            }
+//            LogUtil.v("TAGGGGGG",""+queueSize);
+//            codec.queueInputBuffer(index, 0, queueSize, 0, MediaCodec.BUFFER_FLAG_CODEC_CONFIG);
         }
 
         @Override
@@ -96,21 +121,28 @@ public class MediaCodecImpl extends IRecorderAbstract {
 
         @Override
         public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
-            trackId = mediaMuxer.addTrack(format);
-            mediaMuxer.start();
-            muxerStarted = true;
+//            trackId = mediaMuxer.addTrack(format);
+//            mediaMuxer.start();
+//            muxerStarted = true;
         }
     };
 
     @Override
     public void startRecord() {
         super.startRecord();
+        if (cameraData == null) {
+            cameraData = new SynchronousQueue<>();
+        }
+        muxerStarted = true;
+        mediaMuxer.start();
         mediaCodec.start();
+        cameraData.clear();
     }
 
     @Override
     public void stopRecord() {
         super.stopRecord();
+        mediaCodec.signalEndOfInputStream();
         mediaCodec.stop();
         mediaMuxer.stop();
     }
@@ -146,6 +178,10 @@ public class MediaCodecImpl extends IRecorderAbstract {
 
     @Override
     public void receiveData(byte[] dataY, byte[] dataU, byte[] dataV) {
+//        if (muxerStarted) {
+//            LogUtil.v("TAGssssss",""+dataY.length);
+//            cameraData.add(dataY);
+//        }
 
     }
 }

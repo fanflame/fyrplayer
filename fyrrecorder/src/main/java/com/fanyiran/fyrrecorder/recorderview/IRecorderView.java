@@ -1,8 +1,12 @@
 package com.fanyiran.fyrrecorder.recorderview;
 
-import com.fanyiran.fyrrecorder.camera.CameraConfig;
+import com.fanyiran.fcamera.camera.CameraConfig;
 
 public interface IRecorderView {
+    int getOrientation(int cameraId);
+
+    int getCameraCount(int orientation);
+
     void autoPreview(CameraConfig cameraConfig);
     void switchCamera();
     void release();

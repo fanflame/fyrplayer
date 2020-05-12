@@ -1,18 +1,17 @@
 package com.fanyiran.fyrrecorder.recorderview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
-import android.view.Surface;
 import android.view.TextureView;
 
-import com.fanyiran.fyrrecorder.camera.CameraConfig;
-import com.fanyiran.fyrrecorder.camera.ICamera;
-import com.fanyiran.fyrrecorder.camera.RecorderManager;
+import com.fanyiran.fcamera.camera.CameraConfig;
+import com.fanyiran.fcamera.camera.CameraManager;
+//import com.fanyiran.fcamera.camera.RecorderManager;
 
 public class RecorderTextureViewImpl extends TextureView implements IRecorderView {
     private static final String TAG = "RecorderTextureViewImpl";
-    private ICamera camera;
     private CameraConfig cameraConfig;
 
     public RecorderTextureViewImpl(Context context) {
@@ -26,14 +25,17 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     }
 
     private void init() {
+        CameraManager.getInstance().init((Activity) getContext());
+        CameraManager.getInstance().open(true);
+//        CameraManager.getInstance().setPreviewOrientation(10);
         // TODO: 2019-07-03 需要开启硬件加速？
         setSurfaceTextureListener(new SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 // TODO: 2019-07-03 surface这么构造出来，什么原理？
-                cameraConfig.addSurfaceHolder(new Surface(getSurfaceTexture()));
-                camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
-                camera.preview();
+//                cameraConfig.addSurfaceHolder(new Surface(getSurfaceTexture()));
+//                camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
+                CameraManager.getInstance().preview(getSurfaceTexture());
             }
 
             @Override
@@ -55,6 +57,16 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
 
 
     @Override
+    public int getOrientation(int cameraId) {
+        return 0;
+    }
+
+    @Override
+    public int getCameraCount(int orientation) {
+        return 0;
+    }
+
+    @Override
     public void autoPreview(CameraConfig cameraConfig) {
         if (cameraConfig == null) {
             throw new IllegalArgumentException("config can't be null");
@@ -64,36 +76,37 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
 
     @Override
     public void switchCamera() {
-        camera.switchCamera();
+        CameraManager.getInstance().switchCamera();
     }
 
     @Override
     public void release() {
-        camera.release();
+        CameraManager.getInstance().release();
     }
 
     @Override
     public void startRecord() {
-        camera.startRecord();
+//        camera.startRecord();
     }
 
     @Override
     public void pauseRecord() {
-        camera.pauseRecord();
+//        camera.pauseRecord();
     }
 
     @Override
     public void resumeRecord() {
-        camera.resumeRecord();
+//        camera.resumeRecord();
     }
 
     @Override
     public void stopRecord() {
-        camera.stopRecord();
+//        camera.stopRecord();
     }
 
     @Override
     public int getPreviewFps() {
-        return camera.getPreviewFps();
+//        return camera.getPreviewFps();
+        return 0;
     }
 }

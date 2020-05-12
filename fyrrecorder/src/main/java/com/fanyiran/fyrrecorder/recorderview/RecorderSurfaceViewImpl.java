@@ -1,25 +1,19 @@
 package com.fanyiran.fyrrecorder.recorderview;
 
+import android.app.Activity;
 import android.content.Context;
-import android.os.Environment;
 import android.util.AttributeSet;
-import android.util.Rational;
-import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.fanyiran.fyrrecorder.camera.CameraConfig;
-import com.fanyiran.fyrrecorder.camera.ICamera;
-import com.fanyiran.fyrrecorder.camera.RecorderManager;
+import com.fanyiran.fcamera.camera.CameraConfig;
+import com.fanyiran.fcamera.camera.CameraManager;
 import com.fanyiran.utils.LogUtil;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderView {
     private static final String TAG = "RecorderSurfaceViewImpl";
-    private ICamera camera;
     private CameraConfig cameraConfig;
+    private boolean init;
 
     public RecorderSurfaceViewImpl(Context context) {
         super(context);
@@ -39,23 +33,28 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             LogUtil.v(TAG, "surfaceCreated");
+            CameraManager.getInstance().init((Activity) getContext());
+            CameraManager.getInstance().open(true);
+            CameraManager.getInstance().setPreviewSize(cameraConfig.getPreviewSize());
+//            CameraManager.getInstance().setPreviewOrientation(100);
+            init = true;
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             LogUtil.v(TAG, "surfaceChanged");
             //todo 修改大小
-            cameraConfig.addSurfaceHolder(getHolder().getSurface());
-            camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceHolder.class);
-            camera.preview();
+//            cameraConfig.addSurfaceHolder();
+//            cameraConfig.getRecorderConfig().surface = getHolder().getSurface();
+//            CameraManager.getInstance().preview(getHolder().getSurface());
+            CameraManager.getInstance().preview(getHolder());
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             LogUtil.v(TAG, "surfaceDestroyed");
-            if (camera != null) {
-                camera.release();
-            }
+            CameraManager.getInstance().release();
+            init = false;
         }
     };
 
@@ -69,39 +68,49 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 
     @Override
     public void switchCamera() {
-        camera.switchCamera();
+        CameraManager.getInstance().switchCamera();
     }
 
     @Override
     public void release() {
-        camera.release();
+        CameraManager.getInstance().release();
     }
 
     @Override
     public void startRecord() {
-        camera.startRecord();
+//        CameraManager.getInstance().startRecord();
     }
 
     @Override
     public void pauseRecord() {
-        camera.pauseRecord();
+//        camera.pauseRecord();
     }
 
     @Override
     public void resumeRecord() {
-        camera.resumeRecord();
+//        camera.resumeRecord();
     }
 
     @Override
     public void stopRecord() {
-        camera.stopRecord();
+//        camera.stopRecord();
     }
 
     @Override
     public int getPreviewFps() {
-        if (camera == null) {
+//        if (camera == null) {
             return 0;
-        }
-        return camera.getPreviewFps();
+//        }
+//        return camera.getPreviewFps();
+    }
+
+    @Override
+    public int getOrientation(int cameraId) {
+        return CameraManager.getInstance().getOrientation(cameraId);
+    }
+
+    @Override
+    public int getCameraCount(int orientation) {
+        return init ? CameraManager.getInstance().getCameraCount(orientation) : 0;
     }
 }

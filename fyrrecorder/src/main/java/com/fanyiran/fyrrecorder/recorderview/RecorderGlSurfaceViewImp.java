@@ -6,17 +6,14 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
-import android.view.Surface;
 
-import com.fanyiran.fyrrecorder.camera.CameraConfig;
-import com.fanyiran.fyrrecorder.camera.ICamera;
-import com.fanyiran.fyrrecorder.camera.RecorderManager;
-import com.fanyiran.fyrrecorder.recorder.IRecorder;
-import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
-import com.fanyiran.utils.LogUtil;
+import com.fanyiran.fcamera.camera.CameraConfig;
+import com.fanyiran.fcamera.camera.ICamera;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+//import com.fanyiran.fcamera.camera.RecorderManager;
 
 public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorderView {
     private static final String TAG = "RecorderTextureViewImpl";
@@ -41,9 +38,9 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
             });
             directDrawer = new DirectDrawer(textureId);
 
-            cameraConfig.addSurfaceHolder(new Surface(surfaceTexture));
-            camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
-            camera.preview();
+//            cameraConfig.addSurfaceHolder(new Surface(surfaceTexture));
+//            camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
+//            camera.preview();
         }
 
         @Override
@@ -91,6 +88,16 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
     }
 
     @Override
+    public int getOrientation(int cameraId) {
+        return 0;
+    }
+
+    @Override
+    public int getCameraCount(int orientation) {
+        return 0;
+    }
+
+    @Override
     public void autoPreview(CameraConfig cameraConfig) {
         if (cameraConfig == null) {
             throw new IllegalArgumentException("config can't be null");
@@ -110,26 +117,27 @@ public class RecorderGlSurfaceViewImp extends GLSurfaceView implements IRecorder
 
     @Override
     public void startRecord() {
-        camera.startRecord();
+//        camera.startRecord();
     }
 
     @Override
     public void pauseRecord() {
-        camera.pauseRecord();
+//        camera.pauseRecord();
     }
 
     @Override
     public void resumeRecord() {
-        camera.resumeRecord();
+//        camera.resumeRecord();
     }
 
     @Override
     public void stopRecord() {
-        camera.stopRecord();
+//        camera.stopRecord();
     }
 
     @Override
     public int getPreviewFps() {
-        return camera.getPreviewFps();
+//        return camera.getPreviewFps();
+        return 0;
     }
 }

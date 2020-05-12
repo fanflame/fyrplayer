@@ -7,6 +7,9 @@ cmake_minimum_required(VERSION 3.4.1)
 add_library(ffmpegplayer # 生成的动态库名称
         SHARED # 库的类型
         ffmpegcaller.cpp# 库的源码相对本文件的路径
+        ../ffplayer/BaseThread.cpp
+        ../ffplayer/IDecoder.cpp
+        ../ffplayer/IDemux.cpp
         )
 
 add_library(
@@ -22,10 +25,16 @@ include_directories(ffmpegplayer PRIVATE
         ./
         ../../../../../ffmpeglib/src/main/cpp/include) # 设置.h文件位置
 
+find_library( # Sets the name of the path variable.
+        log-lib
 
+        # Specifies the name of the NDK library that
+        # you want CMake to locate.
+        log)
 # 链接库
 target_link_libraries(
         ffmpegplayer
         ffmpeg
         android
+        ${log-lib}
 )

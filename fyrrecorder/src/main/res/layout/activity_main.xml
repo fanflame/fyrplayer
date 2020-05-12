@@ -8,23 +8,37 @@
 
     <com.fanyiran.fyrrecorder.recorderview.RecorderSurfaceViewImpl
         android:id="@+id/textureView"
-        android:layout_width="@dimen/previewWidth"
-        android:layout_height="@dimen/previewWidth" />
+        android:layout_width="120dp"
+        android:layout_height="240dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="260dp"
-        android:textSize="16sp"
-        android:layout_marginLeft="8dp"
-        android:id="@+id/tvPreviewFps"
-        android:text="fps:" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvPreviewFps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="fps:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvOrientation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="orientation:"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <Button
             android:layout_width="wrap_content"

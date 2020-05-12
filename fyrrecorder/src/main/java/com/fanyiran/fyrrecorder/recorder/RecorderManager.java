@@ -1,8 +1,9 @@
-package com.fanyiran.fyrrecorder.camera;
+package com.fanyiran.fyrrecorder.recorder;
 
-import com.fanyiran.fyrrecorder.camera.factory.Camera2Factory;
-import com.fanyiran.fyrrecorder.camera.factory.ICameraFactory;
-import com.fanyiran.fyrrecorder.recorder.IRecorder;
+//import com.fanyiran.fcamera.camera.factory.Camera2Factory;
+
+import com.fanyiran.fcamera.camera.CameraConfig;
+import com.fanyiran.fcamera.camera.CameraManager;
 import com.fanyiran.fyrrecorder.recorder.factory.IRecorderFactory;
 import com.fanyiran.fyrrecorder.recorder.factory.MediaRecorderFactory;
 
@@ -13,15 +14,10 @@ public class RecorderManager {
         return ourInstance;
     }
 
-    public ICameraFactory cameraFactory;
     public IRecorderFactory iRecorderFactory;
 
 
     private RecorderManager() {
-    }
-
-    public void setCameraFactory(ICameraFactory cameraFactory) {
-        this.cameraFactory = cameraFactory;
     }
 
 
@@ -41,20 +37,12 @@ public class RecorderManager {
      */
 
     // TODO: 2019-07-03  previewClass的检测使用注解 | 编译时检测
-    public ICamera createCamera(CameraConfig cameraConfig,Class previewClass) {
-        return getCameraFactory().createCamera(cameraConfig,getiRecorderFactory().getRecorderClass(),
-                previewClass);
+    public void createCamera(CameraConfig cameraConfig, Class previewClass) {
+        CameraManager.getInstance().init(null);
     }
 
     public IRecorder createRecorder() {
         return getiRecorderFactory().createRecorder();
-    }
-
-    private ICameraFactory getCameraFactory() {
-        if (cameraFactory == null) {
-            cameraFactory = new Camera2Factory();
-        }
-        return cameraFactory;
     }
 
     private IRecorderFactory getiRecorderFactory() {
