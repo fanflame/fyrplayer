@@ -13,6 +13,7 @@ import java.lang.ref.WeakReference;
 
 public abstract class IRecorderManagerAbstract implements IRecorderManager {
     protected ICamera camera;
+    protected int openCameraId;
     protected IRecorder recorder;
     protected WeakReference<Activity> activityWeakReference;
 
@@ -32,7 +33,7 @@ public abstract class IRecorderManagerAbstract implements IRecorderManager {
 
     @Override
     public void openCamera(boolean front, CameraConfig cameraConfig) {
-        camera.open(front);
+        openCameraId = camera.open(front);
         camera.setPreviewSize(cameraConfig.getPreviewSize());
         camera.setPreviewFps(cameraConfig.getPreviewMinFps(), cameraConfig.getPreviewMaxFps());
     }

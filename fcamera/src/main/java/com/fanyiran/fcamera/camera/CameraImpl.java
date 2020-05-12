@@ -156,7 +156,7 @@ public class CameraImpl extends CameraBase {
     }
 
     @Override
-    public boolean open(boolean isFront) {
+    public int open(boolean isFront) {
         release();
         Camera.CameraInfo cameraInfo;
         currentCameraId = -1;
@@ -181,7 +181,7 @@ public class CameraImpl extends CameraBase {
             openInner(currentCameraId);
         }
         LogUtil.v(TAG, "currentCamera:" + currentCamera);
-        return currentCamera == null;
+        return currentCameraId;
     }
 
     @Override
@@ -331,7 +331,7 @@ public class CameraImpl extends CameraBase {
         int tempId = currentCameraId;
         release();
         if (tempId == -1) {
-            if (!open(true)) {
+            if (open(true) != -1) {
                 return false;
             }
             return previewInner();

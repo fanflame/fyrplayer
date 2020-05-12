@@ -29,6 +29,7 @@ public class MediaRecorderCameraManager extends IRecorderManagerAbstract {
         recorderConfig.outputFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
                 , String.format("%d.mp4", System.currentTimeMillis()));
         recorderConfig.camera = ((CameraImpl) camera).getCurrentCamera();
+        recorderConfig.orientation = camera.getOrientation(openCameraId);
         return recorderConfig;
     }
 

@@ -36,7 +36,7 @@ public interface ICamera {
     int getOrientation(int cameraId);
 
     //    void setPreviewOrientation(int degree);
-    boolean open(boolean isFront);
+    int open(boolean isFront);
 
     void setPreviewSize(Size size);
     void setConfig(CameraConfig cameraConfig);
