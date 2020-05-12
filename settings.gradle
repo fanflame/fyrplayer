@@ -1,3 +1,4 @@
-include ':app', ':fyrplayer', ':fyrrecorder', ':ffmpeglib'
+include ':app', ':fyrplayer', ':frecorder', ':ffmpeglib'
 rootProject.name='fyrvideo'
 include ':fcamera'
+include ':frecorderdemo'

@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 //apply from:'../change_recorder_player.gradle'
 ext.usringRecoder = true
 
@@ -8,7 +8,6 @@ android {
 
 
     defaultConfig {
-        applicationId "com.fanyiran.fyrrecorder"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 1

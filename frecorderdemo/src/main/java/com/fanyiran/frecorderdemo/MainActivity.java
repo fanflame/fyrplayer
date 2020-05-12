@@ -1,4 +1,4 @@
-package com.fanyiran.fyrrecorder;
+package com.fanyiran.frecorderdemo;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private IRecorderView iRecorderView;
     private String[] permissions = new String[]{Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
-            ,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            , Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static Handler handler;
 
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         handler = new Handler(callback);
 
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(permissions,REQUEST_CODE);
+            requestPermissions(permissions, REQUEST_CODE);
             return;
         }
         preview();
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         builder.append(String.format("cameraId: %d;orientation:%d\n", i, iRecorderView.getOrientation(i)));
                     }
                     tvOrientation.setText(builder);
-                    handler.sendEmptyMessageDelayed(WHAT_PREVIEW_FPS,1000);
+                    handler.sendEmptyMessageDelayed(WHAT_PREVIEW_FPS, 1000);
                     break;
             }
             return true;
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             int length = grantResults.length;
             for (int i = 0; i < length; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    ToastUtils.showText(this,"cameraFactory not permissed");
+                    ToastUtils.showText(this, "cameraFactory not permissed");
                     return;
                 }
             }

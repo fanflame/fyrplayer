@@ -32,7 +32,7 @@ public class MediaRecorderImpl extends IRecorderAbstract {
         if (mediaRecorder != null) {
             mediaRecorder.stop();
         }
-        recorderConfig.camera.unlock();
+        recorderConfig.camera.unlock();//需要unlock，否则预览界面会卡住
         super.stopRecord();
     }
 
@@ -74,16 +74,22 @@ public class MediaRecorderImpl extends IRecorderAbstract {
                     LogUtil.v(TAG, String.format("error what:%d;extra:%d", what, extra));
                 }
             });
+            mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                @Override
+                public void onInfo(MediaRecorder mr, int what, int extra) {
+                    LogUtil.v(TAG, String.format("onInfo what:%d;extra:%d", what, extra));
+                }
+            });
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mediaRecorder.setOutputFormat(recorderConfig.outputFormat);
             mediaRecorder.setVideoEncoder(recorderConfig.videoEncoder);
             mediaRecorder.setAudioEncoder(recorderConfig.audioEncoder);
-//            mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
             mediaRecorder.setVideoFrameRate(recorderConfig.frameRate);
             File outputFile = recorderConfig.outputFile;
             mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
-//            mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
+//            mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
+            mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
 //            int rotation = ((Activity) recorderConfig.getContext()).getWindowManager().getDefaultDisplay().getRotation();
         }
         try {

@@ -1,4 +1,4 @@
-package com.fanyiran.fyrrecorder;
+package com.fanyiran.frecorderdemo;
 
 import android.app.Application;
 
