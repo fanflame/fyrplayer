@@ -3,17 +3,16 @@ package com.fanyiran.fyrrecorder.recorder.irecordermanager;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.os.Environment;
-import android.view.SurfaceHolder;
 
 import com.fanyiran.fcamera.camera.CameraImpl;
 import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
-import com.fanyiran.fyrrecorder.recorder.mediarecorder.MediaRecorderImpl;
+import com.fanyiran.fyrrecorder.recorder.mediacodec.MediaCodecRecorderImpl;
 
 import java.io.File;
 
-public class MediaRecorderCameraManager extends IRecorderManagerAbstract {
+public class MediaCodecCameraManager extends IRecorderManagerAbstract {
     @Override
     protected ICamera createCamera() {
         return new CameraImpl();
@@ -21,7 +20,15 @@ public class MediaRecorderCameraManager extends IRecorderManagerAbstract {
 
     @Override
     protected IRecorder createRecorder() {
-        return new MediaRecorderImpl();
+        return new MediaCodecRecorderImpl();
+    }
+
+    @Override
+    public void startRecord() {
+        RecorderConfig recorderConfig = createRecorderConfig(activityWeakReference.get());
+        recorder.init(recorderConfig);
+        recorder.getSurface();
+        recorder.startRecord();
     }
 
     @Override
@@ -36,15 +43,10 @@ public class MediaRecorderCameraManager extends IRecorderManagerAbstract {
 
     @Override
     public void startPreview(Object object) {
-        if (object instanceof SurfaceHolder) {
-            camera.preview((SurfaceHolder) object);
-        } else if (object instanceof SurfaceTexture) {
+        if (object instanceof SurfaceTexture) {
             camera.preview((SurfaceTexture) object);
+        } else {
+            throw new IllegalArgumentException("object must be SurfaceTexture?");
         }
-    }
-
-    @Override
-    public void startRecord() {
-        super.startRecord();
     }
 }

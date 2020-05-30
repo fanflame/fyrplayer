@@ -30,7 +30,11 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     @Override
     public void stopRecord() {
         if (mediaRecorder != null) {
-            mediaRecorder.stop();
+            try {
+                mediaRecorder.stop();
+            } catch (RuntimeException e) {
+                recorderConfig.outputFile.delete();
+            }
         }
         recorderConfig.camera.unlock();//需要unlock，否则预览界面会卡住
         super.stopRecord();
@@ -49,8 +53,11 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     @Override
     public void release() {
         super.release();
-        mediaRecorder.reset();
-        mediaRecorder.release();
+        if (mediaRecorder != null) {
+            mediaRecorder.reset();
+            mediaRecorder.release();
+        }
+        mediaRecorder = null;
     }
 
     @Override
@@ -64,6 +71,7 @@ public class MediaRecorderImpl extends IRecorderAbstract {
     }
 
     private void setupMediaRecorder() {
+        // TODO: 2020/5/13 异步操作
         if (mediaRecorder == null) {
             mediaRecorder = new MediaRecorder();
             recorderConfig.camera.unlock();
@@ -89,6 +97,7 @@ public class MediaRecorderImpl extends IRecorderAbstract {
             File outputFile = recorderConfig.outputFile;
             mediaRecorder.setOutputFile(outputFile.getAbsolutePath());
             mediaRecorder.setOrientationHint(recorderConfig.orientation);
+            // TODO: 2020/5/12 视频输出大小
 //            mediaRecorder.setVideoSize(recorderConfig.videSize.getWidth(), recorderConfig.videSize.getHeight());
             mediaRecorder.setVideoEncodingBitRate(recorderConfig.encodingBitRate);
 //            int rotation = ((Activity) recorderConfig.getContext()).getWindowManager().getDefaultDisplay().getRotation();

@@ -6,10 +6,19 @@
     tools:context=".MainActivity">
 
 
-    <com.fanyiran.fyrrecorder.recorderview.RecorderSurfaceViewImpl
+    <!--    <com.fanyiran.fyrrecorder.recorderview.RecorderSurfaceViewImpl-->
+    <!--        android:id="@+id/textureView"-->
+    <!--        android:layout_width="120dp"-->
+    <!--        android:layout_height="240dp" />-->
+    <!--    <com.fanyiran.fyrrecorder.recorderview.RecorderTextureViewImpl-->
+    <!--        android:id="@+id/textureView"-->
+    <!--        android:layout_width="120dp"-->
+    <!--        android:layout_height="240dp" />-->
+
+    <com.fanyiran.fyrrecorder.recorderview.RecorderGlSurfaceViewImpl
         android:id="@+id/textureView"
-        android:layout_width="120dp"
-        android:layout_height="240dp" />
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.fanyiran.fyrrecorder.recorderview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
@@ -7,13 +8,17 @@ import android.view.TextureView;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
+import com.fanyiran.fyrrecorder.recorder.irecordermanager.IRecorderManager;
+import com.fanyiran.fyrrecorder.recorder.irecordermanager.MediaRecorderCameraManager;
+import com.fanyiran.utils.LogUtil;
 
 import java.io.File;
-//import com.fanyiran.fcamera.camera.RecorderManager;
 
 public class RecorderTextureViewImpl extends TextureView implements IRecorderView {
     private static final String TAG = "RecorderTextureViewImpl";
     private CameraConfig cameraConfig;
+    private IRecorderManager recorderManager;
+    private boolean initCamera;
 
     public RecorderTextureViewImpl(Context context) {
         super(context);
@@ -26,46 +31,40 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     }
 
     private void init() {
-//        CameraManager.getInstance().init((Activity) getContext());
-//        CameraManager.getInstance().open(true);
-//        CameraManager.getInstance().setPreviewOrientation(10);
-        // TODO: 2019-07-03 需要开启硬件加速？
-        setSurfaceTextureListener(new SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                // TODO: 2019-07-03 surface这么构造出来，什么原理？
-//                cameraConfig.addSurfaceHolder(new Surface(getSurfaceTexture()));
-//                camera = RecorderManager.getInstance().createCamera(cameraConfig,SurfaceTexture.class);
-//                CameraManager.getInstance().preview(getSurfaceTexture());
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                // TODO: 2019-07-03 大小判断
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-            }
-        });
+        recorderManager = new MediaRecorderCameraManager();
+        recorderManager.init((Activity) getContext());
+        setSurfaceTextureListener(surfaceTextureListener);
     }
 
+    private SurfaceTextureListener surfaceTextureListener = new SurfaceTextureListener() {
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            LogUtil.v(TAG, "onSurfaceTextureAvailable");
+            recorderManager.openCamera(true, cameraConfig);
+            recorderManager.startPreview(getSurfaceTexture());
+            initCamera = true;
+        }
 
-    @Override
-    public int getOrientation(int cameraId) {
-        return 0;
-    }
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            LogUtil.v(TAG, "surfaceChanged");
+            //todo 修改大小
+        }
 
-    @Override
-    public int getCameraCount(int orientation) {
-        return 0;
-    }
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            LogUtil.v(TAG, "surfaceDestroyed");
+            recorderManager.stopPreview();
+            recorderManager.release();
+            initCamera = false;
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+//            LogUtil.v(TAG, "onSurfaceTextureUpdated");
+        }
+    };
 
     @Override
     public void autoPreview(CameraConfig cameraConfig) {
@@ -77,27 +76,27 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
 
     @Override
     public void switchCamera() {
-//        CameraManager.getInstance().switchCamera();
+        recorderManager.switchCamera();
     }
 
     @Override
     public void release() {
-//        CameraManager.getInstance().release();
+        recorderManager.release();
     }
 
     @Override
     public void startRecord() {
-//        camera.startRecord();
+        recorderManager.startRecord();
     }
 
     @Override
     public void startPreview() {
-
+        recorderManager.startPreview(getSurfaceTexture());
     }
 
     @Override
     public void pauseRecord() {
-//        camera.pauseRecord();
+//        recorderManager.pauseRecord();
     }
 
     @Override
@@ -107,18 +106,29 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
 
     @Override
     public void stopRecord() {
-//        camera.stopRecord();
+        recorderManager.stopRecord();
     }
 
     @Override
     public int getPreviewFps() {
-//        return camera.getPreviewFps();
-        return 0;
+        return initCamera ? recorderManager.getCurrentPreviewFps() : 0;
     }
 
     @Override
-    public void takePicture(File file, OnTakePicCallBack onTakePicCallBack) {
+    public void takePicture(File file, OnTakePicCallBack callBack) {
+        if (initCamera) {
+            recorderManager.takePicture(file, callBack);
+        }
+    }
 
+    @Override
+    public int getOrientation(int cameraId) {
+        return recorderManager.getOrientation(cameraId);
+    }
+
+    @Override
+    public int getCameraCount(int orientation) {
+        return initCamera ? recorderManager.getCameraCount(orientation) : 0;
     }
 
 }

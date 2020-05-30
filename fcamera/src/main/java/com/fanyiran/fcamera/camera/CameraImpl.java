@@ -9,6 +9,8 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import com.fanyiran.fcamera.camera.algorithm.IRecorderSize;
+import com.fanyiran.fcamera.camera.algorithm.RecorderSizeImpl;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.utils.LogUtil;
 
@@ -35,6 +37,7 @@ public class CameraImpl extends CameraBase {
     private boolean isPreviewing;
 
     private OrientationEventListener orientationEventListener;
+    private IRecorderSize iRecorderSize;
 
     @Override
     public void init(Activity activity) {
@@ -57,6 +60,7 @@ public class CameraImpl extends CameraBase {
             }
         }
         LogUtil.v(TAG, "cameraNum:" + cameraNum);
+        iRecorderSize = new RecorderSizeImpl();
     }
 
     @Override
@@ -188,40 +192,19 @@ public class CameraImpl extends CameraBase {
     public void setPreviewSize(Size size) {
         checkCurrentCamera();
 //        Size previewSize = getPreviewSize(size);
-        Size previewSize = getProperPreviewSize(size);
-        LogUtil.v(TAG, previewSize + "");
+        Camera.Parameters parameters = currentCamera.getParameters();
+        Camera.Size previewSize = iRecorderSize.getOptimalVideoSize(parameters.getSupportedVideoSizes(),
+                parameters.getSupportedPreviewSizes(), size.getWidth(), size.getHeight());
+        LogUtil.v(TAG, String.format("previewSize:%d*%d", previewSize.width, previewSize.height));
         if (previewSize == null) {
             return;
         }
-        Camera.Parameters parameters = currentCamera.getParameters();
-        parameters.setPreviewSize(previewSize.getWidth(), previewSize.getHeight());
+        parameters.setPreviewSize(previewSize.width, previewSize.height);
         try {
             currentCamera.setParameters(parameters);
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
-    }
-
-    private Size getProperPreviewSize(Size exceptSize) {
-        // TODO: 2020/5/12 获取最佳预览大小
-        int orientation = getActivity().getWindowManager().getDefaultDisplay().getOrientation();
-        if (orientation == 0 || orientation == 180) {
-
-        } else {
-
-        }
-        List<Camera.Size> supportedPreviewSizes = currentCamera.getParameters().getSupportedPreviewSizes();
-//        Arrays.sort(objects);
-        for (Camera.Size supportedPreviewSize : supportedPreviewSizes) {
-            if (exceptSize.getWidth() == supportedPreviewSize.width
-                    && exceptSize.getHeight() == supportedPreviewSize.height) {
-                return exceptSize;
-            }
-            if (exceptSize.getWidth() == supportedPreviewSize.width) {
-                return exceptSize;
-            }
-        }
-        return null;
     }
 
     private boolean openInner(int tempCameraId) {

@@ -2,6 +2,7 @@ package com.fanyiran.fyrrecorder.recorder.mediacodec;
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Handler;
@@ -12,20 +13,22 @@ import androidx.annotation.NonNull;
 
 import com.fanyiran.fyrrecorder.recorder.IRecorderAbstract;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
+import com.fanyiran.utils.LogUtil;
 
 import java.io.IOException;
-import java.util.concurrent.SynchronousQueue;
+import java.nio.ByteBuffer;
 
 
-public class MediaCodecImpl extends IRecorderAbstract {
-    private static final String TAG = "MediaCodecImpl";
+public class MediaCodecRecorderImpl extends IRecorderAbstract {
+    private static final String TAG = "MediaCodecRecorderImpl";
     private MediaCodec mediaCodec;
     private MediaMuxer mediaMuxer;
     private HandlerThread handlerThread;
     private Handler handler;
     private int trackId;
     private boolean muxerStarted = false;
-    private SynchronousQueue<byte[]> cameraData;
+    private Surface inputSurface;
+//    private SynchronousQueue<byte[]> cameraData;
 
     @Override
     public void init(RecorderConfig config) {
@@ -43,28 +46,27 @@ public class MediaCodecImpl extends IRecorderAbstract {
 
         String type = format.getString(MediaFormat.KEY_MIME);
         // TODO: 2019-07-02 以下代码支持
-//        MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
-//        String supportCodec = null;
-//        for (MediaCodecInfo codecInfo : mediaCodecList.getCodecInfos()) {
-//            LogUtil.v(TAG,codecInfo.getName());
-//            if (!codecInfo.isEncoder()) {
-//                continue;
-//            }
-//            try {
-//                if (codecInfo.getCapabilitiesForType(type).isFormatSupported(format)) {
-//                    supportCodec = codecInfo.getName();
-//                    break;
-//                }
-//            } catch (IllegalArgumentException e) {
-//                continue;
-//            }
-//        }
-//        if (supportCodec == null) {
-//            onError(2,"format not support");
-//            return;
-//        }
+        MediaCodecList mediaCodecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
+        String codecName = null;
+        for (MediaCodecInfo codecInfo : mediaCodecList.getCodecInfos()) {
+            LogUtil.v(TAG, codecInfo.getName());
+            if (!codecInfo.isEncoder()) {
+                continue;
+            }
+            String[] supportedTypes = codecInfo.getSupportedTypes();
+            for (String supportedType : supportedTypes) {
+                if (supportedType.equalsIgnoreCase(type)) {
+                    codecName = codecInfo.getName();
+                    break;
+                }
+            }
+        }
+        if (codecName == null) {
+            onError(2, "format not support");
+            return;
+        }
         try {
-            mediaCodec = MediaCodec.createEncoderByType(type);
+            mediaCodec = MediaCodec.createByCodecName(codecName);
             mediaMuxer = new MediaMuxer(config.outputFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } catch (IOException e) {
             e.printStackTrace();
@@ -80,47 +82,36 @@ public class MediaCodecImpl extends IRecorderAbstract {
     }
 
     private MediaCodec.Callback callback = new MediaCodec.Callback() {
-//        private byte[] lastBytes;
-//        private int offSet;
 
         @Override
         public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
-//            ByteBuffer inputBuffer = codec.getInputBuffer(index);
-//            if (lastBytes == null || offSet >= lastBytes.length) {
-//                try {
-//                    lastBytes = cameraData.take();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            int size = lastBytes.length - offSet;
-//            int queueSize;
-//            if (size - inputBuffer.remaining() > 0) {
-//                inputBuffer.put(lastBytes, offSet, queueSize = inputBuffer.remaining());
-//                offSet += inputBuffer.remaining();
-//            } else {
-//                inputBuffer.put(lastBytes, offSet, queueSize = size);
-//                offSet = lastBytes.length;
-//            }
-//            LogUtil.v("TAGGGGGG",""+queueSize);
-//            codec.queueInputBuffer(index, 0, queueSize, 0, MediaCodec.BUFFER_FLAG_CODEC_CONFIG);
         }
 
         @Override
         public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
-            if (muxerStarted) {
-                mediaMuxer.writeSampleData(trackId, codec.getOutputBuffer(index), info);
+            ByteBuffer outputBuffer = codec.getOutputBuffer(index);
+            if (outputBuffer != null) {
+                mediaMuxer.writeSampleData(trackId, outputBuffer, info);
+                LogUtil.v(TAG, String.format("onOutputBufferAvailable presentationTimeUs:%d", info.presentationTimeUs));
             }
             codec.releaseOutputBuffer(index, false);
         }
 
         @Override
         public void onError(@NonNull MediaCodec codec, @NonNull MediaCodec.CodecException e) {
-            MediaCodecImpl.this.onError(2, "codec callback onError");
+            MediaCodecRecorderImpl.this.onError(2, "codec callback onError");
+            if (e.isRecoverable()) {
+
+            } else if (e.isTransient()) {
+
+            } else {
+
+            }
         }
 
         @Override
         public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
+            LogUtil.v(TAG, String.format("onOutputFormatChanged:%s", format.getString(MediaFormat.KEY_MIME)));
 //            trackId = mediaMuxer.addTrack(format);
 //            mediaMuxer.start();
 //            muxerStarted = true;
@@ -130,13 +121,13 @@ public class MediaCodecImpl extends IRecorderAbstract {
     @Override
     public void startRecord() {
         super.startRecord();
-        if (cameraData == null) {
-            cameraData = new SynchronousQueue<>();
-        }
+//        if (cameraData == null) {
+//            cameraData = new SynchronousQueue<>();
+//        }
         muxerStarted = true;
         mediaMuxer.start();
         mediaCodec.start();
-        cameraData.clear();
+//        cameraData.clear();
     }
 
     @Override
@@ -160,7 +151,12 @@ public class MediaCodecImpl extends IRecorderAbstract {
     @Override
     public void release() {
         super.release();
-        mediaCodec.release();
+        if (inputSurface != null) {
+            inputSurface.release();
+        }
+        if (mediaCodec != null) {
+            mediaCodec.release();
+        }
     }
 
     @Override
@@ -173,7 +169,7 @@ public class MediaCodecImpl extends IRecorderAbstract {
             return null;
         }
 
-        return mediaCodec.createInputSurface();
+        return inputSurface = mediaCodec.createInputSurface();
     }
 
     @Override

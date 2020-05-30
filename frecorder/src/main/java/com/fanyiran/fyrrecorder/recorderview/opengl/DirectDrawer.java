@@ -1,4 +1,4 @@
-package com.fanyiran.fyrrecorder.recorderview;
+package com.fanyiran.fyrrecorder.recorderview.opengl;
 
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -9,6 +9,9 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+/**
+ * 渲染器真实操作类，可以对视频画面进行滤镜渲染、旋转、镜像调整等
+ */
 public class DirectDrawer {
     private final String vertexShaderCode =
             "attribute vec4 vPosition;" +
@@ -58,8 +61,7 @@ public class DirectDrawer {
 
     private int texture;
 
-    public DirectDrawer(int texture)
-    {
+    public DirectDrawer(int texture) {
         this.texture = texture;
         // initialize vertex byte buffer for shape coordinates
         ByteBuffer bb = ByteBuffer.allocateDirect(squareCoords.length * 4);
@@ -90,8 +92,7 @@ public class DirectDrawer {
         GLES20.glLinkProgram(mProgram);                  // creates OpenGL ES program executables
     }
 
-    public void draw(float[] mtx)
-    {
+    public void draw(float[] mtx) {
         GLES20.glUseProgram(mProgram);
 
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
@@ -133,12 +134,12 @@ public class DirectDrawer {
 
         return shader;
     }
-    private float[] transformTextureCoordinates( float[] coords, float[] matrix)
-    {
+
+    private float[] transformTextureCoordinates( float[] coords, float[] matrix) {
         float[] result = new float[ coords.length ];
         float[] vt = new float[4];
 
-        for ( int i = 0 ; i < coords.length ; i += 2 ) {
+        for (int i = 0 ; i < coords.length ; i += 2 ) {
             float[] v = { coords[i], coords[i+1], 0 , 1  };
             Matrix.multiplyMV(vt, 0, matrix, 0, v, 0);
             result[i] = vt[0];

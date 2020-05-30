@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         CameraConfig cameraConfig = new CameraConfig.Builder()
                 .context(this)
 //                .setTargetResolution(new Size(640,640))
-                .setPreviewSize(new Size(320, 640))
+                .setPreviewSize(new Size(240, 480))
                 .previewMaxFps(30)
                 .previewMinFps(10)
 //                .setVideoSize(new Size(640,640))
