@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
+import com.fanyiran.fyrrecorder.recorderview.callback.SetOnFrameAvailable;
 
 import java.io.File;
 
@@ -31,4 +32,6 @@ public interface IRecorderManager {
     void switchCamera();
 
     void openCamera(boolean front, CameraConfig cameraConfig);
+
+    void startRecord(SetOnFrameAvailable onFrameAvailable);
 }

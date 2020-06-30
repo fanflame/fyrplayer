@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 
+/**
+ * 使用codec编码
+ */
 public class MediaCodecRecorderImpl extends IRecorderAbstract {
     private static final String TAG = "MediaCodecRecorderImpl";
     private MediaCodec mediaCodec;

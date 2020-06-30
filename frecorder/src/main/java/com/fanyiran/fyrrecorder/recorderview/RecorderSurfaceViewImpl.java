@@ -16,8 +16,8 @@ import java.io.File;
 
 public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderView {
     private static final String TAG = "RecorderSurfaceViewImpl";
-    private CameraConfig cameraConfig;
-    private IRecorderManager recorderManager;
+    protected CameraConfig cameraConfig;
+    protected IRecorderManager recorderManager;
     private boolean initCamera;
 
     public RecorderSurfaceViewImpl(Context context) {
@@ -31,9 +31,13 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
     }
 
     private void init() {
-        recorderManager = new MediaRecorderCameraManager();
+        recorderManager = genRecorderManager();
         recorderManager.init((Activity) getContext());
         getHolder().addCallback(holderCallBack);
+    }
+
+    protected IRecorderManager genRecorderManager() {
+        return new MediaRecorderCameraManager();
     }
 
     private SurfaceHolder.Callback holderCallBack = new SurfaceHolder.Callback() {
@@ -51,7 +55,7 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 //            cameraConfig.addSurfaceHolder();
 //            cameraConfig.getRecorderConfig().surface = getHolder().getSurface();
 //            CameraManager.getInstance().preview(getHolder().getSurface());
-            recorderManager.startPreview(getHolder());
+            startPreviewInner();
         }
 
         @Override
@@ -62,6 +66,10 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
             initCamera = false;
         }
     };
+
+    protected void startPreviewInner() {
+        recorderManager.startPreview(getHolder());
+    }
 
     @Override
     public void autoPreview(CameraConfig cameraConfig) {
@@ -88,7 +96,7 @@ public class RecorderSurfaceViewImpl extends SurfaceView implements IRecorderVie
 
     @Override
     public void startPreview() {
-        recorderManager.startPreview(getHolder());
+        startPreviewInner();
     }
 
     @Override

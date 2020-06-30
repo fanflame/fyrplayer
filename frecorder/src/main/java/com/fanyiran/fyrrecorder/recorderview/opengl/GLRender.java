@@ -1,7 +1,6 @@
 package com.fanyiran.fyrrecorder.recorderview.opengl;
 
 import android.graphics.SurfaceTexture;
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -30,7 +29,7 @@ public class GLRender implements GLSurfaceView.Renderer {
             onSurfaceChangeListner.onSurfaceCreated();
         }
 //        triangle = new Triangle();
-        textureId = generateTexure();
+        textureId = GLUtils.generateTexure();
         directDrawer = new DirectDrawer(textureId);
         GLES20.glClearColor(0.001f, 1, 1, 0);
     }
@@ -60,15 +59,6 @@ public class GLRender implements GLSurfaceView.Renderer {
         surfaceTexture.updateTexImage();
         surfaceTexture.getTransformMatrix(mtx);
         directDrawer.draw(vPMatrix);
-    }
-
-    private int generateTexure() {
-        int[] texture = new int[1];
-        GLES20.glGenTextures(1, texture, 0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture[0]);
-        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GL10.GL_TEXTURE_WRAP_T, GL10.GL_CLAMP_TO_EDGE);
-        return texture[0];
     }
 
     public int getTextureId() {

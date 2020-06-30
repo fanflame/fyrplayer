@@ -13,6 +13,9 @@ import com.fanyiran.fyrrecorder.recorder.mediarecorder.MediaRecorderImpl;
 
 import java.io.File;
 
+/**
+ * 使用camera，MediaRecorder
+ */
 public class MediaRecorderCameraManager extends IRecorderManagerAbstract {
     @Override
     protected ICamera createCamera() {

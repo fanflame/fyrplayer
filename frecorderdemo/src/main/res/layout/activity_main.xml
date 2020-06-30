@@ -15,10 +15,10 @@
     <!--        android:layout_width="120dp"-->
     <!--        android:layout_height="240dp" />-->
 
-    <com.fanyiran.fyrrecorder.recorderview.RecorderGlSurfaceViewImpl
+    <com.fanyiran.fyrrecorder.recorderview.RecorderCodecSurfaceViewImpl
         android:id="@+id/textureView"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"

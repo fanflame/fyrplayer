@@ -7,6 +7,7 @@ import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
+import com.fanyiran.fyrrecorder.recorderview.callback.SetOnFrameAvailable;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -83,5 +84,10 @@ public abstract class IRecorderManagerAbstract implements IRecorderManager {
     public void release() {
         recorder.release();
         camera.release();
+    }
+
+    @Override
+    public void startRecord(SetOnFrameAvailable onFrameAvailable) {
+
     }
 }
