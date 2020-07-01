@@ -29,7 +29,7 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
     private HandlerThread handlerThread;
     private Handler handler;
     private int trackId;
-    private boolean muxerStarted = false;
+    private boolean isRecording = false;
     private Surface inputSurface;
 //    private SynchronousQueue<byte[]> cameraData;
 
@@ -38,12 +38,12 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
         super.init(config);
         MediaFormat format = new MediaFormat();
         format.setString(MediaFormat.KEY_MIME, MediaFormat.MIMETYPE_VIDEO_AVC);
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, config.frameRate);
         format.setInteger(MediaFormat.KEY_WIDTH, config.videSize.getWidth());
         format.setInteger(MediaFormat.KEY_HEIGHT, config.videSize.getHeight());
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, config.encodingBitRate);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, config.frameRate);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, config.iFrameInterval);
         //以上参数必须设置否则crash,KEY_I_FRAME_INTERVAL如果不设置，视频录制结果会比较模糊
 
@@ -76,12 +76,11 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
             onError(2, "mediacodec or mediaMuxer create failed");
             return;
         }
+        mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         handlerThread = new HandlerThread("MediaCodecImpl thread");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-        mediaCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         mediaCodec.setCallback(callback, handler);
-        trackId = mediaMuxer.addTrack(format);
     }
 
     private MediaCodec.Callback callback = new MediaCodec.Callback() {
@@ -92,8 +91,11 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
 
         @Override
         public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
+            LogUtil.v(TAG, String.format("BufferInfo flag:%d", info.flags));
             ByteBuffer outputBuffer = codec.getOutputBuffer(index);
             if (outputBuffer != null) {
+                outputBuffer.position(info.offset);
+                outputBuffer.limit(info.offset + info.size);
                 mediaMuxer.writeSampleData(trackId, outputBuffer, info);
                 LogUtil.v(TAG, String.format("onOutputBufferAvailable presentationTimeUs:%d", info.presentationTimeUs));
             }
@@ -115,30 +117,37 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
         @Override
         public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
             LogUtil.v(TAG, String.format("onOutputFormatChanged:%s", format.getString(MediaFormat.KEY_MIME)));
-//            trackId = mediaMuxer.addTrack(format);
-//            mediaMuxer.start();
-//            muxerStarted = true;
+            trackId = mediaMuxer.addTrack(format);
+            LogUtil.v(TAG, String.format("trackId:%d", trackId));
+            mediaMuxer.start();
         }
     };
 
     @Override
     public void startRecord() {
+        if (isRecording) {
+            LogUtil.v(TAG, "recording!");
+            return;
+        }
         super.startRecord();
-//        if (cameraData == null) {
-//            cameraData = new SynchronousQueue<>();
-//        }
-        muxerStarted = true;
-        mediaMuxer.start();
+        isRecording = true;
         mediaCodec.start();
 //        cameraData.clear();
     }
 
     @Override
     public void stopRecord() {
+        if (!isRecording) {
+            LogUtil.v(TAG, "call startRecord first!");
+            return;
+        }
         super.stopRecord();
         mediaCodec.signalEndOfInputStream();
         mediaCodec.stop();
+
         mediaMuxer.stop();
+        mediaMuxer.release();
+        isRecording = false;
     }
 
     @Override
@@ -172,11 +181,13 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
             return null;
         }
 
+        // TODO: 2020/7/1 release surface
         return inputSurface = mediaCodec.createInputSurface();
     }
 
     @Override
     public void receiveData(byte[] dataY, byte[] dataU, byte[] dataV) {
+        // TODO: 2020/7/1 编码camera数据
 //        if (muxerStarted) {
 //            LogUtil.v("TAGssssss",""+dataY.length);
 //            cameraData.add(dataY);

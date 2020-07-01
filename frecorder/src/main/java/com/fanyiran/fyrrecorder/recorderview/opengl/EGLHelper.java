@@ -4,12 +4,15 @@ import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
+import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 
 import com.fanyiran.utils.LogUtil;
 
 public class EGLHelper {
     private static final String TAG = "EGLHelper";
+    // Android-specific extension.
+    private static final int EGL_RECORDABLE_ANDROID = 0x3142;
     private EGLDisplay display;
     private EGLConfig[] configs;
     private EGLContext eglContext;
@@ -27,6 +30,10 @@ public class EGLHelper {
     }
 
     public void makeCurrent(EGLSurface eglSurface) {
+        if (display == null || eglContext == null) {
+            LogUtil.v(TAG, "eglMakeCurrent: display or eglContext may be null");
+            return;
+        }
         boolean result = EGL14.eglMakeCurrent(display, eglSurface, eglSurface, eglContext);
         if (!result) {
             LogUtil.v(TAG, String.format("eglMakeCurrent: %d!", EGL14.eglGetError()));
@@ -34,7 +41,15 @@ public class EGLHelper {
     }
 
     public boolean swapBuffers(EGLSurface eglSurface) {
+        if (display == null) {
+            LogUtil.v(TAG, "swapBuffers: display is null");
+            return false;
+        }
         return EGL14.eglSwapBuffers(display, eglSurface);
+    }
+
+    public void setPresentationTime(EGLSurface eglSurface, long time) {
+        EGLExt.eglPresentationTimeANDROID(display, eglSurface, time);
     }
 
     static class EGLHelperWrapper {
@@ -64,8 +79,8 @@ public class EGLHelper {
                 EGL14.EGL_GREEN_SIZE, 8,
                 EGL14.EGL_BLUE_SIZE, 8,
                 EGL14.EGL_ALPHA_SIZE, 8,
-//                EGL14.EGL_RENDERABLE_TYPE, EGL_RECORDABLE_ANDROID,
-//                1, 0,// placeholder for recordable [@-3]
+                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+                EGL_RECORDABLE_ANDROID, 1,// placeholder for recordable [@-3]
                 EGL14.EGL_NONE
         };
         configs = new EGLConfig[1];
@@ -74,7 +89,10 @@ public class EGLHelper {
             LogUtil.v(TAG, "eglGetConfigs failed!");
             return -1;
         }
-        int[] attrList = {0x3098, 3, EGL14.EGL_NONE};
+        int[] attrList = {
+                EGL14.EGL_CONTEXT_CLIENT_VERSION, 2,
+                EGL14.EGL_NONE
+        };
         eglContext = EGL14.eglCreateContext(display, configs[0], EGL14.EGL_NO_CONTEXT, attrList, 0);
         if (eglContext == EGL14.EGL_NO_CONTEXT) {
             LogUtil.v(TAG, "eglCreateContext failed!");
@@ -97,8 +115,9 @@ public class EGLHelper {
     }
 
     private boolean check() {
-        if (EGL14.eglGetError() != EGL14.EGL_SUCCESS) {
-            LogUtil.v(TAG, String.format("eglGetError: %d!", EGL14.eglGetError()));
+        int error = EGL14.eglGetError();
+        if (error != EGL14.EGL_SUCCESS) {
+            LogUtil.v(TAG, String.format("eglGetError: 0x%x!", error));
             return false;
         }
         return true;

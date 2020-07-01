@@ -111,6 +111,7 @@ public class DirectDrawer {
         GLES20.glEnableVertexAttribArray(mTextureCoordHandle);
 
         textureVerticesBuffer.clear();
+        // TODO: 2020/7/1 如果旋转yuv数据而不是旋转texture
         textureVerticesBuffer.put(transformTextureCoordinates(textureVertices, mtx));
         textureVerticesBuffer.position(0);
         GLES20.glVertexAttribPointer(mTextureCoordHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, vertexStride, textureVerticesBuffer);

@@ -3,6 +3,7 @@ package com.fanyiran.fyrrecorder.recorder.irecordermanager;
 import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGLSurface;
+import android.opengl.GLES10;
 import android.os.Environment;
 import android.view.Surface;
 
@@ -23,6 +24,7 @@ import java.io.File;
  */
 public class MediaCodecCameraManager extends IRecorderManagerAbstract {
     private EGLSurface eglSurface;
+    private boolean isRecording;
 
     @Override
     protected ICamera createCamera() {
@@ -40,14 +42,18 @@ public class MediaCodecCameraManager extends IRecorderManagerAbstract {
         recorder.init(recorderConfig);
         initEgl(recorder.getSurface());
         recorder.startRecord();
+        isRecording = true;
         if (onFrameAvailable != null) {
             onFrameAvailable.setOnFrameAvailableCallBack(new OnFrameAvailableCallBack() {
                 @Override
-                public void onFrameAvaiable(DirectDrawer directDrawer, float[] mtx, int x, int y, int width, int height) {
-//                    EGLHelper.getInstance().makeCurrent(eglSurface);
-//                    GLES10.glViewport(0,0,width,height);
-//                    directDrawer.draw(mtx);
-//                    EGLHelper.getInstance().swapBuffers(eglSurface);
+                public void onFrameAvaiable(DirectDrawer directDrawer, float[] mtx, int x, int y, int width, int height, long time) {
+                    if (isRecording) {
+                        EGLHelper.getInstance().makeCurrent(eglSurface);
+                        GLES10.glViewport(0, 0, width, height);
+                        directDrawer.draw(mtx);
+                        EGLHelper.getInstance().setPresentationTime(eglSurface, time);
+                        EGLHelper.getInstance().swapBuffers(eglSurface);
+                    }
                 }
             });
         }
@@ -72,7 +78,16 @@ public class MediaCodecCameraManager extends IRecorderManagerAbstract {
         }
     }
 
+    @Override
+    public void stopRecord() {
+        isRecording = false;
+        super.stopRecord();
+    }
+
     private void initEgl(Surface surface) {
         eglSurface = EGLHelper.getInstance().genEglSurface(surface);
+        if (eglSurface == null) {
+            throw new IllegalStateException("eglSurface can't be null");
+        }
     }
 }
