@@ -29,7 +29,7 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
     private HandlerThread handlerThread;
     private Handler handler;
     private int trackId;
-    private boolean isRecording = false;
+    private volatile boolean isRecording = false;
     private Surface inputSurface;
 //    private SynchronousQueue<byte[]> cameraData;
 
@@ -39,7 +39,7 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
         MediaFormat format = new MediaFormat();
         format.setString(MediaFormat.KEY_MIME, MediaFormat.MIMETYPE_VIDEO_AVC);
         format.setInteger(MediaFormat.KEY_WIDTH, config.videSize.getWidth());
-        format.setInteger(MediaFormat.KEY_HEIGHT, config.videSize.getHeight());
+        format.setInteger(MediaFormat.KEY_HEIGHT, config.videSize.getHeight());// TODO: 2020/7/1 大小应该与surfaceview大小一致
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, config.encodingBitRate);
@@ -91,11 +91,12 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
 
         @Override
         public void onOutputBufferAvailable(@NonNull MediaCodec codec, int index, @NonNull MediaCodec.BufferInfo info) {
+            if (!isRecording) {
+                return;
+            }
             LogUtil.v(TAG, String.format("BufferInfo flag:%d", info.flags));
             ByteBuffer outputBuffer = codec.getOutputBuffer(index);
             if (outputBuffer != null) {
-                outputBuffer.position(info.offset);
-                outputBuffer.limit(info.offset + info.size);
                 mediaMuxer.writeSampleData(trackId, outputBuffer, info);
                 LogUtil.v(TAG, String.format("onOutputBufferAvailable presentationTimeUs:%d", info.presentationTimeUs));
             }
@@ -116,6 +117,7 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
 
         @Override
         public void onOutputFormatChanged(@NonNull MediaCodec codec, @NonNull MediaFormat format) {
+            // TODO: 2020/7/1 LogUtil提供relase的empty版
             LogUtil.v(TAG, String.format("onOutputFormatChanged:%s", format.getString(MediaFormat.KEY_MIME)));
             trackId = mediaMuxer.addTrack(format);
             LogUtil.v(TAG, String.format("trackId:%d", trackId));
@@ -143,11 +145,11 @@ public class MediaCodecRecorderImpl extends IRecorderAbstract {
         }
         super.stopRecord();
         mediaCodec.signalEndOfInputStream();
+        isRecording = false;
         mediaCodec.stop();
 
         mediaMuxer.stop();
         mediaMuxer.release();
-        isRecording = false;
     }
 
     @Override

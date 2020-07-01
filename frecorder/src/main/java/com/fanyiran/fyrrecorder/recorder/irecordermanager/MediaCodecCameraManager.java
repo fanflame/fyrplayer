@@ -51,7 +51,8 @@ public class MediaCodecCameraManager extends IRecorderManagerAbstract {
                         EGLHelper.getInstance().makeCurrent(eglSurface);
                         GLES10.glViewport(0, 0, width, height);
                         directDrawer.draw(mtx);
-                        EGLHelper.getInstance().setPresentationTime(eglSurface, time);
+                        // TODO: 2020/7/1 下边这行不影响用android自带播放器播放
+//                        EGLHelper.getInstance().setPresentationTime(eglSurface, time);
                         EGLHelper.getInstance().swapBuffers(eglSurface);
                     }
                 }
