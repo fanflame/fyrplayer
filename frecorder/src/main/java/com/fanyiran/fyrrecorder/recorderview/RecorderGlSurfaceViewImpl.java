@@ -95,7 +95,7 @@ public class RecorderGlSurfaceViewImpl extends GLSurfaceView implements IRecorde
     }
 
     @Override
-    public void startRecord() {
+    public void startRecord(File file) {
         recorderManager.startRecord();
     }
 

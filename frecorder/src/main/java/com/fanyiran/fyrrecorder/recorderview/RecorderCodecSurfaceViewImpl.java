@@ -15,6 +15,8 @@ import com.fanyiran.fyrrecorder.recorderview.opengl.EGLHelper;
 import com.fanyiran.fyrrecorder.recorderview.opengl.GLUtils;
 import com.fanyiran.utils.LogUtil;
 
+import java.io.File;
+
 public class RecorderCodecSurfaceViewImpl extends RecorderSurfaceViewImpl implements SetOnFrameAvailable {
 
     private static final String TAG = "RecorderCodecSurfaceViewImpl";
@@ -79,8 +81,8 @@ public class RecorderCodecSurfaceViewImpl extends RecorderSurfaceViewImpl implem
     }
 
     @Override
-    public void startRecord() {
-        recorderManager.startRecord(this);
+    public void startRecord(File file) {
+        recorderManager.startRecord(this, file);
     }
 
     public void setOnFrameAvailableCallBack(OnFrameAvailableCallBack onFrameAvailableCallBack) {

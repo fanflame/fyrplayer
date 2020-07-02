@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGLSurface;
 import android.opengl.GLES10;
-import android.os.Environment;
 import android.view.Surface;
 
 import com.fanyiran.fcamera.camera.CameraImpl;
@@ -25,6 +24,7 @@ import java.io.File;
 public class MediaCodecCameraManager extends IRecorderManagerAbstract {
     private EGLSurface eglSurface;
     private boolean isRecording;
+    private RecorderConfig recorderConfig;
 
     @Override
     protected ICamera createCamera() {
@@ -37,8 +37,9 @@ public class MediaCodecCameraManager extends IRecorderManagerAbstract {
     }
 
     @Override
-    public void startRecord(SetOnFrameAvailable onFrameAvailable) {
+    public void startRecord(SetOnFrameAvailable onFrameAvailable, File file) {
         RecorderConfig recorderConfig = createRecorderConfig(activityWeakReference.get());
+        recorderConfig.outputFile = file;
         recorder.init(recorderConfig);
         initEgl(recorder.getSurface());
         recorder.startRecord();
@@ -62,9 +63,7 @@ public class MediaCodecCameraManager extends IRecorderManagerAbstract {
 
     @Override
     protected RecorderConfig createRecorderConfig(Activity activity) {
-        RecorderConfig recorderConfig = new RecorderConfig();
-        recorderConfig.outputFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-                , String.format("%d.mp4", System.currentTimeMillis()));
+        recorderConfig = new RecorderConfig();
         recorderConfig.camera = ((CameraImpl) camera).getCurrentCamera();
         recorderConfig.orientation = camera.getOrientation(openCameraId);
         return recorderConfig;

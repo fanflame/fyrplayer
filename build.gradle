@@ -20,12 +20,13 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
     }
+    ext {
+        usringRecoder = true
+        libutilversion = "1.0.8"
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext {
-    usringRecoder = true
-}

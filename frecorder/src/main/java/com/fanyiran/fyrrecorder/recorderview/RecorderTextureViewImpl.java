@@ -85,7 +85,7 @@ public class RecorderTextureViewImpl extends TextureView implements IRecorderVie
     }
 
     @Override
-    public void startRecord() {
+    public void startRecord(File file) {
         recorderManager.startRecord();
     }
 

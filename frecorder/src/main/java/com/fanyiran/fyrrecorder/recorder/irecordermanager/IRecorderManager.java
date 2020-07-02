@@ -19,6 +19,8 @@ public interface IRecorderManager {
 
     void startRecord();
 
+    void startRecord(SetOnFrameAvailable onFrameAvailable, File file);
+
     void stopRecord();
 
     void release();
@@ -33,5 +35,4 @@ public interface IRecorderManager {
 
     void openCamera(boolean front, CameraConfig cameraConfig);
 
-    void startRecord(SetOnFrameAvailable onFrameAvailable);
 }

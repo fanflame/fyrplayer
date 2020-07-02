@@ -1,9 +1,5 @@
 package com.fanyiran.mediaplayer;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,14 +7,16 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.fanyiran.mediaplayer.fyrplayer.PlayerManager;
-import com.fanyiran.mediaplayer.fyrplayer.callback.OnPlayCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.fanyiran.mediaplayer.fyrplayer.PlayerConfig;
+import com.fanyiran.mediaplayer.fyrplayer.PlayerManager;
 import com.fanyiran.mediaplayer.fyrplayer.VideoInfo;
+import com.fanyiran.mediaplayer.fyrplayer.callback.OnPlayCallback;
 import com.fanyiran.utils.LogUtil;
 
 import java.io.File;
@@ -32,11 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-        } else {
-            initView();
-        }
+        initView();
     }
 
     private void initView() {
@@ -61,16 +55,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private PlayerConfig getPlayConfig(Surface surface) {
-        File file = new File(Environment.getExternalStorageDirectory(), "1.mp4");
+        File file = new File(getExternalFilesDir(Environment.DIRECTORY_MOVIES).getAbsolutePath());
+        File[] files = file.listFiles();
+        if (files.length == 0) {
+            return null;
+        }
         PlayerConfig config = new PlayerConfig.PlayerConifgBuild()
                 .surface(surface)
 //                .frameRate(10)
 //                .setPlayRepeatTime(3)
-                .setUrl(file.getAbsolutePath())
+                .setUrl(files[0].getAbsolutePath())
                 .setOnPlayCallback(new OnPlayCallback() {
                     @Override
                     public void onGetVideoInfo(final VideoInfo videoInfo) {
-                        LogUtil.v(TAG,videoInfo.toString());
+                        LogUtil.v(TAG, videoInfo.toString());
                         surfaceView.post(new Runnable() {
                             @Override
                             public void run() {
@@ -80,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
                                 int width = surfaceView.getWidth();
                                 int height = surfaceView.getHeight();
                                 if (videoInfo.getWidth() < width && videoInfo.getHeight() < height) {
-                                    if ((videoInfo.getWidth()/(videoInfo.getHeight() * 1.f)) > (width / (height * 1.f))) {
+                                    if ((videoInfo.getWidth() / (videoInfo.getHeight() * 1.f)) > (width / (height * 1.f))) {
                                         layoutParams.width = width;
-                                        layoutParams.height = (int)((width / (videoInfo.getWidth() *1.f)) * videoInfo.getHeight());
+                                        layoutParams.height = (int) ((width / (videoInfo.getWidth() * 1.f)) * videoInfo.getHeight());
                                     }
                                 }
                                 surfaceView.setLayoutParams(layoutParams);
@@ -97,12 +95,12 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onStart() {
-                        LogUtil.v(TAG,"start");
+                        LogUtil.v(TAG, "start");
                     }
 
                     @Override
                     public void onFinish() {
-                        LogUtil.v(TAG,"finish");
+                        LogUtil.v(TAG, "finish");
                     }
                 })
                 .build();

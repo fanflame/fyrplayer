@@ -87,7 +87,7 @@ public abstract class IRecorderManagerAbstract implements IRecorderManager {
     }
 
     @Override
-    public void startRecord(SetOnFrameAvailable onFrameAvailable) {
+    public void startRecord(SetOnFrameAvailable onFrameAvailable, File file) {
 
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cosmos.fmediaretriever.MetadataRetriever;
 import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             , Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     private static Handler handler;
+    private File videoOutputFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
 //                .setVideoSize(new Size(640,640))
 //                .setEncodingBitRate(100000)
 //                .setVideoIFrameInterval(1)
-//                .setOutputFile(new File(Environment.getExternalStorageDirectory()+"/fyrvideo/",
-//                        System.currentTimeMillis()+".mp4"))
 //                .setTargetAspectRatio(new Rational(1,1))
                 .build();
         iRecorderView.autoPreview(cameraConfig);
@@ -116,11 +116,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onRecordClick(View view) {
-        iRecorderView.startRecord();
+        videoOutputFile = new File(getExternalFilesDir(Environment.DIRECTORY_MOVIES),
+                System.currentTimeMillis() + ".mp4");
+        iRecorderView.startRecord(videoOutputFile);
     }
 
     public void onStopClick(View view) {
         iRecorderView.stopRecord();
+        MetadataRetriever retriever = new MetadataRetriever();
+        retriever.init(videoOutputFile.getAbsolutePath());
+        retriever.getVideoDimensions(new int[2]);
+
         iRecorderView.release();
     }
 

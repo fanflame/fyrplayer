@@ -13,7 +13,8 @@ public interface IRecorderView {
     void autoPreview(CameraConfig cameraConfig);
     void switchCamera();
     void release();
-    void startRecord();
+
+    void startRecord(File file);
 
     void startPreview();
     void pauseRecord();
