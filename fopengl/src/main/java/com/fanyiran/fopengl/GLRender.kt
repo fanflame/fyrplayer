@@ -7,7 +7,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GLRender(drawer: IDrawer) : GLSurfaceView.Renderer {
-    val drawer: IDrawer = drawer
+    private val drawer: IDrawer = drawer
     override fun onDrawFrame(gl: GL10?) {
         GLES20.glClearColor(1.0f, 1.0f, 1.4f, 1.5f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)

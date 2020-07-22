@@ -6,20 +6,21 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class VBODrawer : IDrawer() {
+    private val program by lazy { OpenglProgramHelper.createProgram(getVertexShader(), getFragmentShader()) }
     private val vertexPoint = floatArrayOf(
             -1f, -1f, 0.0f,
             1f, -1f, 0.0f,
             0.0f, 1f, 0.0f
     )
 
-    override fun getVertexShader(): String {
+    private fun getVertexShader(): String {
         return "layout (location = 0) attribute vec3 vertexCoord;" +
                 "void main(){" +
                 "gl_Position = vec4(vertexCoord,1.0f);" +
                 "}"
     }
 
-    override fun getFragmentShader(): String {
+    private fun getFragmentShader(): String {
         return "void main(){" +
                 "gl_FragColor = vec4(0.5f,1.0f,0.5f,1.0f);" +
                 "}"
