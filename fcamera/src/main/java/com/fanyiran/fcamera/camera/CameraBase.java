@@ -25,8 +25,15 @@ public abstract class CameraBase implements ICamera {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
-    public boolean checkAndRequestPermission(Context context) {
-        return context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED;
+    public boolean checkAndRequestPermission(int requestCode) {
+        if (getActivity() == null) {
+            return false;
+        }
+        if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, requestCode);
+            return false;
+        }
+        return true;
     }
 
     protected Activity getActivity() {

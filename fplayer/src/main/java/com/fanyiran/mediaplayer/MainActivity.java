@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        //todo videoview播放？
         surfaceView = findViewById(R.id.surfaceView);
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override

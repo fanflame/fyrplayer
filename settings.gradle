@@ -1,3 +1,5 @@
+include ':fopengldemo'
+include ':fopengl'
 rootProject.name='fyrvideo'
 include ':fmediaretriever'
 include ':app', ':fplayer', ':frecorder', ':ffmpeglib'

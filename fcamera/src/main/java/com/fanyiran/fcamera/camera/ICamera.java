@@ -23,7 +23,7 @@ public interface ICamera {
 
     boolean checkCameraHardware(Context context);
 
-    boolean checkAndRequestPermission(Context context);
+    boolean checkAndRequestPermission(int requestCode);
 
     void init(Activity context);
 

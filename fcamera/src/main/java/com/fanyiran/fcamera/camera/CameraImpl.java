@@ -250,6 +250,7 @@ public class CameraImpl extends CameraBase {
         currentCamera.setPreviewCallback(new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
+                // TODO: 2020/7/3 使用YuvImage 直接操作data
                 fps++;
                 if (System.currentTimeMillis() - lastFpsTimes > 1000) {
                     lastFpsTimes = System.currentTimeMillis();
