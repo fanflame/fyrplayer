@@ -1,11 +1,12 @@
 package com.fanyiran.fopengl
 
 import android.opengl.GLES20
+import android.opengl.GLES30
 import android.text.TextUtils
 import com.fanyiran.utils.LogUtil
 
 object GLESHelper {
-    private val TAG = "GLESHelper"
+    private const val TAG = "GLESHelper"
 
     public fun createProgram(vertexSource: String, fragmentSource: String): Int {
         if (TextUtils.isEmpty(vertexSource) || TextUtils.isEmpty(fragmentSource)) {
@@ -51,11 +52,11 @@ object GLESHelper {
 
     fun checkError() {
         val error = GLES20.glGetError()
-        if (error != 0) {
+        if (error != GLES30.GL_NO_ERROR) {
             when (error) {
-                GLES20.GL_INVALID_ENUM -> LogUtil.v(TAG, "checkError:${error} :GL_INVALID_ENUM")
-                GLES20.GL_INVALID_VALUE -> LogUtil.v(TAG, "checkError:${error} :GL_INVALID_VALUE")
-                GLES20.GL_INVALID_OPERATION -> LogUtil.v(TAG, "checkError:${error} :GL_INVALID_OPERATION")
+                GLES20.GL_INVALID_ENUM -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_ENUM")
+                GLES20.GL_INVALID_VALUE -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_VALUE")
+                GLES20.GL_INVALID_OPERATION -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_OPERATION")
                 else -> LogUtil.v(TAG, "checkError:${error} :fs")
             }
 

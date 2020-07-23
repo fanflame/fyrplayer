@@ -52,7 +52,7 @@ class TowVAODrawer : IDrawerSingle() {
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboArray[0])
         val buffer = ByteBuffer.allocateDirect(vertexCoord.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer()
-                .put(vertexCoord).put(vertexCoord1).position(0)
+                .put(vertexCoord).position(0)
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexCoord.size * FLOAT_SIZE, buffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 3 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
