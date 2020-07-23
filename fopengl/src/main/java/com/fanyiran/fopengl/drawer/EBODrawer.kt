@@ -31,6 +31,9 @@ class EBODrawer : IDrawerSingle() {
     }
 
     override fun config() {
+        GLES30.glEnable(GLES30.GL_CULL_FACE)
+        GLES30.glCullFace(GLES30.GL_BACK)
+
         GLES30.glGenVertexArrays(1, vaoArray, 0)
         GLES30.glBindVertexArray(vaoArray[0])
         val vboArray = IntArray(1)
