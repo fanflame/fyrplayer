@@ -4,8 +4,8 @@ import android.opengl.GLES20
 import android.text.TextUtils
 import com.fanyiran.utils.LogUtil
 
-object OpenglProgramHelper {
-    private val TAG = "OpenglProgramHelper"
+object GLESHelper {
+    private val TAG = "GLESHelper"
 
     public fun createProgram(vertexSource: String, fragmentSource: String): Int {
         if (TextUtils.isEmpty(vertexSource) || TextUtils.isEmpty(fragmentSource)) {

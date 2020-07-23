@@ -2,25 +2,20 @@ package com.fanyiran.fopengl.drawer
 
 import android.opengl.GLES30
 import android.os.Handler
-import com.fanyiran.fopengl.OpenglProgramHelper
-import com.fanyiran.fopengl.drawer.idrawer.IDrawer
+import com.fanyiran.fopengl.GLESHelper
+import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class TowVBOManager : IDrawer() {
+class TowVBODrawer : IDrawerSingle() {
     val vbo = IntArray(2)
-    val program1 by lazy { OpenglProgramHelper.createProgram(getVertexShader(), getFragmentShader()) }
     var drawId = 1
     val handle: Handler = Handler()
 
     init {
         handle.postDelayed(object : Runnable {
             override fun run() {
-                drawId = if (drawId == 1) {
-                    2
-                } else {
-                    1
-                }
+                drawId++
                 handle.postDelayed(this, 1000)
             }
         }, 1000)
@@ -38,14 +33,14 @@ class TowVBOManager : IDrawer() {
             1.0f, 1.0f, 1.0f
     )
 
-    fun getVertexShader(): String {
+    override fun getVertexShader(): String {
         return "layout(location = 0) attribute vec3 vertexCoord;" +
                 "void main(){" +
                 "gl_Position = vec4(vertexCoord,1.0);" +
                 "}"
     }
 
-    fun getFragmentShader(): String {
+    override fun getFragmentShader(): String {
         return "void main(){" +
                 "gl_FragColor = vec4(0.5f,0.5f,0.5f,1.0f);" +
                 "}"
@@ -64,7 +59,7 @@ class TowVBOManager : IDrawer() {
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexCoord1.size * FLOAT_SIZE, buffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 4 * 3, 0)
         GLES30.glEnableVertexAttribArray(0)
-        OpenglProgramHelper.checkError()
+        GLESHelper.checkError()
     }
 
     private fun config1() {
@@ -74,12 +69,12 @@ class TowVBOManager : IDrawer() {
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexCoord2.size * FLOAT_SIZE, buffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 4 * 3, 0)
         GLES30.glEnableVertexAttribArray(0)
-        OpenglProgramHelper.checkError()
+        GLESHelper.checkError()
     }
 
     override fun draw() {
-        GLES30.glUseProgram(program1)
-        if (drawId == 1) {
+        GLES30.glUseProgram(program)
+        if (drawId % 2 == 0) {
             config1()
         } else {
             config2()

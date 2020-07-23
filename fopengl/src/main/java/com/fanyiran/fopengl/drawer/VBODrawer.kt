@@ -1,7 +1,7 @@
 package com.fanyiran.fopengl.drawer
 
 import android.opengl.GLES20
-import com.fanyiran.fopengl.OpenglProgramHelper
+import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -35,7 +35,7 @@ class VBODrawer : IDrawerSingle() {
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexPoint.size * FLOAT_SIZE, buffer, GLES20.GL_STATIC_DRAW)
         GLES20.glVertexAttribPointer(0, 3, GLES20.GL_FLOAT, false, FLOAT_SIZE * 3, 0)
         GLES20.glEnableVertexAttribArray(0)
-        OpenglProgramHelper.checkError()
+        GLESHelper.checkError()
     }
 
     override fun draw() {
