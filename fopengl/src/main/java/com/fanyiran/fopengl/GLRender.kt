@@ -2,7 +2,7 @@ package com.fanyiran.fopengl
 
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import com.fanyiran.fopengl.drawer.IDrawer
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
