@@ -5,7 +5,9 @@ import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-
+/*
+ 使用vbo
+ */
 class VBODrawer : IDrawerSingle() {
     private val vertexPoint = floatArrayOf(
             -1f, -1f, 0.0f,

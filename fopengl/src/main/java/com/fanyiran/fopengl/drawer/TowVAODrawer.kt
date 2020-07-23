@@ -6,6 +6,9 @@ import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+/*
+ 使用两个vao切换绘制
+ */
 class TowVAODrawer : IDrawerSingle() {
     val vaoArray = IntArray(2)
     val vertexCoord = floatArrayOf(

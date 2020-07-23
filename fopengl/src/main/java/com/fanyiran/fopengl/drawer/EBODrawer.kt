@@ -5,6 +5,9 @@ import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+/*
+ 使用ebo
+ */
 class EBODrawer : IDrawerSingle() {
     private val vaoArray = IntArray(1)
     private val vertexCoord = floatArrayOf(

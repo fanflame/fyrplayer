@@ -7,6 +7,9 @@ import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+/*
+ 使用两个vbo切换绘制
+ */
 class TowVBODrawer : IDrawerSingle() {
     val vbo = IntArray(2)
     var drawId = 1
