@@ -1,10 +1,9 @@
-package com.fanyiran.fopengl.drawer
+package com.fanyiran.fopengl.drawer.sample
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLUtils
-import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.MyApplication
 import com.fanyiran.fopengl.R
 import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
@@ -13,12 +12,13 @@ import java.nio.ByteOrder
 
 class TextureDrawer : IDrawerSingle() {
     private val vaoArray = IntArray(1)
+    private val texture = IntArray(1)
     private val vertexCoord = floatArrayOf(
-            -0.5f, -0.5f, 1.0f, 0f, 0f,
-            0.5f, -0.5f, 1.0f, 1f, 0f,
-            -0.5f, 0.5f, 1.0f, 0f, 1f,
-            0.5f, 0.5f, 1.0f, 1f, 1f
-    )
+            -0.5f, -0.5f, 1.0f, 0f, 1f,
+            0.5f, -0.5f, 1.0f, 1f, 1f,
+            -0.5f, 0.5f, 1.0f, 0f, 0f,
+            0.5f, 0.5f, 1.0f, 1f, 0f
+    )//Android 中纹理坐标(0,0)点在左上角
 
     private val textureCoord = floatArrayOf(
     )
@@ -88,12 +88,11 @@ class TextureDrawer : IDrawerSingle() {
     }
 
     private fun genTexture() {
-//        GLES30.glActiveTexture(GLES30.GL_TEXTURE1)
-//        var textureSamplerLocation = GLES30.glGetUniformLocation(program, "textureSampler")
-//        GLES30.glUniform1i(textureSamplerLocation,1)
-        GLESHelper.checkError()
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE1)
+        var textureSamplerLocation = GLES30.glGetUniformLocation(program, "textureSampler")
+        GLES30.glUseProgram(program)
+        GLES30.glUniform1i(textureSamplerLocation, 1)
 
-        val texture = IntArray(1)
         GLES30.glGenTextures(1, texture, 0)
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture[0])
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_REPEAT)
@@ -103,7 +102,7 @@ class TextureDrawer : IDrawerSingle() {
         var bitmap = BitmapFactory.decodeResource(MyApplication.myApplication.resources, R.drawable.ic_launcher)
 
         bufferData(bitmap)
-//        bufferData1(bitmap)
+//        bufferData1(bitmap) 这个方法也可以实现
         bitmap.recycle()
     }
 

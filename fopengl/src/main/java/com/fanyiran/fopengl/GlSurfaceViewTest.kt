@@ -3,7 +3,7 @@ package com.fanyiran.fopengl
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import com.fanyiran.fopengl.drawer.TextureDrawer
+import com.fanyiran.fopengl.drawer.sample.TextureDrawer
 
 class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView(context, attrs) {
     //    private val render by lazy { GLRender(VBODrawer()) }//单独vbo

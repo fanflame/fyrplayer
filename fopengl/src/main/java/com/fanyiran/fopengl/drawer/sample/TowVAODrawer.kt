@@ -1,4 +1,4 @@
-package com.fanyiran.fopengl.drawer
+package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import android.os.Handler
