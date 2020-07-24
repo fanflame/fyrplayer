@@ -11,7 +11,7 @@ import java.nio.ByteOrder
 class MultiAttributePointDrawer : IDrawerSingle() {
     private val vaoArray = IntArray(1)
 
-    //顶点属性的x,y可以取<-1或>1.0f的值，但是z必须在-1到1之间，否则该顶点不能显示
+    //NOTE 顶点属性的x,y可以取<-1或>1.0f的值，但是z必须在-1到1之间，否则该顶点不能显示,因为已经处于不可见范围
     private val attributeArray = floatArrayOf(
             -0.5f, -0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 1.0f,
             0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,

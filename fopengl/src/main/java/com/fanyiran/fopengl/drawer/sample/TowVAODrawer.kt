@@ -61,7 +61,7 @@ class TowVAODrawer : IDrawerSingle() {
         GLES30.glEnableVertexAttribArray(0)
 
         GLES30.glBindVertexArray(vaoArray[1])
-        //这里不能用同一个vbo,如果用同一个vbo，即使绘制的时候glBindVertexArray(vaoArray[0]),也会显示vertexCoord1的三角形
+        //NOTE 这里不能用同一个vbo,如果用同一个vbo，即使绘制的时候glBindVertexArray(vaoArray[0]),也会显示vertexCoord1的三角形
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboArray[1])
         val buffer1 = ByteBuffer.allocateDirect(vertexCoord1.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())

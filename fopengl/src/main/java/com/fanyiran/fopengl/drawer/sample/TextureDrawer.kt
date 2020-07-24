@@ -20,7 +20,7 @@ class TextureDrawer : IDrawerSingle() {
             0.5f, 0.5f, 1.0f
     )
 
-    //Android 中纹理坐标(0,0)点在左上角
+    //NOTE Android 中纹理坐标(0,0)点在左上角,x/y轴方向与view一致
     private val textureCoord = floatArrayOf(
             0f, 1f,
             1f, 1f,
@@ -68,7 +68,7 @@ class TextureDrawer : IDrawerSingle() {
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 3 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
 
-        // Warning 这里故意使用一个VAO绑定两个VAO
+        // NOTE 这里故意使用一个VAO绑定两个VAO
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo[1])
         val textureCoordBuffer = ByteBuffer.allocateDirect(textureCoord.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
@@ -107,7 +107,7 @@ class TextureDrawer : IDrawerSingle() {
         var bitmap = BitmapFactory.decodeResource(MyApplication.myApplication.resources, R.drawable.ic_launcher)
 
         bufferData(bitmap)
-//        bufferData1(bitmap) 这个方法也可以实现
+//        bufferData1(bitmap) NOTE 这个方法也可以实现
         bitmap.recycle()
     }
 

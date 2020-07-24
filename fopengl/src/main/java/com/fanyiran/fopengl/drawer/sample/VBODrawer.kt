@@ -41,8 +41,8 @@ class VBODrawer : IDrawerSingle() {
     }
 
     override fun draw() {
-        //如果只有一个vbo,其他什么都不画，不需要每次调用config()
-        //如果有两个vbo切换，需要每次调用自己的config()，详见 {@link com.fanyiran.fopengl.drawer.TowVBOManager}
+        //NOTE 如果只有一个vbo,其他什么都不画，不需要每次调用config()
+        //NOTE 如果有两个vbo切换，需要每次调用自己的config()，详见 {@link com.fanyiran.fopengl.drawer.TowVBOManager}
         GLES20.glUseProgram(program)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3)
     }

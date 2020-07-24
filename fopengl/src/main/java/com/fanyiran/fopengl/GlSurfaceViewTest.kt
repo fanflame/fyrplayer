@@ -3,7 +3,7 @@ package com.fanyiran.fopengl
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import com.fanyiran.fopengl.drawer.sample.TextureDrawer
+import com.fanyiran.fopengl.drawer.sample.MultiTextureDrawer
 
 class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView(context, attrs) {
     //    private val render by lazy { GLRender(VBODrawer()) }//单独vbo
@@ -13,7 +13,8 @@ class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView
 //    private val render by lazy { GLRender(EBODrawer()) }//ebo
 //    private val render by lazy { GLRender(MultiAttributePointDrawer()) }//multi attribute
 //    private val render by lazy { GLRender(BlingDrawer()) }//uniform
-    private val render by lazy { GLRender(TextureDrawer()) }//texure
+//    private val render by lazy { GLRender(TextureDrawer()) }//texure
+    private val render by lazy { GLRender(MultiTextureDrawer()) }//multitexure
     // TODO: 2020/7/24 使用NDK实现？
 
 
