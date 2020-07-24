@@ -10,7 +10,7 @@ import java.nio.ByteOrder
 /*
  使用两个vbo切换绘制
  */
-class TowVBODrawer : IDrawerSingle() {
+class MultiVBODrawer : IDrawerSingle() {
     val vbo = IntArray(2)
     var drawId = 1
     val handle: Handler = Handler()

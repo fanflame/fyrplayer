@@ -9,7 +9,7 @@ import java.nio.ByteOrder
 /*
  使用两个vao切换绘制
  */
-class TowVAODrawer : IDrawerSingle() {
+class MultiVAODrawer : IDrawerSingle() {
     val vaoArray = IntArray(2)
     val vertexCoord = floatArrayOf(
             -1.0f, -1.0f, 1.0f,
