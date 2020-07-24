@@ -14,9 +14,11 @@ class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView
 //    private val render by lazy { GLRender(MultiAttributePointDrawer()) }//multi attribute
 //    private val render by lazy { GLRender(BlingDrawer()) }//uniform
     private val render by lazy { GLRender(TextureDrawer()) }//texure
+    // TODO: 2020/7/24 使用NDK实现？
+
 
     init {
-        setEGLContextClientVersion(3)//入股使用默认EGLContextFactory和EGLConfigChooser，必须设置这个才会有效果！！！
+        setEGLContextClientVersion(3)//如果使用默认EGLContextFactory和EGLConfigChooser，必须设置这个才会有效果！！！
         setRenderer(render)
         renderMode = RENDERMODE_CONTINUOUSLY
     }

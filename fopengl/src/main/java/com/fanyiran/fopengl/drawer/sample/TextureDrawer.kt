@@ -14,13 +14,18 @@ class TextureDrawer : IDrawerSingle() {
     private val vaoArray = IntArray(1)
     private val texture = IntArray(1)
     private val vertexCoord = floatArrayOf(
-            -0.5f, -0.5f, 1.0f, 0f, 1f,
-            0.5f, -0.5f, 1.0f, 1f, 1f,
-            -0.5f, 0.5f, 1.0f, 0f, 0f,
-            0.5f, 0.5f, 1.0f, 1f, 0f
-    )//Android 中纹理坐标(0,0)点在左上角
+            -0.5f, -0.5f, 1.0f,
+            0.5f, -0.5f, 1.0f,
+            -0.5f, 0.5f, 1.0f,
+            0.5f, 0.5f, 1.0f
+    )
 
+    //Android 中纹理坐标(0,0)点在左上角
     private val textureCoord = floatArrayOf(
+            0f, 1f,
+            1f, 1f,
+            0f, 0f,
+            1f, 0f
     )
 
     private val eboIndice = intArrayOf(
@@ -46,13 +51,13 @@ class TextureDrawer : IDrawerSingle() {
     }
 
     override fun config() {
-//        GLES30.glEnable(GLES30.GL_CULL_FACE)
-//        GLES30.glCullFace(GLES30.GL_BACK)
+        GLES30.glEnable(GLES30.GL_CULL_FACE)
+        GLES30.glCullFace(GLES30.GL_BACK)
 
         GLES30.glGenVertexArrays(1, vaoArray, 0)
         GLES30.glBindVertexArray(vaoArray[0])
         val vbo = IntArray(2)
-        GLES30.glGenBuffers(1, vbo, 0)
+        GLES30.glGenBuffers(2, vbo, 0)
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo[0])
         val vertexBuffer = ByteBuffer.allocateDirect(vertexCoord.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
@@ -60,18 +65,18 @@ class TextureDrawer : IDrawerSingle() {
                 .put(vertexCoord)
                 .position(0)
         GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexCoord.size * FLOAT_SIZE, vertexBuffer, GLES30.GL_STATIC_DRAW)
-        GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 0)
+        GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 3 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
 
-        // TODO: 2020/7/23 使用两个vbo？
-//        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo[1])
-//        val textureCoordBuffer = ByteBuffer.allocateDirect(textureCoord.size * FLOAT_SIZE)
-//                .order(ByteOrder.nativeOrder())
-//                .asFloatBuffer()
-//                .put(textureCoord)
-//                .position(0)
-//        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, textureCoord.size * FLOAT_SIZE, textureCoordBuffer, GLES30.GL_STATIC_DRAW)
-        GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 3 * FLOAT_SIZE)
+        // Warning 这里故意使用一个VAO绑定两个VAO
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo[1])
+        val textureCoordBuffer = ByteBuffer.allocateDirect(textureCoord.size * FLOAT_SIZE)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(textureCoord)
+                .position(0)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, textureCoord.size * FLOAT_SIZE, textureCoordBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 2 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(1)
 
         genTexture()
