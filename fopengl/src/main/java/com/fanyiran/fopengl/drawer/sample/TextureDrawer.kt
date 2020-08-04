@@ -6,11 +6,11 @@ import android.opengl.GLES30
 import android.opengl.GLUtils
 import com.fanyiran.fopengl.MyApplication
 import com.fanyiran.fopengl.R
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class TextureDrawer : IDrawerSingle() {
+class TextureDrawer : IDrawer() {
     private val vaoArray = IntArray(1)
     private val texture = IntArray(1)
     private val vertexCoord = floatArrayOf(
@@ -129,5 +129,9 @@ class TextureDrawer : IDrawerSingle() {
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }

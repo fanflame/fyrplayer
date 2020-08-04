@@ -2,14 +2,14 @@ package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import com.fanyiran.fopengl.GLESHelper
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /*
  * uniform biling biling
  */
-class BlingDrawer : IDrawerSingle() {
+class BlingDrawer : IDrawer() {
     private val vaoArray = IntArray(1)
     private val vertexArray = floatArrayOf(
             -0.5f, -0.5f, 1.0f, 1.0f, 0.5f, 1.0f, 1.0f,
@@ -77,5 +77,9 @@ class BlingDrawer : IDrawerSingle() {
         val alphaFactor = GLES30.glGetUniformLocation(program, "alphaFactor")
         GLES30.glUniform1f(alphaFactor, (System.currentTimeMillis() % 1000) / 1000.0f)
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }

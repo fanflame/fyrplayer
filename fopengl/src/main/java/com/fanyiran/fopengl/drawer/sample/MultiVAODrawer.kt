@@ -2,14 +2,14 @@ package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import android.os.Handler
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /*
  使用两个vao切换绘制
  */
-class MultiVAODrawer : IDrawerSingle() {
+class MultiVAODrawer : IDrawer() {
     val vaoArray = IntArray(2)
     val vertexCoord = floatArrayOf(
             -1.0f, -1.0f, 1.0f,
@@ -80,5 +80,9 @@ class MultiVAODrawer : IDrawerSingle() {
             GLES30.glBindVertexArray(vaoArray[1])
         }
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3)
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }

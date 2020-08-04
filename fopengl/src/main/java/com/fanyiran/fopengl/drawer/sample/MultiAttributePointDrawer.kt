@@ -1,14 +1,14 @@
 package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /*
  使用多个顶点属性
  */
-class MultiAttributePointDrawer : IDrawerSingle() {
+class MultiAttributePointDrawer : IDrawer() {
     private val vaoArray = IntArray(1)
 
     //NOTE 顶点属性的x,y可以取<-1或>1.0f的值，但是z必须在-1到1之间，否则该顶点不能显示,因为已经处于不可见范围
@@ -72,5 +72,9 @@ class MultiAttributePointDrawer : IDrawerSingle() {
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }

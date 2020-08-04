@@ -5,11 +5,11 @@ import android.opengl.GLES30
 import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.MyApplication
 import com.fanyiran.fopengl.R
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class MultiTextureDrawer : IDrawerSingle() {
+class MultiTextureDrawer : IDrawer() {
     private val vaoArray = IntArray(1)
     private val vertexArray = floatArrayOf(
             -.5f, -.5f, 1f, 0f, 1f,
@@ -116,5 +116,9 @@ class MultiTextureDrawer : IDrawerSingle() {
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
         GLESHelper.checkError()
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }

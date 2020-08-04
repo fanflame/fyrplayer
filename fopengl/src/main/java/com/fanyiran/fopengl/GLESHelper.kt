@@ -8,7 +8,7 @@ import com.fanyiran.utils.LogUtil
 object GLESHelper {
     private const val TAG = "GLESHelper"
 
-    public fun createProgram(vertexSource: String, fragmentSource: String): Int {
+    public fun createProgram(vertexSource: String?, fragmentSource: String?): Int {
         if (TextUtils.isEmpty(vertexSource) || TextUtils.isEmpty(fragmentSource)) {
             LogUtil.v(TAG, "vertex/fragment shader source is empty")
             return -1

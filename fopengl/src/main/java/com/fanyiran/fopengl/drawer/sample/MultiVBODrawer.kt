@@ -3,14 +3,14 @@ package com.fanyiran.fopengl.drawer.sample
 import android.opengl.GLES30
 import android.os.Handler
 import com.fanyiran.fopengl.GLESHelper
-import com.fanyiran.fopengl.drawer.idrawer.IDrawerSingle
+import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /*
  使用两个vbo切换绘制
  */
-class MultiVBODrawer : IDrawerSingle() {
+class MultiVBODrawer : IDrawer() {
     val vbo = IntArray(2)
     var drawId = 1
     val handle: Handler = Handler()
@@ -83,5 +83,9 @@ class MultiVBODrawer : IDrawerSingle() {
             config2()
         }
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3)
+    }
+
+    override fun release() {
+        TODO("Not yet implemented")
     }
 }
