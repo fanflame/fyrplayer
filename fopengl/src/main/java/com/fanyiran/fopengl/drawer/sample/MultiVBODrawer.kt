@@ -2,6 +2,7 @@ package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import android.os.Handler
+import android.os.Looper
 import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
@@ -13,7 +14,7 @@ import java.nio.ByteOrder
 class MultiVBODrawer : IDrawer() {
     val vbo = IntArray(2)
     var drawId = 1
-    val handle: Handler = Handler()
+    val handle: Handler = Handler(Looper.getMainLooper())
 
     init {
         handle.postDelayed(object : Runnable {

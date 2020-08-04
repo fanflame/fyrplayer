@@ -18,6 +18,7 @@ class PipeLineManager : IDrawerPipeLine() {
 
     override fun config() {
         addDrawer(FBODrawer())
+        addDrawer(BmpDrawer())
         addDrawer(ScreenDrawer())
     }
 

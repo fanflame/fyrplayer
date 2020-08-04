@@ -2,6 +2,7 @@ package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import android.os.Handler
+import android.os.Looper
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -22,7 +23,7 @@ class MultiVAODrawer : IDrawer() {
             1.0f, 1.0f, 1.0f
     )
     var index = 0
-    var handler = Handler()
+    var handler = Handler(Looper.getMainLooper())
 
     init {
         handler.postDelayed(object : Runnable {

@@ -57,6 +57,7 @@ object GLESHelper {
                 GLES20.GL_INVALID_ENUM -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_ENUM")
                 GLES20.GL_INVALID_VALUE -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_VALUE")
                 GLES20.GL_INVALID_OPERATION -> LogUtil.v(TAG, "checkError:${error} GL_INVALID_OPERATION")
+                GLES20.GL_OUT_OF_MEMORY -> LogUtil.v(TAG, "checkError:${error} GL_OUT_OF_MEMORY")
                 else -> LogUtil.v(TAG, "checkError:${error} :fs")
             }
 
