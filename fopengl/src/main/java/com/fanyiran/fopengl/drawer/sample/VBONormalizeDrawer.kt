@@ -6,22 +6,14 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /*
- 使用vbo
+ 使用vbo；normalize 转入true；
  */
-class VBODrawer : IDrawer() {
-    // TODO: 2020/7/28 fbo 实现滤镜
-    // TODO: 2020/7/28 yuv转纹理
-    // TODO:glShaderBinary
-    //  TODO:glTexSubImage2D
-    // TODO: 3D  多个
-    // todo 矩阵
-    // todo 顶点坐标不归一化？即不是在-1到1之间的数值，
-
+class VBONormalizeDrawer : IDrawer() {
     private val vertexPoint = intArrayOf(
-            Int.MIN_VALUE, Int.MIN_VALUE, 1,
+            Int.MIN_VALUE / 2, Int.MIN_VALUE, 1,
             Int.MAX_VALUE, Int.MIN_VALUE, 1,
-            0, Int.MAX_VALUE, 1
-    )
+            0, 0, 1
+    )//NOTE 注意这里，
 
     override fun getVertexShader(): String {
         return "layout (location = 0) attribute vec3 vertexCoord;" +
@@ -43,6 +35,7 @@ class VBODrawer : IDrawer() {
         val buffer = ByteBuffer.allocateDirect(vertexPoint.size * FLOAT_SIZE).order(ByteOrder.nativeOrder()).asIntBuffer()
         buffer.put(vertexPoint).position(0)
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexPoint.size * FLOAT_SIZE, buffer, GLES20.GL_STATIC_DRAW)
+        // NOTE normalized设置为true，归一化算法是按照int的【Int.MIN_VALUE，Int.MAX_VALUE】的范围归一化
         GLES20.glVertexAttribPointer(0, 3, GLES20.GL_INT, true, FLOAT_SIZE * 3, 0)
         GLES20.glEnableVertexAttribArray(0)
     }

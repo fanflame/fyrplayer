@@ -7,10 +7,11 @@ import com.fanyiran.fopengl.drawer.sample.*
 import com.fanyiran.fopengl.drawer.sample.fbo.PipeLineManager
 
 class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView(context, attrs) {
-    private val DRAWER_TYPE = "VBODrawer"
+    private val DRAWER_TYPE = "VBONormalizeDrawer"
     private val render by lazy {
         when (DRAWER_TYPE) {
             "VBODrawer" -> GLRender(VBODrawer())
+            "VBONormalizeDrawer" -> GLRender(VBONormalizeDrawer())
             "VAODrawer" -> GLRender(VAODrawer())
             "MultiVAODrawer" -> GLRender(MultiVAODrawer())
             "EBODrawer" -> GLRender(EBODrawer())
