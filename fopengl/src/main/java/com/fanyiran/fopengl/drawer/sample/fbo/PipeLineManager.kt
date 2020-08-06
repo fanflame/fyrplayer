@@ -1,15 +1,8 @@
 package com.fanyiran.fopengl.drawer.sample.fbo
 
 class PipeLineManager : IDrawerPipeLine() {
-    override fun draw() {
-        drawerNext?.draw()
-    }
-
-    override fun draw(data: ByteArray) {
-        drawerNext?.draw(data)
-    }
-
-    override fun drawSelf() {
+    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
+        return texture
     }
 
     override fun getVertexShader(): String? {
@@ -23,7 +16,7 @@ class PipeLineManager : IDrawerPipeLine() {
     override fun config() {
         addDrawer(FBODrawer())
         addDrawer(YUVDrawer())
-//        addDrawer(ScreenDrawer())
+        addDrawer(ScreenDrawer())
     }
 
     override fun release() {

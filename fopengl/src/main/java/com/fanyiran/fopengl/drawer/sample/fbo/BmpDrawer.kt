@@ -43,11 +43,12 @@ class BmpDrawer : IDrawerPipeLine() {
                 "}"
     }
 
-    override fun drawSelf() {
+
+    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
-        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture)
         GLES30.glUniform1i(GLES30.glGetUniformLocation(program, "texture"), 0)
         val bmp = getBmp()
         val pixelBuffer = ByteBuffer.allocateDirect(bmp.byteCount).order(ByteOrder.nativeOrder())
@@ -57,6 +58,7 @@ class BmpDrawer : IDrawerPipeLine() {
                 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, pixelBuffer)
 
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
+        return texture
     }
 
     private fun getBmp(): Bitmap {
@@ -70,12 +72,12 @@ class BmpDrawer : IDrawerPipeLine() {
         val vboArray = IntArray(1)
         GLES30.glGenBuffers(1, vboArray, 0)
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboArray[0])
-        val vboBuffer = ByteBuffer.allocateDirect(pointAttributeData.size * FLOAT_SIZE)
+        val vboBuffer = ByteBuffer.allocateDirect(pointAttributeData().size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
-                .put(pointAttributeData)
+                .put(pointAttributeData())
                 .position(0)
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData.size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData().size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
         GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 3 * FLOAT_SIZE)

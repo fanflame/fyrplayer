@@ -3,29 +3,22 @@ package com.fanyiran.fopengl.drawer.sample.fbo
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 
 abstract class IDrawerPipeLine : IDrawer() {
-    protected var drawerNext: IDrawerPipeLine? = null
-    protected var textureID: Int = 0
-
-    fun draw(textureID: Int) {
-        this.textureID = textureID
-        this.draw()
+    enum class TYPE {
+        LOCAL_IMAGE,
+        YUV_NV21
     }
+    protected var drawerNext: IDrawerPipeLine? = null
 
     override fun draw() {
-        drawSelf()
-        if (drawerNext != null) {
-            drawerNext?.draw(textureID)
-        }
+        TODO("Not yet implemented")
     }
 
-    override fun draw(data: ByteArray) {
-        drawSelf()
-        if (drawerNext != null) {
-            drawerNext?.draw(data)
-        }
+    fun draw(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int) {
+        var resultTexture = drawSelf(type, width, height, data, texture)
+        drawerNext?.draw(type, width, height, data, resultTexture)
     }
 
-    abstract fun drawSelf()
+    abstract fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int
 
     fun addDrawer(drawer: IDrawerPipeLine) {
         if (drawerNext == null) {

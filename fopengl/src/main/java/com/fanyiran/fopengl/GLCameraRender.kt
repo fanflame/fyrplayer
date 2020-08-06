@@ -2,21 +2,20 @@ package com.fanyiran.fopengl
 
 import android.app.Activity
 import android.graphics.SurfaceTexture
-import android.opengl.GLES20
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.util.Size
 import com.fanyiran.fcamera.camera.CameraImpl
 import com.fanyiran.fcamera.camera.CameraManager
 import com.fanyiran.fcamera.camera.callback.OnPreviewDataCallback
-import com.fanyiran.fopengl.drawer.idrawer.IDrawer
+import com.fanyiran.fopengl.drawer.sample.fbo.IDrawerPipeLine
 import com.fanyiran.utils.LogUtil
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class GLCameraRender(drawer: IDrawer, surfaceView: GLSurfaceView) : GLSurfaceView.Renderer, OnPreviewDataCallback {
+class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSurfaceView.Renderer, OnPreviewDataCallback {
     private val TAG = "GLCameraRender"
-    private val drawer: IDrawer = drawer
+    private val drawer: IDrawerPipeLine = drawer
     private lateinit var cameraManager: CameraManager
     private var context = surfaceView.context as Activity
     private var surfaceView = surfaceView
@@ -42,14 +41,11 @@ class GLCameraRender(drawer: IDrawer, surfaceView: GLSurfaceView) : GLSurfaceVie
     }
 
     override fun onPreviewData(data: ByteArray) {
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-
         // NOTE: 2020/8/5 这里GLSurfaceview 创建的线程中有GLContext,camera相机open的线程中没有looper（即GLSurfaceView渲染线程没有looper）
         // NOTE: 2020/8/5 因此，camera的数据回调会放到主线程中，因此要想GL绘制,需要queueEvent到gl线程中
         surfaceView.queueEvent {
 //            val dddd = ByteBuffer.allocate(data.size).put(data)
-            drawer.draw(data)//todo 如果将camera吐的数据放入异步线程；那么当onPreviewData返回的时候，data可能已经回收?
+            drawer.draw(IDrawerPipeLine.TYPE.YUV_NV21, 1280, 720, data, 0)//todo 如果将camera吐的数据放入异步线程；那么当onPreviewData返回的时候，data可能已经回收?
             surfaceView.requestRender()//NOTE : 主动调用这个方法才会swapBuffer
         }
     }

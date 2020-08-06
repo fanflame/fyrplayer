@@ -3,7 +3,7 @@ package com.fanyiran.fopengl.drawer.idrawer
 import com.fanyiran.fopengl.GLESHelper
 
 abstract class IDrawer {
-    protected val pointAttributeData by lazy {
+    private val pointAttributeData by lazy {
         floatArrayOf(
                 -0.5f, -0.5f, 1.0f, 0f, 1f,
                 0.5f, -0.5f, 1.0f, 1f, 1f,
@@ -11,6 +11,7 @@ abstract class IDrawer {
                 0.5f, 0.5f, 1.0f, 1f, 0f
         )
     }
+
     protected val eboIndice by lazy {
         intArrayOf(
                 0, 1, 2, 1, 3, 2
@@ -29,5 +30,8 @@ abstract class IDrawer {
     //    abstract fun config(drawerConfig: DrawerConfig)
     abstract fun draw()
     abstract fun release()
-    open fun draw(data: ByteArray) {}
+
+    open fun pointAttributeData(): FloatArray {
+        return pointAttributeData
+    }
 }

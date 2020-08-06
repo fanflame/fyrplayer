@@ -5,6 +5,23 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class ScreenDrawer : IDrawerPipeLine() {
+    private val pointAttributeData by lazy {
+        floatArrayOf(
+                -1f, -1f, 1.0f, 0f, 0f,
+                1f, -1f, 1.0f, 0f, 1f,
+                -1f, 1f, 1.0f, 1f, 0f,
+                1f, 1f, 1.0f, 1f, 1f
+        )
+    }
+
+    //    private val pointAttributeData by lazy {
+//        floatArrayOf(
+//                -0.5f, -0.5f, 1.0f, 0f, 1f,
+//                0.5f, -0.5f, 1.0f, 1f, 1f,
+//                -0.5f, 0.5f, 1.0f, 0f, 0f,
+//                0.5f, 0.5f, 1.0f, 1f, 0f
+//        )
+//    }
     private val vao = IntArray(1)
 
     override fun getVertexShader(): String {
@@ -21,11 +38,14 @@ class ScreenDrawer : IDrawerPipeLine() {
         return "uniform sampler2D texture;" +
                 "varying vec2 textureCoord;" +
                 "void main(){" +
-//                "gl_FragColor = texture2D(texture,textureCoord);" +
-                "gl_FragColor = vec4(1.0f,0.5f,0.5f,1.0f);" +
+                "gl_FragColor = texture2D(texture,textureCoord);" +
+//                "gl_FragColor = vec4(textureCoord.x,textureCoord.y,textureCoord.x,1.0f);" +
                 "}"
     }
 
+    override fun pointAttributeData(): FloatArray {
+        return pointAttributeData
+    }
     override fun config() {
         GLES30.glGenVertexArrays(1, vao, 0)
         GLES30.glBindVertexArray(vao[0])
@@ -33,12 +53,12 @@ class ScreenDrawer : IDrawerPipeLine() {
         val vbo = IntArray(1)
         GLES30.glGenBuffers(1, vbo, 0)
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo[0])
-        val vboBuffer = ByteBuffer.allocateDirect(pointAttributeData.size * FLOAT_SIZE)
+        val vboBuffer = ByteBuffer.allocateDirect(pointAttributeData().size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
-                .put(pointAttributeData)
+                .put(pointAttributeData())
                 .position(0)
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData.size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData().size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
         GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 3 * FLOAT_SIZE)
@@ -56,14 +76,18 @@ class ScreenDrawer : IDrawerPipeLine() {
         GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, eboIndice.size * INT_SIZE, eboBuffer, GLES30.GL_STATIC_DRAW)
     }
 
-    override fun drawSelf() {
+    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0)
+        GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vao[0])
-//        GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
-//        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureID)
-//        GLES30.glUniform1i(GLES30.glGetUniformLocation(program, "texture"), 0)
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, texture)
+        GLES30.glUniform1i(GLES30.glGetUniformLocation(program, "texture"), 0)
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
+        return texture
     }
 
     override fun release() {
