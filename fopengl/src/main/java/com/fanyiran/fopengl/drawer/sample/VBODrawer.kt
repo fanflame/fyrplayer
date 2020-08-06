@@ -15,7 +15,7 @@ class VBODrawer : IDrawer() {
     //  TODO:glTexSubImage2D
     // TODO: 3D  多个
     // todo 矩阵
-    // todo 顶点坐标不归一化？即不是在-1到1之间的数值，
+    // todo pipeline 不清晰
 
     private val vertexPoint = intArrayOf(
             Int.MIN_VALUE, Int.MIN_VALUE, 1,

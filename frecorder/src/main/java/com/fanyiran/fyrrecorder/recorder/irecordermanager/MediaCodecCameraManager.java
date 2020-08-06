@@ -6,8 +6,6 @@ import android.opengl.EGLSurface;
 import android.opengl.GLES10;
 import android.view.Surface;
 
-import com.fanyiran.fcamera.camera.CameraImpl;
-import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
 import com.fanyiran.fyrrecorder.recorder.mediacodec.MediaCodecRecorderImpl;

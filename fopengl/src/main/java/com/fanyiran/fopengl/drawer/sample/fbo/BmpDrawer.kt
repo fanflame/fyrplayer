@@ -24,16 +24,6 @@ class BmpDrawer : IDrawerPipeLine() {
     }
 
     private val vaoArray = IntArray(1)
-    private val vertexCoordArray = floatArrayOf(
-            -0.5f, -0.5f, 1.0f, 0f, 1f,
-            0.5f, -0.5f, 1.0f, 1f, 1f,
-            -0.5f, 0.5f, 1.0f, 0f, 0f,
-            0.5f, 0.5f, 1.0f, 1f, 0f
-    )
-
-    private val eboIndice = intArrayOf(
-            0, 1, 2, 1, 3, 2
-    )
 
     override fun getVertexShader(): String {
         return "layout(location = 0) attribute vec3 vertexCoord;" +
@@ -80,12 +70,12 @@ class BmpDrawer : IDrawerPipeLine() {
         val vboArray = IntArray(1)
         GLES30.glGenBuffers(1, vboArray, 0)
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboArray[0])
-        val vboBuffer = ByteBuffer.allocateDirect(vertexCoordArray.size * FLOAT_SIZE)
+        val vboBuffer = ByteBuffer.allocateDirect(pointAttributeData.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
-                .put(vertexCoordArray)
+                .put(pointAttributeData)
                 .position(0)
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexCoordArray.size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData.size * FLOAT_SIZE, vboBuffer, GLES30.GL_STATIC_DRAW)
         GLES30.glVertexAttribPointer(0, 3, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(0)
         GLES30.glVertexAttribPointer(1, 2, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 3 * FLOAT_SIZE)

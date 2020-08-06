@@ -4,5 +4,5 @@ import com.fanyiran.fcamera.camera.CameraConfig;
 import com.fanyiran.fcamera.camera.ICamera;
 
 public interface ICameraFactory {
-    ICamera createCamera(CameraConfig config,Class recorderClass,Class previewClass);
+    ICamera createCamera(CameraConfig config, Class recorderClass, Class previewClass);
 }

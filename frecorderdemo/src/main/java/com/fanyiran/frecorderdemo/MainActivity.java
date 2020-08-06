@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cosmos.fmediaretriever.MetadataRetriever;
 import com.fanyiran.fcamera.camera.CameraConfig;
-import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.fyrrecorder.recorderview.IRecorderView;
 import com.fanyiran.utils.ToastUtils;

@@ -17,9 +17,6 @@ class BlingDrawer : IDrawer() {
             -0.5f, 0.5f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f,
             0.5f, 0.5f, 1.0f, 1.0f, 0.5f, 0.5f, 1.0f
     )
-    private val eboIndice = intArrayOf(
-            0, 1, 2, 1, 3, 2
-    )
 
     override fun getVertexShader(): String {
         return "layout(location = 0) attribute vec3 vertexCoord;" +

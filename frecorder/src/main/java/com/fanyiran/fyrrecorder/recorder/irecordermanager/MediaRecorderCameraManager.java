@@ -5,8 +5,6 @@ import android.graphics.SurfaceTexture;
 import android.os.Environment;
 import android.view.SurfaceHolder;
 
-import com.fanyiran.fcamera.camera.CameraImpl;
-import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;
 import com.fanyiran.fyrrecorder.recorder.mediarecorder.MediaRecorderImpl;

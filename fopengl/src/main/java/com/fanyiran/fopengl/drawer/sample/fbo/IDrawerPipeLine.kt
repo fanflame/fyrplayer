@@ -18,6 +18,13 @@ abstract class IDrawerPipeLine : IDrawer() {
         }
     }
 
+    override fun draw(data: ByteArray) {
+        drawSelf()
+        if (drawerNext != null) {
+            drawerNext?.draw(data)
+        }
+    }
+
     abstract fun drawSelf()
 
     fun addDrawer(drawer: IDrawerPipeLine) {

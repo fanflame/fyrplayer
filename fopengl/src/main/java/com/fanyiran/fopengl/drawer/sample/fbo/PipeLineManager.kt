@@ -5,6 +5,10 @@ class PipeLineManager : IDrawerPipeLine() {
         drawerNext?.draw()
     }
 
+    override fun draw(data: ByteArray) {
+        drawerNext?.draw(data)
+    }
+
     override fun drawSelf() {
     }
 
@@ -18,8 +22,8 @@ class PipeLineManager : IDrawerPipeLine() {
 
     override fun config() {
         addDrawer(FBODrawer())
-        addDrawer(BmpDrawer())
-        addDrawer(ScreenDrawer())
+        addDrawer(YUVDrawer())
+//        addDrawer(ScreenDrawer())
     }
 
     override fun release() {

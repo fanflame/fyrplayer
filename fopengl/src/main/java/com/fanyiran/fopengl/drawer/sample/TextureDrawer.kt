@@ -28,10 +28,6 @@ class TextureDrawer : IDrawer() {
             1f, 0f
     )
 
-    private val eboIndice = intArrayOf(
-            0, 1, 2, 1, 3, 2
-    )
-
     override fun getVertexShader(): String {
         return "layout(location = 0) attribute vec3 vertexCoord;" +
                 "layout(location = 1) attribute vec2 inTextureCoord;" +

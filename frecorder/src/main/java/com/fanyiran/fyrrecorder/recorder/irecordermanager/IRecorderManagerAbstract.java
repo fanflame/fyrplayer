@@ -3,7 +3,6 @@ package com.fanyiran.fyrrecorder.recorder.irecordermanager;
 import android.app.Activity;
 
 import com.fanyiran.fcamera.camera.CameraConfig;
-import com.fanyiran.fcamera.camera.ICamera;
 import com.fanyiran.fcamera.camera.callback.OnTakePicCallBack;
 import com.fanyiran.fyrrecorder.recorder.IRecorder;
 import com.fanyiran.fyrrecorder.recorder.RecorderConfig;

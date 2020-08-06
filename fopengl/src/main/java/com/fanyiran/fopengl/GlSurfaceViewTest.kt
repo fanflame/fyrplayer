@@ -7,7 +7,7 @@ import com.fanyiran.fopengl.drawer.sample.*
 import com.fanyiran.fopengl.drawer.sample.fbo.PipeLineManager
 
 class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView(context, attrs) {
-    private val DRAWER_TYPE = "VBONormalizeDrawer"
+    private val DRAWER_TYPE = "GLCameraRender"
     private val render by lazy {
         when (DRAWER_TYPE) {
             "VBODrawer" -> GLRender(VBODrawer())
@@ -20,6 +20,7 @@ class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView
             "TextureDrawer" -> GLRender(TextureDrawer())
             "MultiTextureDrawer" -> GLRender(MultiTextureDrawer())
             "PipeLineManager" -> GLRender(PipeLineManager())
+            "GLCameraRender" -> GLCameraRender(PipeLineManager(), this)
             else -> GLRender(PipeLineManager())
         }
     }
@@ -29,6 +30,7 @@ class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView
     init {
         setEGLContextClientVersion(3)//如果使用默认EGLContextFactory和EGLConfigChooser，必须设置这个才会有效果！！！
         setRenderer(render)
-        renderMode = RENDERMODE_CONTINUOUSLY
+//        renderMode = RENDERMODE_CONTINUOUSLY
+        renderMode = RENDERMODE_WHEN_DIRTY
     }
 }

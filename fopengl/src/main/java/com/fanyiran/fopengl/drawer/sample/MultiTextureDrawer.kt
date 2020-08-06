@@ -11,16 +11,6 @@ import java.nio.ByteOrder
 
 class MultiTextureDrawer : IDrawer() {
     private val vaoArray = IntArray(1)
-    private val vertexArray = floatArrayOf(
-            -.5f, -.5f, 1f, 0f, 1f,
-            .5f, -.5f, 1f, 1f, 1f,
-            -.5f, .5f, 1f, 0f, 0f,
-            .5f, .5f, 1f, 1f, 0f
-    )
-
-    private val eboIndice = intArrayOf(
-            0, 1, 2, 1, 3, 2
-    )
 
     override fun getVertexShader(): String {
         return "attribute vec3 vertexCoord;" +
@@ -48,12 +38,12 @@ class MultiTextureDrawer : IDrawer() {
         val vboArray = IntArray(1)
         GLES30.glGenBuffers(1, vboArray, 0)
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboArray[0])
-        val attributeBuffer = ByteBuffer.allocateDirect(vertexArray.size * FLOAT_SIZE)
+        val attributeBuffer = ByteBuffer.allocateDirect(pointAttributeData.size * FLOAT_SIZE)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer()
-                .put(vertexArray)
+                .put(pointAttributeData)
                 .position(0)
-        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, vertexArray.size * FLOAT_SIZE, attributeBuffer, GLES30.GL_STATIC_DRAW)
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, pointAttributeData.size * FLOAT_SIZE, attributeBuffer, GLES30.GL_STATIC_DRAW)
         val vertexPosition = GLES30.glGetAttribLocation(program, "vertexCoord")
         GLES30.glVertexAttribPointer(vertexPosition, 3, GLES30.GL_FLOAT, false, 5 * FLOAT_SIZE, 0)
         GLES30.glEnableVertexAttribArray(vertexPosition)
