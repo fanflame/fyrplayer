@@ -2,6 +2,7 @@ package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES30
 import com.fanyiran.fopengl.GLESHelper
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -36,7 +37,7 @@ class BlingDrawer : IDrawer() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
 //        GLES30.glEnable(GLES30.GL_CULL_FACE)
 //        GLES30.glCullFace(GLES30.GL_BACK)
 

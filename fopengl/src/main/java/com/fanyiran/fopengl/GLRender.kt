@@ -19,6 +19,6 @@ class GLRender(drawer: IDrawer) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        drawer.config()
+        drawer.config(null)
     }
 }

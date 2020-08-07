@@ -1,7 +1,9 @@
 package com.fanyiran.fopengl.drawer.sample.fbo
 
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
+
 class PipeLineManager : IDrawerPipeLine() {
-    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
+    override fun drawSelf(type: TYPE, data: ByteArray, texture: Int): Int {
         return texture
     }
 
@@ -13,10 +15,10 @@ class PipeLineManager : IDrawerPipeLine() {
         return null
     }
 
-    override fun config() {
-        addDrawer(FBODrawer())
-        addDrawer(YUVDrawer())
-        addDrawer(ScreenDrawer())
+    override fun config(drawerConfig: DrawerConfig?) {
+        addDrawer(FBODrawer(), drawerConfig)
+        addDrawer(YUVDrawer(), drawerConfig)
+        addDrawer(ScreenDrawer(), drawerConfig)
     }
 
     override fun release() {

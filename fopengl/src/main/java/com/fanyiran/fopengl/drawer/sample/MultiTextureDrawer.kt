@@ -5,6 +5,7 @@ import android.opengl.GLES30
 import com.fanyiran.fopengl.GLESHelper
 import com.fanyiran.fopengl.MyApplication
 import com.fanyiran.fopengl.R
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -31,7 +32,7 @@ class MultiTextureDrawer : IDrawer() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
         GLES30.glGenVertexArrays(1, vaoArray, 0)
         GLES30.glBindVertexArray(vaoArray[0])
 

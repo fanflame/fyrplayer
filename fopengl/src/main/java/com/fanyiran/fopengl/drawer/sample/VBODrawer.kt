@@ -1,6 +1,7 @@
 package com.fanyiran.fopengl.drawer.sample
 
 import android.opengl.GLES20
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -36,7 +37,7 @@ class VBODrawer : IDrawer() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
         val vbo = IntArray(1)
         GLES20.glGenBuffers(1, vbo, 0)
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])

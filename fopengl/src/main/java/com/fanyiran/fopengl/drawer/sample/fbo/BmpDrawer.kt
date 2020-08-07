@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import com.fanyiran.fopengl.MyApplication
 import com.fanyiran.fopengl.R
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -44,7 +45,7 @@ class BmpDrawer : IDrawerPipeLine() {
     }
 
 
-    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
+    override fun drawSelf(type: TYPE, data: ByteArray, texture: Int): Int {
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
@@ -66,7 +67,7 @@ class BmpDrawer : IDrawerPipeLine() {
                 if (index % 2 == 0) R.drawable.ic_launcher else R.drawable.awesomeface)
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
         GLES30.glGenVertexArrays(1, vaoArray, 0)
         GLES30.glBindVertexArray(vaoArray[0])
         val vboArray = IntArray(1)

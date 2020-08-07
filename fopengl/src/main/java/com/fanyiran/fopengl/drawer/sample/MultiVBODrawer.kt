@@ -4,6 +4,7 @@ import android.opengl.GLES30
 import android.os.Handler
 import android.os.Looper
 import com.fanyiran.fopengl.GLESHelper
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -50,7 +51,7 @@ class MultiVBODrawer : IDrawer() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
         GLES30.glGenBuffers(2, vbo, 0)
         config1()
         config2()

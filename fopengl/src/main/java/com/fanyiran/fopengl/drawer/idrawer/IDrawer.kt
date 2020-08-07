@@ -25,9 +25,7 @@ abstract class IDrawer {
 
     abstract fun getVertexShader(): String?
     abstract fun getFragmentShader(): String?
-    abstract fun config()
-
-    //    abstract fun config(drawerConfig: DrawerConfig)
+    abstract fun config(drawerConfig: DrawerConfig?)
     abstract fun draw()
     abstract fun release()
 

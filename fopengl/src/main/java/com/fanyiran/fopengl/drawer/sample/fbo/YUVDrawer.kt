@@ -1,10 +1,12 @@
 package com.fanyiran.fopengl.drawer.sample.fbo
 
 import android.opengl.GLES30
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class YUVDrawer : IDrawerPipeLine() {
+    private var drawerConfig: DrawerConfig? = null
     private val pointAttributeData by lazy {
         floatArrayOf(
                 -1f, -1f, 1.0f, 0f, 1f,
@@ -47,20 +49,22 @@ class YUVDrawer : IDrawerPipeLine() {
         uvData.put(byteBuffer, width * height, width * height / 2).position(0)
     }
 
-    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
-        updateYUV(data, width, height)
+    override fun drawSelf(type: TYPE, data: ByteArray, texture: Int): Int {
+        updateYUV(data, drawerConfig!!.previewWidth, drawerConfig!!.previewHeight)
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, yTexture)
         GLES30.glUniform1i(GLES30.glGetUniformLocation(program, "yTexture"), 0)
-        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_LUMINANCE, width, height,
+        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_LUMINANCE,
+                drawerConfig!!.previewWidth, drawerConfig!!.previewHeight,
                 0, GLES30.GL_LUMINANCE, GLES30.GL_UNSIGNED_BYTE, yData)// note 如果用GLES30_RGBA，绘制结果有重复图像, 还有其他错误显示
 
         GLES30.glActiveTexture(GLES30.GL_TEXTURE1)
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, uvTexture)
         GLES30.glUniform1i(GLES30.glGetUniformLocation(program, "uvTexture"), 1)
-        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_LUMINANCE_ALPHA, width / 2, height / 2,
+        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_LUMINANCE_ALPHA,
+                drawerConfig!!.previewWidth / 2, drawerConfig!!.previewHeight / 2,
                 0, GLES30.GL_LUMINANCE_ALPHA, GLES30.GL_UNSIGNED_BYTE, uvData)
 
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
@@ -94,7 +98,8 @@ class YUVDrawer : IDrawerPipeLine() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
+        this.drawerConfig = drawerConfig
         GLES30.glGenVertexArrays(1, vaoArray, 0)
         GLES30.glBindVertexArray(vaoArray[0])
         val bufferArray = IntArray(2)

@@ -8,12 +8,15 @@ import android.util.Size
 import com.fanyiran.fcamera.camera.CameraImpl
 import com.fanyiran.fcamera.camera.CameraManager
 import com.fanyiran.fcamera.camera.callback.OnPreviewDataCallback
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.sample.fbo.IDrawerPipeLine
 import com.fanyiran.utils.LogUtil
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSurfaceView.Renderer, OnPreviewDataCallback {
+    private val PREVIEEW_WIDTH = 1280
+    private val PREIVIEW_HEIGHT = 720
     private val TAG = "GLCameraRender"
     private val drawer: IDrawerPipeLine = drawer
     private lateinit var cameraManager: CameraManager
@@ -26,6 +29,7 @@ class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSu
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
 //        GLES30.glViewport(0, 0, width, height)
         val surfaceTexture = SurfaceTexture(genTexture())
+        drawer.config(DrawerConfig(width, height, PREVIEEW_WIDTH, PREIVIEW_HEIGHT))
         cameraManager.preview(surfaceTexture, this)
     }
 
@@ -45,7 +49,7 @@ class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSu
         // NOTE: 2020/8/5 因此，camera的数据回调会放到主线程中，因此要想GL绘制,需要queueEvent到gl线程中
         surfaceView.queueEvent {
 //            val dddd = ByteBuffer.allocate(data.size).put(data)
-            drawer.draw(IDrawerPipeLine.TYPE.YUV_NV21, 1280, 720, data, 0)//todo 如果将camera吐的数据放入异步线程；那么当onPreviewData返回的时候，data可能已经回收?
+            drawer.draw(IDrawerPipeLine.TYPE.YUV_NV21, data, 0)//todo 如果将camera吐的数据放入异步线程；那么当onPreviewData返回的时候，data可能已经回收?
             surfaceView.requestRender()//NOTE : 主动调用这个方法才会swapBuffer
         }
     }
@@ -56,7 +60,6 @@ class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSu
         cameraManager.init(context)
         cameraManager.open(true)
         cameraManager.setPreviewFps(15, 15)
-        cameraManager.setPreviewSize(Size(1280, 720))
-        drawer.config()
+        cameraManager.setPreviewSize(Size(PREVIEEW_WIDTH, PREIVIEW_HEIGHT))
     }
 }

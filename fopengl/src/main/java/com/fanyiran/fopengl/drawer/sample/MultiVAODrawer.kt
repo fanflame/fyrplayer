@@ -3,6 +3,7 @@ package com.fanyiran.fopengl.drawer.sample
 import android.opengl.GLES30
 import android.os.Handler
 import android.os.Looper
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -47,7 +48,7 @@ class MultiVAODrawer : IDrawer() {
                 "}"
     }
 
-    override fun config() {
+    override fun config(drawerConfig: DrawerConfig?) {
         GLES30.glGenVertexArrays(2, vaoArray, 0)
 
         GLES30.glBindVertexArray(vaoArray[0])

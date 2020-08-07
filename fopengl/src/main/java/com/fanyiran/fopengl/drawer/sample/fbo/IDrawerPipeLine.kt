@@ -1,5 +1,6 @@
 package com.fanyiran.fopengl.drawer.sample.fbo
 
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import com.fanyiran.fopengl.drawer.idrawer.IDrawer
 
 abstract class IDrawerPipeLine : IDrawer() {
@@ -13,19 +14,19 @@ abstract class IDrawerPipeLine : IDrawer() {
         TODO("Not yet implemented")
     }
 
-    fun draw(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int) {
-        var resultTexture = drawSelf(type, width, height, data, texture)
-        drawerNext?.draw(type, width, height, data, resultTexture)
+    fun draw(type: TYPE, data: ByteArray, texture: Int) {
+        var resultTexture = drawSelf(type, data, texture)
+        drawerNext?.draw(type, data, resultTexture)
     }
 
-    abstract fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int
+    abstract fun drawSelf(type: TYPE, data: ByteArray, texture: Int): Int
 
-    fun addDrawer(drawer: IDrawerPipeLine) {
+    fun addDrawer(drawer: IDrawerPipeLine, drawerConfig: DrawerConfig?) {
         if (drawerNext == null) {
             drawerNext = drawer
-            drawer.config()
+            drawer.config(drawerConfig)
         } else {
-            drawerNext?.addDrawer(drawer)
+            drawerNext?.addDrawer(drawer, drawerConfig)
         }
     }
 

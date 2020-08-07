@@ -1,10 +1,13 @@
 package com.fanyiran.fopengl.drawer.sample.fbo
 
 import android.opengl.GLES30
+import com.fanyiran.fopengl.drawer.idrawer.DrawerConfig
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class ScreenDrawer : IDrawerPipeLine() {
+    private var drawerConfig: DrawerConfig? = null
+
     private val pointAttributeData by lazy {
         floatArrayOf(
                 -1f, -1f, 1.0f, 0f, 0f,
@@ -37,7 +40,9 @@ class ScreenDrawer : IDrawerPipeLine() {
     override fun pointAttributeData(): FloatArray {
         return pointAttributeData
     }
-    override fun config() {
+
+    override fun config(drawerConfig: DrawerConfig?) {
+        this.drawerConfig = drawerConfig
         GLES30.glGenVertexArrays(1, vao, 0)
         GLES30.glBindVertexArray(vao[0])
 
@@ -67,9 +72,9 @@ class ScreenDrawer : IDrawerPipeLine() {
         GLES30.glBufferData(GLES30.GL_ELEMENT_ARRAY_BUFFER, eboIndice.size * INT_SIZE, eboBuffer, GLES30.GL_STATIC_DRAW)
     }
 
-    override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
+    override fun drawSelf(type: TYPE, data: ByteArray, texture: Int): Int {
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0)
-        GLES30.glViewport(0, 0, 1080, 1980);
+        GLES30.glViewport(0, 0, drawerConfig!!.viewWidth, drawerConfig!!.viewHeight);
         GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
 
