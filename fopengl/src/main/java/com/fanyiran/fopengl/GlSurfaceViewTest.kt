@@ -3,6 +3,7 @@ package com.fanyiran.fopengl
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
+import android.view.SurfaceHolder
 import com.fanyiran.fopengl.drawer.sample.*
 import com.fanyiran.fopengl.drawer.sample.fbo.PipeLineManager
 
@@ -32,5 +33,10 @@ class GlSurfaceViewTest(context: Context?, attrs: AttributeSet?) : GLSurfaceView
         setRenderer(render)
 //        renderMode = RENDERMODE_CONTINUOUSLY
         renderMode = RENDERMODE_WHEN_DIRTY
+    }
+
+    override fun surfaceCreated(holder: SurfaceHolder?) {
+        super.surfaceCreated(holder)
+//        holder.setFixedSize()?  todo
     }
 }

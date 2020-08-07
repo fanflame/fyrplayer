@@ -24,7 +24,7 @@ class GLCameraRender(drawer: IDrawerPipeLine, surfaceView: GLSurfaceView) : GLSu
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES30.glViewport(0, 0, width, height)
+//        GLES30.glViewport(0, 0, width, height)
         val surfaceTexture = SurfaceTexture(genTexture())
         cameraManager.preview(surfaceTexture, this)
     }

@@ -14,14 +14,6 @@ class ScreenDrawer : IDrawerPipeLine() {
         )
     }
 
-    //    private val pointAttributeData by lazy {
-//        floatArrayOf(
-//                -0.5f, -0.5f, 1.0f, 0f, 1f,
-//                0.5f, -0.5f, 1.0f, 1f, 1f,
-//                -0.5f, 0.5f, 1.0f, 0f, 0f,
-//                0.5f, 0.5f, 1.0f, 1f, 0f
-//        )
-//    }
     private val vao = IntArray(1)
 
     override fun getVertexShader(): String {
@@ -39,7 +31,6 @@ class ScreenDrawer : IDrawerPipeLine() {
                 "varying vec2 textureCoord;" +
                 "void main(){" +
                 "gl_FragColor = texture2D(texture,textureCoord);" +
-//                "gl_FragColor = vec4(textureCoord.x,textureCoord.y,textureCoord.x,1.0f);" +
                 "}"
     }
 
@@ -78,8 +69,10 @@ class ScreenDrawer : IDrawerPipeLine() {
 
     override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0)
+        GLES30.glViewport(0, 0, 1080, 1980);
         GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+
 
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vao[0])

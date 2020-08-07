@@ -12,6 +12,7 @@ class FBODrawer : IDrawerPipeLine() {
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, fboArray[0])
         GLES30.glClearColor(0.5f, 1.0f, 1.0f, 1.0f)
         GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+        GLES30.glViewport(0, 0, 1280, 720);
         return textureArray[0]
     }
 
@@ -24,6 +25,7 @@ class FBODrawer : IDrawerPipeLine() {
     }
 
     override fun config() {
+        GLES30.glPixelStorei(GLES30.GL_UNPACK_ALIGNMENT, 1)
         GLES30.glGenFramebuffers(1, fboArray, 0)
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, fboArray[0])
 
@@ -33,8 +35,8 @@ class FBODrawer : IDrawerPipeLine() {
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_REPEAT)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
-        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, 1080,
-                2076, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null)
+        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, 1280,
+                720, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null)
 
         GLES30.glFramebufferTexture2D(GLES30.GL_FRAMEBUFFER, GLES30.GL_COLOR_ATTACHMENT0,
                 GLES30.GL_TEXTURE_2D, textureArray[0], 0)

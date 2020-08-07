@@ -49,7 +49,6 @@ class YUVDrawer : IDrawerPipeLine() {
 
     override fun drawSelf(type: TYPE, width: Int, height: Int, data: ByteArray, texture: Int): Int {
         updateYUV(data, width, height)
-//        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0)
         GLES30.glUseProgram(program)
         GLES30.glBindVertexArray(vaoArray[0])
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
@@ -66,7 +65,6 @@ class YUVDrawer : IDrawerPipeLine() {
 
         GLES30.glDrawElements(GLES30.GL_TRIANGLES, 6, GLES30.GL_UNSIGNED_INT, 0)
 
-        // todo 这里没有对texture做操作？
         return texture
     }
 
