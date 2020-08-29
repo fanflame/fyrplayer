@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://blog.csdn.net/ziyuanxiazai123/article/details/51879737"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="report" content='{"pid": "blog", "spm":"1001.2101"}'>
+
+    <meta name="applicable-device" content="pc">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <meta name="referrer" content="always">
+    <link rel="alternate" media="handheld" href="#"/>
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <meta name="csdn-baidu-search" content='{"autorun":true,"install":true,"keyword":"qt加载obj模型"}'>
+
+    <link href="https://csdnimg.cn/public/favicon.ico" rel="SHORTCUT ICON">
+    <title>OpenGL学习脚印:模型加载初步-加载obj模型(load obj model)_王定桥的专栏-CSDN博客_qt加载obj模型</title>
+    <meta name="keywords" content="qt加载obj模型">
+    <meta name="description"
+          content="写在前面 前面介绍了光照基础内容，以及材质和lighting maps，和光源类型，我们对使用光照增强场景真实感有了一定了解。但是到目前为止，我们通过在程序中指定的立方体数据，绘制立方体，看起来还是很乏味。本节开始介绍模型加载，通过加载丰富的模型，能够丰富我们的场景，变得好玩。本节的示例代码均可以在我的github下载。加载模型可以使用比较好的库，例如obj模型加载的库，Assimp加载库。本节作_qt加载obj模型">
+    <script src='//g.csdnimg.cn/tingyun/1.8.3/blog.js' type='text/javascript'></script>
+
+    <link rel="stylesheet"
+          href="https://csdnimg.cn/release/phoenix/template/new_css/detail_enter-aa41db3c8c.min.css">
+    <script type="application/ld+json">{
+        "@context": "https:\/\/ziyuan.baidu.com\/contexts\/cambrian.jsonld",
+        "@id": "https:\/\/blog.csdn.net\/ziyuanxiazai123\/java\/article\/details\/51879737",
+        "appid": 1638831770136827,
+        "title": "OpenGL\u5b66\u4e60\u811a\u5370:\u6a21\u578b\u52a0\u8f7d\u521d\u6b65-\u52a0\u8f7dobj\u6a21\u578b(load obj model)_\u738b\u5b9a\u6865\u7684\u4e13\u680f-CSDN\u535a\u5ba2_qt\u52a0\u8f7dobj\u6a21\u578b",
+        "pubDate": "2016-07-12T00:12:06",
+        "upDate": "2016-07-12T00:12:06"
+    }</script>
+
+    <link rel="stylesheet"
+          href="https://csdnimg.cn/release/phoenix/template/themes_skin/skin3-template/skin3-template-3faf0f2897.min.css">
+
+    <!--    自定义皮肤样式-->
+
+    <script type="text/javascript">
+        var username = "ziyuanxiazai123";
+        var blog_address = "https://blog.csdn.net/wangdingqiaoit";
+        var static_host = "https://csdnimg.cn/release/phoenix/";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737"
+        var blogUrl = "https://blog.csdn.net/";
+
+        var curSkin = "skin3-template";
+        // 收藏所需数据
+        var articleTitle = "OpenGL学习脚印:模型加载初步-加载obj模型(load obj model)";
+        var articleDesc = "写在前面 前面介绍了光照基础内容，以及材质和lighting maps，和光源类型，我们对使用光照增强场景真实感有了一定了解。但是到目前为止，我们通过在程序中指定的立方体数据，绘制立方体，看起来还是很乏味。本节开始介绍模型加载，通过加载丰富的模型，能够丰富我们的场景，变得好玩。本节的示例代码均可以在我的github下载。加载模型可以使用比较好的库，例如obj模型加载的库，Assimp加载库。本节作_qt加载obj模型";
+
+        var articleTitles = "OpenGL学习脚印:模型加载初步-加载obj模型(load obj model)_王定桥的专栏-CSDN博客_qt加载obj模型";
+        
+        var nickName = "The fool";
+        var isCorporate = false;
+        var subDomainBlogUrl = "https://blog.csdn.net/"
+        var digg_base_url = "https://blog.csdn.net/wangdingqiaoit";
+        var articleDetailUrl = "https://blog.csdn.net/ziyuanxiazai123/article/details/51879737";
+        var isShowThird = "1"
+        var skinStatus = "White"
+        var canRead = true;
+        
+        var sideToolbarVersion = 2.5;
+        // 百度搜索类型
+        var baiduSearchType = "baidulandingword";
+
+    </script>
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js"
+            type="text/javascript"></script>
+    <!--js引用-->
+    <script src="//g.csdnimg.cn/??fixed-sidebar/1.1.6/fixed-sidebar.js,report/1.5.6/report.js"
+            type="text/javascript"></script>
+    <link rel="stylesheet" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+
+    </style>
+</head>
+<body class="nodata ">
+<link rel="stylesheet"
+      href="https://csdnimg.cn/public/common/toolbar/content_toolbar_css/content_toolbar.css">
+<script id="toolbar-tpl-scriptId"
+        src="https://csdnimg.cn/public/common/toolbar/js/content_toolbar.js" type="text/javascript"
+        domain="https://blog.csdn.net/"></script>
+<script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+
+</script>
+<link rel="stylesheet"
+      href="https://csdnimg.cn/release/phoenix/template/new_css/blog_code-c3a0c33d5c.css">
+<link rel="stylesheet"
+      href="https://csdnimg.cn/release/phoenix/vendor/pagination/paging-e040f0c7c8.css">
+
+<script type="text/javascript">
+	var NEWS_FEED = function(){}
+
+</script>
+
+<link rel="stylesheet"
+      href="https://csdnimg.cn/release/phoenix/template/new_css/chart-3456820cac.css"/>
+<div class="main_father clearfix d-flex justify-content-center" style="height:100%;">
+    <div class="container clearfix" id="mainBox">
+        <aside class="blog_container_aside">
+            <!--主页引入-->
+
+            <div id="asideProfile" class="aside-box">
+                <div class="profile-intro d-flex">
+                    <div class="avatar-box d-flex justify-content-center flex-column">
+                        <a href="https://blog.csdn.net/ziyuanxiazai123"
+                           data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4121","dest":"https://blog.csdn.net/ziyuanxiazai123","ab":"new"}'>
+                            <img src="https://profile.csdnimg.cn/9/D/9/3_ziyuanxiazai123"
+                                 class="avatar_pic" username='ziyuanxiazai123'>
+                        </a>
+                    </div>
+                    <div class="user-info d-flex flex-column profile-intro-name-box">
+                        <div>
+                            <a href="https://blog.csdn.net/ziyuanxiazai123" class="" id="uid"
+                               title='The fool'
+                               data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4122","dest":"https://blog.csdn.net/ziyuanxiazai123","ab":"new"}'>
+                    <span class="name " username='ziyuanxiazai123'>
+                        The fool                    </span>
+                            </a>
+                            <span></span>
+                            <span class="flag expert-blog"><span
+                                    class="bubble">CSDN认证博客专家</span></span>
+                            <span class="flag company-blog"><span
+                                    class="bubble">CSDN认证企业博客</span></span>
+                        </div>
+
+                        <div class="profile-intro-name-boxFooter">
+                            <span class="personal-home-page">码龄11年</span>
+                            <span class="personal-home-page"><a class="personal-home-certification"
+                                                                href="https://me.csdn.net/ziyuanxiazai123?utm_source=14998968"
+                                                                target="_blank"><img
+                                    src="https://csdnimg.cn/identity/nocErtification.png" alt="">暂无认证</a></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-info d-flex item-tiling">
+                    <dl class="text-center" title="129">
+                        <dt><a href="https://blog.csdn.net/wangdingqiaoit"
+                               data-report-query="t=1"><span class="count">129</span></a></dt>
+                        <dd><a href="https://blog.csdn.net/wangdingqiaoit" data-report-query="t=1">原创</a>
+                        </dd>
+                    </dl>
+                    <dl class="text-center" id="fanBox" title="1149">
+                        <dt><span class="count" id="fan">1149</span></dt>
+                        <dd>粉丝</dd>
+                    </dl>
+                    <dl class="text-center" title="396">
+                        <dt><span class="count">396</span></dt>
+                        <dd>获赞</dd>
+                    </dl>
+                    <dl class="text-center" title="254">
+                        <dt><span class="count">254</span></dt>
+                        <dd>评论</dd>
+                    </dl>
+                    <dl class="text-center" style="min-width:58px" title="957164">
+                        <dt><span class="count">95万+</span></dt>
+                        <dd>访问</dd>
+                    </dl>
+                </div>
+                <div class="item-rank"></div>
+                <div class="data-info d-flex item-tiling">
+                    <dl class="text-center" title="9407">
+                        <dt><span class="count">9407</span></dt>
+                        <dd>积分</dd>
+                    </dl>
+                    <dl class="text-center" title="518">
+                        <dt><span class="count">518</span></dt>
+                        <dd>收藏</dd>
+                    </dl>
+                    <dl class="text-center" title="46994">
+                        <dt><span class="count">4万+</span></dt>
+                        <dd><a href="https://blog.csdn.net/rank/writing_rank"
+                               target="_blank">周排名</a></dd>
+                    </dl>
+                    <dl class="text-center" title="4363">
+                        <dt><span class="count">4363</span></dt>
+                        <dd><a href="https://blog.csdn.net/rank/writing_rank_total" target="_blank">总排名</a>
+                        </dd>
+                    </dl>
+                    <dl class="text-center" title="7级,点击查看等级说明">
+                        <dt>
+                            <a href="https://blog.csdn.net/blogdevteam/article/details/103478461#博客等级"
+                               target="_blank">
+                                <img class="level" src="https://csdnimg.cn/identity/blog7.png"/>
+                            </a>
+                        </dt>
+                        <dd>等级</dd>
+                    </dl>
+                </div>
+                <div class="aside-box-footer">
+                    <div class="badge-box d-flex">
+                        <div class="badge d-flex">
+                            <div class="icon-badge" title="专栏达人">
+                                <div class="mouse-box">
+                                    <img src="https://csdnimg.cn/medal/zhuanlandaren@240.png"
+                                         alt="">
+                                    <div class="icon-arrow"></div>
+                                </div>
+                                <div class="grade-detail-box">
+                                    <div class="pos-box">
+                                        <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                                            <img src="https://csdnimg.cn/medal/zhuanlandaren@240.png"
+                                                 alt="">
+                                        </div>
+                                        <div class="right-box">
+                                            <div class="title">专栏达人</div>
+                                            <div class="desc">
+                                                授予成功创建个人博客专栏的用户。专栏中添加五篇以上博文即可点亮！撰写博客专栏浓缩技术精华，专栏达人就是你！
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-badge" title="持之以恒">
+                                <div class="mouse-box">
+                                    <img src="https://csdnimg.cn/medal/chizhiyiheng@240.png" alt="">
+                                    <div class="icon-arrow"></div>
+                                </div>
+                                <div class="grade-detail-box">
+                                    <div class="pos-box">
+                                        <div class="left-box d-flex justify-content-center align-items-center flex-column">
+                                            <img src="https://csdnimg.cn/medal/chizhiyiheng@240.png"
+                                                 alt="">
+                                        </div>
+                                        <div class="right-box">
+                                            <div class="title">持之以恒</div>
+                                            <div class="desc">
+                                                授予每个自然月内发布4篇或4篇以上原创或翻译IT博文的用户。不积跬步无以至千里，不积小流无以成江海，程序人生的精彩需要坚持不懈地积累！
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                    (function($) {
+                        setTimeout(function() {
+                            $('div.icon-badge.show-moment').removeClass('show-moment');
+                        }, 5000);
+                    })(window.jQuery)
+
+                        </script>
+                    </div>
+
+                </div>
+                <div class="profile-intro-name-boxOpration">
+                    <div class='opt-letter-watch-box'>
+                        <a class="bt-button personal-letter"
+                           href="https://me.csdn.net/ziyuanxiazai123" target="_blank"
+                           rel="noopener">TA的主页</a>
+                    </div>
+                    <div class='opt-letter-watch-box'>
+                        <a class="bt-button personal-letter"
+                           href=https://im.csdn.net/im/main.html?userName=ziyuanxiazai123
+                           target="_blank" rel="noopener">私信</a>
+                    </div>
+                    <div class="opt-letter-watch-box">
+                        <a class="personal-watch bt-button" id="btnAttent">关注</a>
+                    </div>
+                </div>
+            </div>
+            <div id="asideSearchArticle" class="aside-box">
+                <div class="aside-content search-comter">
+                    <div class="aside-search aside-search-blog">
+                        <input type="text" class="input-serch-blog" name="" autocomplete="off"
+                               value="" id="search-blog-words" placeholder="搜博主文章">
+                        <a class="btn-search-blog">
+                            <img src="//csdnimg.cn/cdn/content-toolbar/csdn-sou.png?v=1587021042">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <script>
+    function watchBtnChange(flag, username) {
+        $('span.blog-expert-button-follow').each(function(index) {
+            if (flag) {
+                if ($(this).attr("data-name") == username) {
+                    $(this).html('<span class="hover-hide">已关注</span><span class="hover-show">取消</span>').removeClass('btn-red-follow').addClass('btn-gray-follow attented');
+                }
+            } else {
+                if ($(this).attr("data-name") == username) {
+                    $(this).html("关注").addClass('btn-red-follow').removeClass('btn-gray-follow attented');
+                }
+            }
+        })
+        if (username == $('p.csdn-tracking-statistics').attr("username")) {
+            if (flag) {
+                $('#btnAttent').addClass("attented").text("已关注").removeClass('btn-red-hollow').addClass('btn-gray-hollow');
+                changeFans(1)
+            } else {
+                $('#btnAttent').text("关注").addClass('btn-red-hollow').removeClass('btn-gray-hollow attented');
+                changeFans(-1)
+            }
+        }
+
+    }
+
+    function changeFans(num) {
+        if ($('#fan').text().indexOf('+') < 0) {
+            $('#fan').text(parseInt($('#fan').text()) + num);
+        } else {
+            $('#fanBox').attr('title', parseInt($('#fanBox').attr('title')) + num);
+        }
+    }
+    window.csdn = window.csdn ? window.csdn : {};
+    window.csdn.watchBtnChange = watchBtnChange;
+
+            </script>
+            <div id="asideNewArticle" class="aside-box">
+                <h3 class="aside-title">最新文章</h3>
+                <div class="aside-content">
+                    <ul class="inf_list clearfix">
+                        <li class="clearfix">
+                            <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/79145885","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/79145885"
+                               target="_blank">
+                                数据结构与算法(Python)——常见数据结构Part5(二叉搜索树BST和AVL) </a>
+                        </li>
+                        <li class="clearfix">
+                            <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/78862125","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/78862125"
+                               target="_blank">
+                                数据结构与算法(Python)——常见数据结构Part4(二叉树) </a>
+                        </li>
+                        <li class="clearfix">
+                            <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/78825627","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/78825627"
+                               target="_blank">
+                                数据结构与算法(Python)——常见数据结构Part3(队列和循环队列) </a>
+                        </li>
+                        <li class="clearfix">
+                            <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/78762010","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/78762010"
+                               target="_blank">
+                                数据结构与算法(Python)——常见数据结构Part2(栈和递归) </a>
+                        </li>
+                        <li class="clearfix">
+                            <a data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/78757533","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/78757533"
+                               target="_blank">
+                                数据结构与算法(Python)——常见数据结构Part1(数组和链表) </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="asideArchive" class="aside-box">
+                <h3 class="aside-title">归档</h3>
+                <div class="aside-content">
+                    <div class="archive-box">
+                        <div class="archive-title">2018</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2018/02"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2018/02"}'>
+                                    <span class="time">2月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2017</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2017/12"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2017/12"}'>
+                                    <span class="time">12月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2017/09"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2017/09"}'>
+                                    <span class="time">9月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2017/08"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2017/08"}'>
+                                    <span class="time">8月</span>
+                                    <span class="count">2篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2016</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/10"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/10"}'>
+                                    <span class="time">10月</span>
+                                    <span class="count">6篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/09"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/09"}'>
+                                    <span class="time">9月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/08"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/08"}'>
+                                    <span class="time">8月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/07"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/07"}'>
+                                    <span class="time">7月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/06"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/06"}'>
+                                    <span class="time">6月</span>
+                                    <span class="count">5篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2016/05"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2016/05"}'>
+                                    <span class="time">5月</span>
+                                    <span class="count">7篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2015</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2015/06"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2015/06"}'>
+                                    <span class="time">6月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2015/01"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2015/01"}'>
+                                    <span class="time">1月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2014</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/11"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/11"}'>
+                                    <span class="time">11月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/10"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/10"}'>
+                                    <span class="time">10月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/08"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/08"}'>
+                                    <span class="time">8月</span>
+                                    <span class="count">3篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/04"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/04"}'>
+                                    <span class="time">4月</span>
+                                    <span class="count">10篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/03"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/03"}'>
+                                    <span class="time">3月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2014/02"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2014/02"}'>
+                                    <span class="time">2月</span>
+                                    <span class="count">3篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2013</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2013/12"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2013/12"}'>
+                                    <span class="time">12月</span>
+                                    <span class="count">2篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2013/11"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2013/11"}'>
+                                    <span class="time">11月</span>
+                                    <span class="count">9篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2013/10"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2013/10"}'>
+                                    <span class="time">10月</span>
+                                    <span class="count">6篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2013/09"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2013/09"}'>
+                                    <span class="time">9月</span>
+                                    <span class="count">5篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2013/03"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2013/03"}'>
+                                    <span class="time">3月</span>
+                                    <span class="count">7篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2012</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/07"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/07"}'>
+                                    <span class="time">7月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/06"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/06"}'>
+                                    <span class="time">6月</span>
+                                    <span class="count">1篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/05"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/05"}'>
+                                    <span class="time">5月</span>
+                                    <span class="count">4篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/04"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/04"}'>
+                                    <span class="time">4月</span>
+                                    <span class="count">6篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/03"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/03"}'>
+                                    <span class="time">3月</span>
+                                    <span class="count">3篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/02"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/02"}'>
+                                    <span class="time">2月</span>
+                                    <span class="count">8篇</span>
+                                </a>
+                            </div>
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2012/01"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2012/01"}'>
+                                    <span class="time">1月</span>
+                                    <span class="count">12篇</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="archive-title">2011</div>
+                        <div class="archive-content">
+                            <div class="archive-item">
+                                <a href="https://blog.csdn.net/ziyuanxiazai123/article/month/2011/03"
+                                   target="_blank"
+                                   data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":"https://blog.csdn.net/ziyuanxiazai123/article/month/2011/03"}'>
+                                    <span class="time">3月</span>
+                                    <span class="count">5篇</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="asideCategory" class="aside-box flexible-box"
+                 style="">
+                <h3 class="aside-title">分类专栏</h3>
+                <div class="aside-content">
+                    <ul>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_9261428.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_9261428.html">
+                                <img src="https://img-blog.csdn.net/20151123175347458?imageView2/1/w/64/h/64/interlace/1"
+                                     alt=""
+                                     onerror="this.src='https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224'">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">数据库应用开发</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">6篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1067268.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1067268.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140213434.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span
+                                        class="text">Windows VC++程序设计</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">28篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1070068.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1070068.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">IBM汇编语言程序设计</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">1篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1070073.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1070073.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140213434.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">数据库编程</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">7篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1100292.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1100292.html">
+                                <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">Linux</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">2篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1129415.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1129415.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">C++</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">3篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1151000.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1151000.html">
+                                <img src="https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">php</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">2篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1636699.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1636699.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140158853.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">java基础</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">29篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1660073.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_1660073.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140145169.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">UML</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">1篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2107037.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_2107037.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140145169.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">OpenGL学习脚印</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">32篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377483.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_2377483.html">
+                                <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">web前端</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">5篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377491.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_2377491.html">
+                                <img src="https://img-blog.csdnimg.cn/20190918140158853.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">错误列表</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">6篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377499.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_2377499.html">
+                                <img src="https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">开发环境搭建和维护</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">4篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2724617.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_2724617.html">
+                                <img src="https://img-blog.csdnimg.cn/20190927151043371.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">python</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">6篇</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a class="clearfix"
+                               data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_7130340.html","ab":"new"}'
+                               href="https://blog.csdn.net/ziyuanxiazai123/category_7130340.html">
+                                <img src="https://img-blog.csdnimg.cn/2019092715111047.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                     alt="">
+                                <!--####是否付费-->
+                                <span class="title oneline"><span class="text">数据结构与算法</span>
+                                                    </span>
+                                <!--####是否付费-->
+                                <span class="count float-right">11篇</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <p class="text-center">
+                    <a class="flexible-btn" data-fbox="aside-archive"><img class="look-more"
+                                                                           src="https://csdnimg.cn/release/phoenix/template/new_img/arrowDownWhite.png"
+                                                                           alt=""></a>
+                </p>
+            </div>
+            <div id="asideHotArticle" class="aside-box">
+                <h3 class="aside-title">热门文章</h3>
+                <div class="aside-content">
+                    <ul class="hotArticle-list">
+                        <li>
+
+                            <a
+                                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51457675","ab":"new"}'
+                                    href="https://blog.csdn.net/ziyuanxiazai123/article/details/51457675">
+                                OpenGL学习脚印: 二维纹理映射(2D textures) <img
+                                    src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                                    alt=""><span class="read">44952</span>
+                            </a>
+                        </li>
+                        <li>
+
+                            <a
+                                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51589825","ab":"new"}'
+                                    href="https://blog.csdn.net/ziyuanxiazai123/article/details/51589825">
+                                OpenGL学习脚印: 投影矩阵和视口变换矩阵(math-projection and viewport matrix) <img
+                                    src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                                    alt=""><span class="read">35686</span>
+                            </a>
+                        </li>
+                        <li>
+
+                            <a
+                                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51879737","ab":"new"}'
+                                    href="https://blog.csdn.net/ziyuanxiazai123/article/details/51879737">
+                                OpenGL学习脚印:模型加载初步-加载obj模型(load obj model) <img
+                                    src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                                    alt=""><span class="read">35508</span>
+                            </a>
+                        </li>
+                        <li>
+
+                            <a
+                                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/23454769","ab":"new"}'
+                                    href="https://blog.csdn.net/ziyuanxiazai123/article/details/23454769">
+                                最速梯度下降法及matlab实践 <img
+                                    src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                                    alt=""><span class="read">35349</span>
+                            </a>
+                        </li>
+                        <li>
+
+                            <a
+                                    data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/8630900","ab":"new"}'
+                                    href="https://blog.csdn.net/ziyuanxiazai123/article/details/8630900">
+                                c++ 学习错误列表 <img
+                                    src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                                    alt=""><span class="read">34192</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="asideNewComments" class="aside-box">
+                <h3 class="aside-title">最新评论</h3>
+                <div class="aside-content">
+                    <ul class="newcomment-list">
+                        <li>
+                            <a class="title text-truncate"
+                               data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51308622#comments_13074998","ab":"new"}'
+                               target="_blank"
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/51308622#comments_13074998">OpenGL学习脚印:
+                                环境搭建</a>
+                            <p class="comment ellipsis">
+                                <a href="https://my.csdn.net/summer_dew" class="user-name"
+                                   target="_blank">GeoDoer</a>
+                                <span class="reply">回复</span>
+                                m0_46527523：你需要把dll拷贝到程序生成的exe所在目录 </p>
+                        </li>
+                        <li>
+                            <a class="title text-truncate"
+                               data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51879737#comments_13067910","ab":"new"}'
+                               target="_blank"
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/51879737#comments_13067910">OpenGL学习脚印:模型加载初步...</a>
+                            <p class="comment ellipsis">
+                                <a href="https://my.csdn.net/weixin_43229922" class="user-name"
+                                   target="_blank">weixin_43229922</a>
+                                ：
+                                楼主，一个qopenglwidget
+                                需要加载两个obj格式的文件，请问怎么做？如何做到两个可以独立运动？目前我用了两个顶点、片段着色器程序，但程序中gl_Position和gl_FragColor相互影响
+                            </p>
+                        </li>
+                        <li>
+                            <a class="title text-truncate"
+                               data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51586007#comments_13033570","ab":"new"}'
+                               target="_blank"
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/51586007#comments_13033570">OpenGL学习脚印:
+                                欧拉角实现...</a>
+                            <p class="comment ellipsis">
+                                <a href="https://my.csdn.net/leave_one_blood" class="user-name"
+                                   target="_blank">Leave_One_Blood</a>
+                                ：
+                                楼主很强 </p>
+                        </li>
+                        <li>
+                            <a class="title text-truncate"
+                               data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51457675#comments_13018404","ab":"new"}'
+                               target="_blank"
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/51457675#comments_13018404">OpenGL学习脚印:
+                                二维纹理映...</a>
+                            <p class="comment ellipsis">
+                                <a href="https://my.csdn.net/zzlBoom" class="user-name"
+                                   target="_blank">zzlBoom</a>
+                                ：
+                                请问博主，为什么我纹理图弄完之后，代码也对的，但是出来的3D图像是灰色的，您知道这是什么原因么？ </p>
+                        </li>
+                        <li>
+                            <a class="title text-truncate"
+                               data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/ziyuanxiazai123/article/details/51594408#comments_12519404","ab":"new"}'
+                               target="_blank"
+                               href="https://blog.csdn.net/ziyuanxiazai123/article/details/51594408#comments_12519404">OpenGL学习脚印:
+                                坐标变换过...</a>
+                            <p class="comment ellipsis">
+                                <a href="https://my.csdn.net/Const_Gong" class="user-name"
+                                   target="_blank">箭已离弓</a>
+                                ：
+                                写的很好，解释了我心中疑惑，非常感谢 </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="footerRightAds">
+                <div class="aside-box">
+                    <div id="kp_box_57" data-pid="57">
+                        <script async
+                                src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+                        <div id="gpt-passback-1">
+                            <script>
+    window.googletag = window.googletag || {cmd: []};
+    googletag.cmd.push(function() {
+    googletag.defineSlot('/162717810/CN-csdn.net/300x600-3', [300, 600], 'gpt-passback-1').addService(googletag.pubads());
+    googletag.enableServices();
+    googletag.display('gpt-passback-1');
+    });
+
+                            </script>
+                        </div>
+                        <img class="pre-img-lasy"
+                             data-src="https://kunyu.csdn.net/1.png?p=57&a=2234&c=0&k=&d=1&t=3&u=87a07e29751b47ff9e11f435e6653052">
+                    </div>
+                </div>
+            </div>
+            <!-- 详情页显示目录 -->
+            <!--文章目录-->
+            <div id="asidedirectory" class="aside-box">
+                <div class='groupfile' id="directory">
+                    <h3 class="aside-title">目录</h3>
+                    <div class="align-items-stretch group_item">
+                        <div class="pos-box">
+                            <div class="scroll-box">
+                                <div class="toc-box"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div id="asideFooter">
+            <div class="aside-box">
+                <div class="persion_article">
+                </div>
+            </div>
+        </div> -->
+        </aside>
+        <script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).parents("p.text-center").remove();
+	})
+
+        </script>
+        <script type="text/javascript"
+                src="https://g.csdnimg.cn/user-tooltip/2.1/user-tooltip.js"></script>
+        <main>
+            <script type="text/javascript">
+    var blogSensitiveWords = "";
+
+            </script>
+            <div class="blog-content-box">
+                <div class="article-header-box">
+                    <div class="article-header">
+                        <div class="article-title-box">
+                            <h1 class="title-article" id="articleContentId">
+                                OpenGL学习脚印:模型加载初步-加载obj模型(load obj model)</h1>
+                        </div>
+                        <div class="article-info-box">
+                            <div class="article-bar-top">
+                                <!--文章类型-->
+                                <!--原创-->
+                                <img class="article-type-img"
+                                     src="https://csdnimg.cn/release/phoenix/template/new_img/original.png"
+                                     alt="">
+                                <!--翻译-->
+                                <!--转载-->
+                                <div class="bar-content">
+                                    <a class="follow-nickName"
+                                       href="https://me.csdn.net/ziyuanxiazai123" target="_blank"
+                                       rel="noopener">The fool</a>
+                                    <span class="time">2016-07-12 00:12:06</span>
+                                    <img class="article-read-img article-heard-img"
+                                         src="https://csdnimg.cn/release/phoenix/template/new_img/articleReadEyes.png"
+                                         alt="">
+                                    <span class="read-count">35524</span>
+                                    <a id='blog_detail_zk_collection' class="un-collection"
+                                       data-report-click='{"mod":"popu_823","spm":"1001.2101.3001.4232","ab":"new"}'>
+                                        <img class="article-collect-img article-heard-img un-collect-status"
+                                             style="display:inline-block"
+                                             src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollect.png"
+                                             alt="">
+                                        <img class="article-collect-img article-heard-img collect-status"
+                                             style="display:none"
+                                             src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollectionActive.png"
+                                             alt="">
+                                        <span class="name">收藏</span>
+                                        <span class="get-collection">
+                                                25                                                </span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="blog-tags-box">
+                                <div class="tags-box artic-tag-box">
+                                    <span class="label">分类专栏：</span>
+                                    <a class="tag-link" target="_blank" rel="noopener"
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2107037.html">
+                                        OpenGL学习脚印 </a>
+
+                                </div>
+                            </div>
+                            <div class="up-time"><span>最后发布：2016-07-12 00:12:06</span><span>首次发布：2016-07-12 00:12:06</span>
+                            </div>
+                            <div class="slide-content-box">
+                                <div class="all-tags-box">
+                                </div>
+                                <div class="article-copyright">
+                                    <div class="creativecommons">
+                                        <a rel="license"
+                                           href="http://creativecommons.org/licenses/by-sa/4.0/"></a>
+                                    </div>
+                                    <div class="creativecommons">
+                                        版权声明：本文为博主原创文章，遵循<a
+                                            href="http://creativecommons.org/licenses/by-sa/4.0/"
+                                            target="_blank" rel="noopener"> CC 4.0 BY-SA </a>版权协议，转载请附上原文出处链接和本声明。
+                                    </div>
+                                    <div class="article-source-link">
+                                        本文链接：<a
+                                            href="https://blog.csdn.net/ziyuanxiazai123/article/details/51879737">https://blog.csdn.net/ziyuanxiazai123/article/details/51879737</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="operating">
+                                <a class="href-article-edit slide-toggle">版权</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--python安装手册结束-->
+                <article class="baidu_pl">
+                    <div id="article_content" class="article_content clearfix">
+                        <link rel="stylesheet"
+                              href="https://csdnimg.cn/release/phoenix/template/css/ck_htmledit_views-963e387caa.css"/>
+                        <div id="content_views" class="markdown_views prism-atom-one-dark">
+                            <!-- flowchart 箭头图标 勿删 -->
+                            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                <path stroke-linecap="round" d="M5,0 0,2.5 5,5z"
+                                      id="raphael-marker-block"
+                                      style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                            </svg>
+                            <p>写在前面 <br>
+                                前面介绍了<a href="http://blog.csdn.net/wangdingqiaoit/article/details/51638260"
+                                        target="_blank">光照基础内容</a>，以及<a
+                                        href="http://blog.csdn.net/wangdingqiaoit/article/details/51817860"
+                                        target="_blank">材质和lighting maps</a>，和<a
+                                        href="http://blog.csdn.net/wangdingqiaoit/article/details/51867538"
+                                        target="_blank">光源类型</a>，我们对使用光照增强场景真实感有了一定了解。但是到目前为止，我们通过在程序中指定的立方体数据，绘制立方体，看起来还是很乏味。本节开始介绍模型加载，通过加载丰富的模型，能够丰富我们的场景，变得好玩。本节的示例代码均可以在<a
+                                        href="https://github.com/wangdingqiao/noteForOpenGL/tree/master/modelLoading"
+                                        target="_blank">我的github下载</a>。</p>
+
+                            <p>加载模型可以使用比较好的库，例如<a href="https://github.com/syoyo/tinyobjloader"
+                                                  target="_blank">obj模型加载的库</a>，<a
+                                    href="http://assimp.sourceforge.net/lib_html/index.html"
+                                    rel="nofollow" target="_blank">Assimp加载库</a>。本节作为入门篇，我们一开始不使用这些库加载很酷的模型，而是熟悉下模型以及模型加载的概念，然后我们封装一个简单的obj模型加载类，加载一个简单的立方体模型。
+                            </p>
+
+                            <p><strong>不要太急于看到漂亮的3D模型，下一节我们会使用Assimp库会加载一个酷炫的3d模型，但是本节还是注重多感受下模型加载的基础，否则下一节学习起来会吃力。</strong>
+                            </p>
+
+                            <p>通过本节可以了解到</p>
+
+                            <ul>
+                                <li>Mesh的概念</li>
+                                <li>Obj模型数据格式</li>
+                                <li>Obj模型简单的加载类和加载实验</li>
+                            </ul>
+
+
+                            <h2 id="模型的表达">模型的表达</h2>
+
+                            <p>
+                                在3d图形处理中，一个模型(model)通常由一个或者多个Mesh（网格）组成，一个Mesh是可绘制的独立实体。例如复杂的人物模型，可以分别划分为头部，四肢，服饰，武器等各个部分来建模，这些Mesh组合在一起最终形成人物模型。</p>
+
+                            <p>
+                                Mesh由顶点、边、面Faces组成的，它包含绘制所需的数据，例如顶点位置、纹理坐标、法向量，材质属性等内容，它是OpenGL用来绘制的最小实体。Mesh的概念示意如下图所示(来自:<a
+                                    href="https://www.quora.com/What-is-a-mesh-in-OpenGL"
+                                    rel="nofollow" target="_blank">What is a mesh in OpenGL?</a>)：
+                            </p>
+
+                            <p><img src="https://img-blog.csdn.net/20160711230322418" alt="Mesh"
+                                    title=""></p>
+
+                            <p>
+                                Mesh可以包含多个Face，一个Face是Mesh中一个可绘制的基本图元，例如三角形，多边形，点。要想模型更加逼真，一般需要增加更多图元使Mesh更加精细，当然这也会受到硬件处理能力的限制，例如PC游戏的处理能力要强于移动设备。由于多边形都可以划分为三角形，而三角形是图形处理器中都支持的基本图元，因此使用得较多的就是三角形网格来建模。例如下面的图(来自:<a
+                                    href="https://www.quora.com/What-is-a-mesh-in-OpenGL"
+                                    rel="nofollow" target="_blank">What is a mesh in OpenGL?</a>)表达了使用越来越复杂的Mesh建模一只兔子的过程：
+                            </p>
+
+                            <p><img src="https://img-blog.csdn.net/20160711230453733" alt="Mesh2"
+                                    title=""></p>
+
+                            <p>随着增加三角形个数，兔子模型变得越来越真实。</p>
+
+                            <p>目前模型存储的格式很丰富，比较常用的，例如<a
+                                    href="https://en.wikipedia.org/wiki/Wavefront_.obj_file"
+                                    rel="nofollow" target="_blank">Wavefront .obj file</a>，<a
+                                    href="https://en.wikipedia.org/wiki/COLLADA" rel="nofollow"
+                                    target="_blank">COLLADA</a>等，要了解各个格式的特点，可以参考<a
+                                    href="https://en.wikipedia.org/wiki/Category:3D_graphics_file_formats"
+                                    rel="nofollow" target="_blank">wiki 3D graphics file formats</a>。在众多的格式中以obj格式比较通用，它内部是以文本形式表达的，接下来我们通过熟悉下obj格式，了解模型是如何定义的，以及如何加载到OpenGL中来渲染模型。
+                            </p>
+
+
+                            <h1 id="obj模型数据格式">Obj模型数据格式</h1>
+
+                            <p>obj模型内部以文本存储，例如从<a
+                                    href="http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/"
+                                    rel="nofollow" target="_blank">Model loading</a>处获取的一个立方体模型cube.obj的数据如下：
+                            </p>
+
+
+                            <pre class="prettyprint"><code class=" hljs vala"><span
+                                    class="hljs-preprocessor"># Blender3D v249 OBJ File: untitled.blend</span>
+<span class="hljs-preprocessor"># www.blender3d.org</span>
+mtllib cube.mtl
+v <span class="hljs-number">1.000000</span> -<span class="hljs-number">1.000000</span> -<span
+                                        class="hljs-number">1.000000</span>
+v <span class="hljs-number">1.000000</span> -<span class="hljs-number">1.000000</span> <span
+                                        class="hljs-number">1.000000</span>
+v -<span class="hljs-number">1.000000</span> -<span class="hljs-number">1.000000</span> <span
+                                        class="hljs-number">1.000000</span>
+v -<span class="hljs-number">1.000000</span> -<span class="hljs-number">1.000000</span> -<span
+                                        class="hljs-number">1.000000</span>
+v <span class="hljs-number">1.000000</span> <span class="hljs-number">1.000000</span> -<span
+                                        class="hljs-number">1.000000</span>
+v <span class="hljs-number">0.999999</span> <span class="hljs-number">1.000000</span> <span
+                                        class="hljs-number">1.000001</span>
+v -<span class="hljs-number">1.000000</span> <span class="hljs-number">1.000000</span> <span
+                                        class="hljs-number">1.000000</span>
+v -<span class="hljs-number">1.000000</span> <span class="hljs-number">1.000000</span> -<span
+                                        class="hljs-number">1.000000</span>
+vt <span class="hljs-number">0.748573</span> <span class="hljs-number">0.750412</span>
+vt <span class="hljs-number">0.749279</span> <span class="hljs-number">0.501284</span>
+vt <span class="hljs-number">0.999110</span> <span class="hljs-number">0.501077</span>
+vt <span class="hljs-number">0.999455</span> <span class="hljs-number">0.750380</span>
+vt <span class="hljs-number">0.250471</span> <span class="hljs-number">0.500702</span>
+vt <span class="hljs-number">0.249682</span> <span class="hljs-number">0.749677</span>
+vt <span class="hljs-number">0.001085</span> <span class="hljs-number">0.750380</span>
+vt <span class="hljs-number">0.001517</span> <span class="hljs-number">0.499994</span>
+vt <span class="hljs-number">0.499422</span> <span class="hljs-number">0.500239</span>
+vt <span class="hljs-number">0.500149</span> <span class="hljs-number">0.750166</span>
+vt <span class="hljs-number">0.748355</span> <span class="hljs-number">0.998230</span>
+vt <span class="hljs-number">0.500193</span> <span class="hljs-number">0.998728</span>
+vt <span class="hljs-number">0.498993</span> <span class="hljs-number">0.250415</span>
+vt <span class="hljs-number">0.748953</span> <span class="hljs-number">0.250920</span>
+vn <span class="hljs-number">0.000000</span> <span class="hljs-number">0.000000</span> -<span
+                                        class="hljs-number">1.000000</span>
+vn -<span class="hljs-number">1.000000</span> -<span class="hljs-number">0.000000</span> -<span
+                                        class="hljs-number">0.000000</span>
+vn -<span class="hljs-number">0.000000</span> -<span class="hljs-number">0.000000</span> <span
+                                        class="hljs-number">1.000000</span>
+vn -<span class="hljs-number">0.000001</span> <span class="hljs-number">0.000000</span> <span
+                                        class="hljs-number">1.000000</span>
+vn <span class="hljs-number">1.000000</span> -<span class="hljs-number">0.000000</span> <span
+                                        class="hljs-number">0.000000</span>
+vn <span class="hljs-number">1.000000</span> <span class="hljs-number">0.000000</span> <span
+                                        class="hljs-number">0.000001</span>
+vn <span class="hljs-number">0.000000</span> <span class="hljs-number">1.000000</span> -<span
+                                        class="hljs-number">0.000000</span>
+vn -<span class="hljs-number">0.000000</span> -<span class="hljs-number">1.000000</span> <span
+                                        class="hljs-number">0.000000</span>
+usemtl Material_ray.png
+s off
+f <span class="hljs-number">5</span>/<span class="hljs-number">1</span>/<span
+                                        class="hljs-number">1</span> <span
+                                        class="hljs-number">1</span>/<span
+                                        class="hljs-number">2</span>/<span
+                                        class="hljs-number">1</span> <span
+                                        class="hljs-number">4</span>/<span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">1</span>
+f <span class="hljs-number">5</span>/<span class="hljs-number">1</span>/<span
+                                        class="hljs-number">1</span> <span
+                                        class="hljs-number">4</span>/<span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">1</span> <span
+                                        class="hljs-number">8</span>/<span
+                                        class="hljs-number">4</span>/<span
+                                        class="hljs-number">1</span>
+f <span class="hljs-number">3</span>/<span class="hljs-number">5</span>/<span
+                                        class="hljs-number">2</span> <span
+                                        class="hljs-number">7</span>/<span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">2</span> <span
+                                        class="hljs-number">8</span>/<span
+                                        class="hljs-number">7</span>/<span
+                                        class="hljs-number">2</span>
+f <span class="hljs-number">3</span>/<span class="hljs-number">5</span>/<span
+                                        class="hljs-number">2</span> <span
+                                        class="hljs-number">8</span>/<span
+                                        class="hljs-number">7</span>/<span
+                                        class="hljs-number">2</span> <span
+                                        class="hljs-number">4</span>/<span
+                                        class="hljs-number">8</span>/<span
+                                        class="hljs-number">2</span>
+f <span class="hljs-number">2</span>/<span class="hljs-number">9</span>/<span
+                                        class="hljs-number">3</span> <span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">10</span>/<span
+                                        class="hljs-number">3</span> <span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">5</span>/<span
+                                        class="hljs-number">3</span>
+f <span class="hljs-number">6</span>/<span class="hljs-number">10</span>/<span
+                                        class="hljs-number">4</span> <span
+                                        class="hljs-number">7</span>/<span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">4</span> <span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">5</span>/<span
+                                        class="hljs-number">4</span>
+f <span class="hljs-number">1</span>/<span class="hljs-number">2</span>/<span
+                                        class="hljs-number">5</span> <span
+                                        class="hljs-number">5</span>/<span
+                                        class="hljs-number">1</span>/<span
+                                        class="hljs-number">5</span> <span
+                                        class="hljs-number">2</span>/<span
+                                        class="hljs-number">9</span>/<span
+                                        class="hljs-number">5</span>
+f <span class="hljs-number">5</span>/<span class="hljs-number">1</span>/<span
+                                        class="hljs-number">6</span> <span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">10</span>/<span
+                                        class="hljs-number">6</span> <span
+                                        class="hljs-number">2</span>/<span
+                                        class="hljs-number">9</span>/<span
+                                        class="hljs-number">6</span>
+f <span class="hljs-number">5</span>/<span class="hljs-number">1</span>/<span
+                                        class="hljs-number">7</span> <span
+                                        class="hljs-number">8</span>/<span
+                                        class="hljs-number">11</span>/<span
+                                        class="hljs-number">7</span> <span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">10</span>/<span
+                                        class="hljs-number">7</span>
+f <span class="hljs-number">8</span>/<span class="hljs-number">11</span>/<span
+                                        class="hljs-number">7</span> <span
+                                        class="hljs-number">7</span>/<span
+                                        class="hljs-number">12</span>/<span
+                                        class="hljs-number">7</span> <span
+                                        class="hljs-number">6</span>/<span
+                                        class="hljs-number">10</span>/<span
+                                        class="hljs-number">7</span>
+f <span class="hljs-number">1</span>/<span class="hljs-number">2</span>/<span
+                                        class="hljs-number">8</span> <span
+                                        class="hljs-number">2</span>/<span
+                                        class="hljs-number">9</span>/<span
+                                        class="hljs-number">8</span> <span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">13</span>/<span
+                                        class="hljs-number">8</span>
+f <span class="hljs-number">1</span>/<span class="hljs-number">2</span>/<span
+                                        class="hljs-number">8</span> <span
+                                        class="hljs-number">3</span>/<span
+                                        class="hljs-number">13</span>/<span
+                                        class="hljs-number">8</span> <span
+                                        class="hljs-number">4</span>/<span
+                                        class="hljs-number">14</span>/<span
+                                        class="hljs-number">8</span>
+</code></pre>
+
+                            <p>对这个文本格式做一个简要说明：</p>
+
+                            <ul>
+                                <li>以#开始的行为注释行</li>
+                                <li>usemtl和mtllib表示的材质相关数据，解析材质数据稍微繁琐，本节我们只是为了说明加载模型的原理，不做讨论。</li>
+                                <li>o 引入一个新的object</li>
+                                <li>v 表示顶点位置</li>
+                                <li>vt 表示顶点纹理坐标</li>
+                                <li>vn 表示顶点法向量</li>
+                                <li>f 表示一个面，面使用1/2/8这样格式，表示顶点位置/纹理坐标/法向量的索引，这里索引的是前面用v,vt,vn定义的数据
+                                    注意这里Obj的索引是从1开始的，而不是0
+                                </li>
+                            </ul>
+
+                            <p>模型一般通过3d建模软件，例如<a href="http://www.blender.org/" rel="nofollow"
+                                                 target="_blank">Blender</a>, <a
+                                    href="http://www.autodesk.nl/products/3ds-max/overview"
+                                    rel="nofollow" target="_blank">3DS Max</a> 或者 <a
+                                    href="http://www.autodesk.com/products/autodesk-maya/overview"
+                                    rel="nofollow"
+                                    target="_blank">Maya</a>等工具建模，导出时的数据格式变化较大，<strong>我们导入模型到OpenGL的任务就是</strong>：将一种模型数据文件表示的模型，转换为OpenGL可以利用的数据。例如上面的Obj文件中，我们需要解析顶点位置，纹理坐标等数据，构成OpenGL可以渲染的Mesh对象。
+                            </p>
+
+
+                            <h1 id="从obj到opengl可以理解的mesh">从Obj到OpenGL可以理解的Mesh</h1>
+
+                            <p>上面说明了Obj的数据格式，那么在OpenGL中我们怎么表达Mesh呢？首先定义顶点属性数据如下所示：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs glsl"> <span
+                                    class="hljs-comment">// 表示一个顶点属性</span>
+<span class="hljs-keyword">struct</span> Vertex
+{
+    glm::<span class="hljs-keyword">vec3</span> position;  <span class="hljs-comment">// 顶点位置</span>
+    glm::<span class="hljs-keyword">vec2</span> texCoords; <span class="hljs-comment">// 纹理坐标</span>
+    glm::<span class="hljs-keyword">vec3</span> normal;  <span class="hljs-comment">// 法向量</span>
+};</code></pre>
+
+                            <p>Mesh中包含顶点属性，纹理对象等信息，本节我们定义Mesh数据结构如下所示：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs cpp">
+<span class="hljs-comment">// 表示一个OpenGL渲染的最小实体</span>
+<span class="hljs-keyword">class</span> Mesh
+{
+<span class="hljs-keyword">public</span>:
+    <span class="hljs-keyword">void</span> draw(Shader&amp; shader) <span class="hljs-comment">// 绘制Mesh</span>
+    Mesh(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span
+                                    class="hljs-stl_container"><span
+                                    class="hljs-built_in">vector</span>&lt;Vertex&gt;</span>&amp; vertData,
+        GLint textureId) <span class="hljs-comment">// 构造一个Mesh</span>
+<span class="hljs-keyword">private</span>:
+    <span class="hljs-built_in">std</span>::<span class="hljs-stl_container"><span
+                                    class="hljs-built_in">vector</span>&lt;Vertex&gt;</span> vertData;<span
+                                    class="hljs-comment">// 顶点数据</span>
+    GLuint VAOId, VBOId; <span class="hljs-comment">// 缓存对象</span>
+    GLint textureId; <span class="hljs-comment">// 纹理对象id</span>
+    <span class="hljs-keyword">void</span> setupMesh();  <span
+                                    class="hljs-comment">// 建立VAO,VBO等缓冲区</span>
+};</code></pre>
+
+                            <p>
+                                载入obj模型的过程，就是读取obj文件，并转换为上面Mesh对象的过程。这个过程的思路大致是这样的，读取文件的每一行，根据行首部的指示，确定数据类型，然后加载到mesh的vertData里面去，这个框架是这样：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs mel">std::ifstream <span
+                                    class="hljs-keyword">file</span>(objFilePath);
+<span class="hljs-keyword">while</span> (getline(<span class="hljs-keyword">file</span>, line))
+{
+    <span class="hljs-keyword">if</span> (line.substr(<span class="hljs-number">0</span>, <span
+                                        class="hljs-number">2</span>) == <span class="hljs-string">"vt"</span>) <span
+                                        class="hljs-comment">// 顶点纹理坐标数据</span>
+    {
+        <span class="hljs-comment">// 解析顶点纹理数据</span>
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (line.substr(<span
+                                        class="hljs-number">0</span>, <span
+                                        class="hljs-number">2</span>) == <span class="hljs-string">"vn"</span>) <span
+                                        class="hljs-comment">// 顶点法向量数据</span>
+    {
+        <span class="hljs-comment">// 解析法向量数据</span>
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (line.substr(<span
+                                        class="hljs-number">0</span>, <span
+                                        class="hljs-number">1</span>) == <span class="hljs-string">"v"</span>) <span
+                                        class="hljs-comment">// 顶点位置数据</span>
+    {
+        <span class="hljs-comment">// 解析顶点位置数据</span>
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (line.substr(<span
+                                        class="hljs-number">0</span>, <span
+                                        class="hljs-number">1</span>) == <span class="hljs-string">"f"</span>) <span
+                                        class="hljs-comment">// 面数据</span>
+    {
+        <span class="hljs-comment">// 解析面数据</span>
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (line[<span
+                                        class="hljs-number">0</span>] == <span class="hljs-string">'#'</span>) <span
+                                        class="hljs-comment">// 注释忽略</span>
+    { }
+    <span class="hljs-keyword">else</span>  
+    {
+        <span class="hljs-comment">// 其余内容 暂时不处理</span>
+    }
+}</code></pre>
+
+                            <p>上面提供了一个读取obj文件格式的框架，例如解析纹理坐标数据如下：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs avrasm">if (line<span
+                                    class="hljs-preprocessor">.substr</span>(<span
+                                    class="hljs-number">0</span>, <span class="hljs-number">2</span>) == <span
+                                    class="hljs-string">"vt"</span>) // 顶点纹理坐标数据
+{
+    <span class="hljs-keyword">std</span>::istringstream s(line<span class="hljs-preprocessor">.substr</span>(<span
+                                        class="hljs-number">2</span>))<span
+                                        class="hljs-comment">;</span>
+    glm::vec2 v<span class="hljs-comment">;</span>
+    s &gt;&gt; v<span class="hljs-preprocessor">.x</span><span class="hljs-comment">; </span>
+    s &gt;&gt; v<span class="hljs-preprocessor">.y</span><span class="hljs-comment">;</span>
+    v<span class="hljs-preprocessor">.y</span> = -v<span class="hljs-preprocessor">.y</span><span
+                                        class="hljs-comment">;  // 注意这里加载的dds纹理 要对y进行反转</span>
+    temp_textCoords<span class="hljs-preprocessor">.push</span>_back(v)<span
+                                        class="hljs-comment">;</span>
+}</code></pre>
+
+                            <p>其余的也类似处理。读取到数据后，在Mesh对象里面需要向前面绘制物体时一样建立缓冲数据，如下：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs scss">void <span
+                                    class="hljs-function">setupMesh()</span>  <span
+                                    class="hljs-comment">// 建立VAO,VBO等缓冲区</span>
+{
+    <span class="hljs-function">glGenVertexArrays(<span class="hljs-number">1</span>, &amp;this-&gt;VAOId)</span>;
+    <span class="hljs-function">glGenBuffers(<span class="hljs-number">1</span>, &amp;this-&gt;VBOId)</span>;
+
+    <span class="hljs-function">glBindVertexArray(this-&gt;VAOId)</span>;
+    <span class="hljs-function">glBindBuffer(GL_ARRAY_BUFFER, this-&gt;VBOId)</span>;
+    <span class="hljs-function">glBufferData(GL_ARRAY_BUFFER, <span class="hljs-function">sizeof(Vertex)</span>* this-&gt;vertData.<span
+            class="hljs-function">size()</span>,
+        &amp;this-&gt;vertData[<span class="hljs-number">0</span>], GL_STATIC_DRAW)</span>;
+    <span class="hljs-comment">// 顶点位置属性</span>
+    <span class="hljs-function">glVertexAttribPointer(<span class="hljs-number">0</span>, <span
+            class="hljs-number">3</span>, GL_FLOAT, GL_FALSE,
+        <span class="hljs-function">sizeof(Vertex)</span>, (GLvoid*)</span>0);
+    <span class="hljs-function">glEnableVertexAttribArray(<span class="hljs-number">0</span>)</span>;
+    <span class="hljs-comment">// 顶点纹理坐标</span>
+    <span class="hljs-function">glVertexAttribPointer(<span class="hljs-number">1</span>, <span
+            class="hljs-number">2</span>, GL_FLOAT, GL_FALSE,
+        <span class="hljs-function">sizeof(Vertex)</span>, (GLvoid*)</span>(3 * <span
+                                        class="hljs-function">sizeof(GL_FLOAT)</span>));
+    <span class="hljs-function">glEnableVertexAttribArray(<span class="hljs-number">1</span>)</span>;
+    <span class="hljs-comment">// 顶点法向量属性</span>
+    <span class="hljs-function">glVertexAttribPointer(<span class="hljs-number">2</span>, <span
+            class="hljs-number">3</span>, GL_FLOAT, GL_FALSE,
+        <span class="hljs-function">sizeof(Vertex)</span>, (GLvoid*)</span>(5 * <span
+                                        class="hljs-function">sizeof(GL_FLOAT)</span>));
+    <span class="hljs-function">glEnableVertexAttribArray(<span class="hljs-number">2</span>)</span>;
+    <span class="hljs-function">glBindBuffer(GL_ARRAY_BUFFER, <span
+            class="hljs-number">0</span>)</span>;
+    <span class="hljs-function">glBindVertexArray(<span class="hljs-number">0</span>)</span>;
+}</code></pre>
+
+                            <p>建立缓冲区的同时，本节我们使用的立方体模型cube.dds纹理如下图所示： <br>
+                                <img src="https://img-blog.csdn.net/20160711234637189" alt="dds"
+                                     title=""></p>
+
+                            <p>这与以前使用的png纹理不一样，这里我用C++重新改编了<a
+                                    href="http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/"
+                                    rel="nofollow" target="_blank">Model loading</a>处的加载dds纹理的函数，加载纹理不是本节的重点，具体可以查看<a
+                                    href="https://github.com/wangdingqiao/noteForOpenGL/blob/master/modelLoading/simpleObjLoader/texture.h"
+                                    target="_blank">github代码</a>。加载纹理后，可以渲染这个obj表达的立方体模型，整个过程如下：</p>
+
+
+                            <pre class="prettyprint"><code class="language-C++ hljs cpp"><span
+                                    class="hljs-comment">//Section1 从obj文件加载数据</span>
+<span class="hljs-built_in">std</span>::<span class="hljs-stl_container"><span
+                                        class="hljs-built_in">vector</span>&lt;Vertex&gt;</span> vertData;
+ObjLoader::loadFromFile(<span class="hljs-string">"cube.obj"</span>, vertData)
+
+<span class="hljs-comment">// Section2 准备纹理</span>
+GLint textureId = TextureHelper::loadDDS(<span class="hljs-string">"cube.dds"</span>);
+
+<span class="hljs-comment">// Section3 建立Mesh对象</span>
+Mesh mesh(vertData, textureId);
+
+<span class="hljs-comment">// Section4 准备着色器程序</span>
+Shader shader(<span class="hljs-string">"cube.vertex"</span>, <span
+                                        class="hljs-string">"cube.frag"</span>);
+
+<span class="hljs-comment">// 在游戏主循环中渲染立方体</span></code></pre>
+
+                            <p>这里我们可以看到，与以往在程序中通过数值指定立方体模型相比，我们的代码更简洁，后面介绍使用<a
+                                    href="http://assimp.sourceforge.net/lib_html/index.html"
+                                    rel="nofollow" target="_blank">Assimp加载库</a>后，可以加载更多丰富的模型，当然要比这个立方体好看。但是本节还是看一下最终立方体的效果吧，如下：
+                                <br>
+                                <img src="https://img-blog.csdn.net/20160711235223593" alt="obj加载"
+                                     title=""></p>
+
+
+                            <h1 id="最后的说明">最后的说明</h1>
+
+                            <p>在使用dds纹理的时候，要注意纹理的y轴相对于OpenGL是进行反转的，因此需要使用( coord.u, 1.0-coord.v)
+                                来访问，这可以在加载obj时做，也可以在着色器里面做。没有使用反转的v坐标将导致，无法正常渲染，这也是困住我的一个地方。后来使用数据比对格式发现了这个错误，如下图，左边是反转了的数据，右边是未反转的数据：</p>
+
+                            <p><img src="https://img-blog.csdn.net/20160711235814428" alt="v导致的错误"
+                                    title=""></p>
+
+                            <p>在使用<a href="https://www.blender.org/" rel="nofollow">blender</a>软件导出模型时，即使勾选了includ
+                                UVs，输出时仍然没有纹理坐标，这是因为除了勾选这些选项外，还需要一个uv map操作，关于这一点也是容易产生错误的，详细可以参考<a
+                                        href="http://blender.stackexchange.com/questions/18422/add-uv-mapped-texture-coordinates-to-obj-file"
+                                        rel="nofollow">Add UV Mapped texture coordinates to OBJ
+                                    file?</a>。uv mappring这个操作的过程比较繁琐，就不再这里介绍了，感兴趣地可以参考<a
+                                        href="https://www.blender.org/manual/editors/uv_image/uv_editing/unwrapping.html"
+                                        rel="nofollow">UV Mapping a Mesh</a></p>
+
+                            <p>最后本节的加载obj程序只是一个示例，并没有解析材质mtl部分。当没有使用纹理数据绘制经典的Suzanne 模型如下图所示： <br>
+                                <img src="https://img-blog.csdn.net/20160712000608025" alt="Suzanne"
+                                     title=""></p>
+
+                            <p>这里缺少了纹理和光照，所以模型看起来不真实，下一节介绍使用<a
+                                    href="http://blog.csdn.net/wangdingqiaoit/article/details/52014321">Assimp加载库</a>时将会改善这一点。
+                            </p>
+
+                            <h1 id="参考资料">参考资料</h1>
+
+                            <ol>
+                                <li><a href="https://www.quora.com/What-is-a-mesh-in-OpenGL"
+                                       rel="nofollow" target="_blank">https://www.quora.com/What-is-a-mesh-in-OpenGL</a>
+                                </li>
+                                <li>
+                                    <a href="http://gamedev.stackexchange.com/questions/38412/whats-the-difference-between-mesh-and-a-model"
+                                       rel="nofollow" target="_blank">http://gamedev.stackexchange.com/questions/38412/whats-the-difference-between-mesh-and-a-model</a>
+                                </li>
+                                <li>
+                                    <a href="http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/"
+                                       rel="nofollow" target="_blank">http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/</a>
+                                </li>
+                                <li>
+                                    <a href="https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ"
+                                       rel="nofollow" target="_blank">https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ</a>
+                                </li>
+                                <li>
+                                    <a href="http://www.opengl-tutorial.org/beginners-tutorials/tutorial-5-a-textured-cube/"
+                                       rel="nofollow" target="_blank">http://www.opengl-tutorial.org/beginners-tutorials/tutorial-5-a-textured-cube/</a>
+                                </li>
+                            </ol>
+                        </div>
+                        <link href="https://csdnimg.cn/release/phoenix/mdeditor/markdown_views-ff98e99283.css"
+                              rel="stylesheet">
+                    </div>
+                </article>
+            </div>
+            <script>
+    // 敏感词替换
+    ~function(blogSensitiveWords){
+        if(blogSensitiveWords){   
+            var getContentViews = document.getElementById("content_views");
+            var getContentTitle = document.getElementById("articleContentId");
+            var contentViewsInnerHTML = getContentViews.innerHTML;
+            var contentTitleInnerHTML = getContentTitle.innerHTML;
+            var keyWordsJsonArr = [];
+            var keyWordsArr = blogSensitiveWords.split(',');
+            function repeatTimes(str, num){
+                return num > 1 ? str += repeatTimes(str, --num): str;
+            }
+            for(var i = 0; i < keyWordsArr.length; i++){
+                var keyWordsJson = {} ;
+                keyWordsJson.key = keyWordsArr[i];
+                keyWordsJson.value = repeatTimes("*",keyWordsArr[i].length);
+                keyWordsJsonArr.push(keyWordsJson);
+            }
+            var reg;
+            for(var i = 0; i < keyWordsJsonArr.length; i++){
+                var item = keyWordsJsonArr[i];
+                reg = new RegExp(item.key+"(?!([^<]*>)|([^<]*<\/a>))","ig");
+                contentViewsInnerHTML = contentViewsInnerHTML.replace(reg,item.value);
+                contentTitleInnerHTML = contentTitleInnerHTML.replace(reg,item.value);
+            }
+            getContentViews.innerHTML=contentViewsInnerHTML;
+            getContentTitle.innerHTML=contentTitleInnerHTML;
+        }
+    }(blogSensitiveWords)
+
+            </script>
+            <!--         <div class="hide-article-box hide-article-pos text-center">
+            <a class="btn-readmore" id="btn-readmore-zk" data-report-view='{"mod":"popu_376","dest":"https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737","strategy":"readmore","ab":"new"}' data-report-click='{"mod":"popu_376","dest":"https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737","strategy":"readmore","ab":"new"}'>
+                展开阅读全文
+                <svg class="icon chevrondown" aria-hidden="true">
+                    <use xlink:href="#csdnc-chevrondown"></use>
+                </svg>
+            </a>
+        </div>
+         -->
+
+            <script>
+    $.get("https://blog.csdn.net/ziyuanxiazai123/article/uvc/51879737");
+
+            </script>
+
+            <div class="more-toolbox" id="toolBarBox">
+                <span id="fixedBar"></span>
+                <div class="left-toolbox">
+                    <ul class="toolbox-list">
+                        <li class="tool-item tool-active is-like" id="is-like"><a>
+                            <img style="display:none;" id="is-like-imgactive"
+                                 src="https://csdnimg.cn/release/phoenix/template/new_img/tobarThumbUpactive.png"
+                                 alt="">
+                            <img style="display:block;" id="is-like-img"
+                                 src="https://csdnimg.cn/release/phoenix/template/new_img/tobarThumbUp.png"
+                                 alt="">
+                            <span class="name" id="is-like-span">点赞</span>
+                            <span id="spanCount" class="count">13</span>
+                        </a></li>
+                        <li class="tool-item tool-active tool-item-comment">
+                            <a href="#commentBox">
+                                <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarComment.png"
+                                     alt="">
+                                <span class="name">评论</span>
+                                <span class="count">15</span>
+                            </a>
+                        </li>
+                        <li class="tool-item tool-active tool-QRcode" id="tool-share">
+                            <a href="javascript:;"
+                               data-report-click='{"mod":"1582594662_002","spm":"1001.2101.3001.4129","ab":"new"}'>
+                                <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarShare.png"
+                                     alt="">
+                                <span class="name">分享</span>
+                            </a>
+                            <div class="QRcode" id="tool-QRcode" style="left:-92%;">
+                                <span id="QRcode-close">x</span>
+                                <p class="title">
+                                    海报分享
+                                </p>
+                                <div id='shareCode'></div>
+                                <p>
+                                    扫一扫，分享海报
+                                </p>
+                            </div>
+                        </li>
+                        <li class="tool-item tool-active is-collection ">
+                            <a href="javascript:;"
+                               data-report-click='{"mod":"popu_824","spm":"1001.2101.3001.4130","ab":"new"}'>
+                                <img id="is-collection-img" style="display:block;"
+                                     src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollect.png"
+                                     alt="">
+                                <img id="is-collection-imgactive" style="display:none;"
+                                     src="https://csdnimg.cn/release/phoenix/template/new_img/tobarCollectionActive.png"
+                                     alt="">
+                                <span class="name" id="is-collection">收藏</span>
+                                <span class="count get-collection">                    25                    </span>
+                            </a>
+                        </li>
+                        <li class="tool-item tool-active tool-phong" id="tool-phong">
+                            <a href="javascript:;"
+                               data-report-click='{"mod":"popu_831","spm":"1001.2101.3001.4131","dest":"","ab":"new"}'>
+                                <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarMobile.png"
+                                     alt="">
+                                <span class="name">
+                        手机看
+                    </span>
+                            </a>
+                            <div class="QRcode" id="tool-QRcode-phong" style="left:-78%;">
+                                <p class="title">
+                                    分享到微信朋友圈
+                                </p>
+                                <span id="QRcode-phong-close">x</span>
+                                <div id='shareQrCode'></div>
+                                <p>
+                                    扫一扫，手机阅读
+                                </p>
+                            </div>
+                        </li>
+                        <!--打赏开始-->
+                        <li class="tool-item tool-active tool-reward">
+                            <!-- <div>
+                                                        <a  data-report-click='{"mod":"popu_830","dest":"","ab":"new"}'><img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarReward.png" alt=""><span class="name">打赏</span></a>
+
+                            </div> -->
+                            <a id="toolreward"
+                               data-report-click='{"mod":"popu_830","spm":"1001.2101.3001.4237","dest":"","ab":"new"}'>
+                                <img src="https://csdnimg.cn/release/phoenix/template/new_img/tobarReward.png"
+                                     alt="">
+                                <span class="name">打赏</span>
+                            </a>
+                            <div id="reward" class="reward-box">
+                                <p class="rewad-title">打赏<span class="reward-close"><svg
+                                        t="1567152543821" class="icon" viewBox="0 0 1024 1024"
+                                        version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                        p-id="10924" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        width="12" height="12"><defs><style type="text/css"></style></defs><path
+                                        d="M512 438.378667L806.506667 143.893333a52.032 52.032 0 1 1 73.6 73.621334L585.621333 512l294.485334 294.485333a52.074667 52.074667 0 0 1-73.6 73.642667L512 585.621333 217.514667 880.128a52.053333 52.053333 0 1 1-73.621334-73.642667L438.378667 512 143.893333 217.514667a52.053333 52.053333 0 1 1 73.621334-73.621334L512 438.378667z"
+                                        fill="" p-id="10925"></path></svg></span></p>
+                                <dl>
+                                    <dd><a href="javascript:;"><img
+                                            src="https://profile.csdnimg.cn/9/D/9/3_ziyuanxiazai123"
+                                            alt=""></a></dd>
+                                    <dt>
+                                        <p class="blog-name">The fool</p>
+                                        <p class="blog-discript">“你的鼓励将是我创作的最大动力”</p>
+                                    </dt>
+                                </dl>
+                                <div class="change-bt-box">
+                                    <span class="reward-bt reward-bt-coin">C币</span>
+                                    <span class="reward-bt-space"></span>
+                                    <span class="reward-bt reward-bt-money reward-bt-active">余额</span>
+                                </div>
+                                <div class="money-box">
+                                    <span class="choosed choose_money" data-id="2">2C币</span>
+                                    <span class="choose_money" data-id="4">4C币</span>
+                                    <span class="choose_money" data-id="6">6C币</span>
+                                    <span class="choose_money" data-id="8">8C币</span>
+                                    <span class="choose_money" data-id="10">10C币</span>
+                                    <span class="choose_money" data-id="20">20C币</span>
+                                </div>
+                                <div class="sure-box">
+                                    <p class="is-have-money"><a class="reward-sure">确定</a></p>
+                                </div>
+                            </div>
+
+                        </li>
+                        <!--打赏结束-->
+                        <li class="tool-item tool-active tool-more">
+                            <a>
+                                <img class="tool-more-img"
+                                     src="https://csdnimg.cn/release/phoenix/template/new_img/lookMore.png"
+                                     alt="">
+                            </a>
+                            <ul class="more-box">
+                                <li class="item item-report"><a class="article-report">文章举报</a></li>
+                            </ul>
+                        </li>
+                        <li class="tool-item">
+                            <a class="tool-attend tool-bt-button tool-bt-attend"
+                               href="javascript:;">关注</a>
+                        </li>
+                    </ul>
+                    <div style="display:flex">
+                        <!-- <a class="tool-mover-open" id="btn-readmore" style="display: none;"  data-type="0" data-report-view='{"mod":"popu_376","spm":"1001.2101.3001.4232","dest":"https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737","strategy":"packupbar","ab":"new"}' data-report-click='{"mod":"popu_376","spm":"1001.2101.3001.4232","dest":"https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737","strategy":"packupbar","ab":"new"}'>
+                <span>收起全文</span>
+                <img id="btn-close-img" style="display: block;" src="https://csdnimg.cn/release/phoenix/template/new_img/CommentArrow.png" alt="">
+            </a> -->
+                    </div>
+                </div>
+            </div>
+            <script type=text/javascript crossorigin
+                    src="https://csdnimg.cn/release/phoenix/production/qrcode-7c90a92189.min.js"></script>
+            <script src="//g.csdnimg.cn/??sharewx/1.2.1/sharewx.js" type="text/javascript"></script>
+            <script type="text/javascript" crossorigin
+                    src="https://g.csdnimg.cn/collection-box/1.2.0/collection-box.js"></script>
+            <div class="recommend-box first-recommend-box">
+                <div class="recommend-item-box  recommend-download-box clearfix"
+                     data-report-view='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lacrimosa_\/7134895","ab":"new"}'>
+                    <div class="content clearfix">
+                        <div class="">
+                            <a href="https://download.csdn.net/download/lacrimosa_/7134895"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lacrimosa_\/7134895","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param'>
+                                <h4 class="text-truncate oneline clearfix">
+                                    <!-- <span class="recommend-article-type">下载</span> -->
+                                    <em>OpenGL</em>读取显示<em>obj</em>文件并渲染 </h4>
+                            </a>
+                            <span class="data float-right">04-02</span>
+                        </div>
+                        <a href="https://download.csdn.net/download/lacrimosa_/7134895"
+                           target="_blank" rel="noopener"
+                           data-report-click='{"mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/lacrimosa_\/7134895","ab":"new"}'
+                           data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant_t0.none-task-download-BlogCommendFromMachineLearnPai2-1.channel_param'>
+                            <div class="desc oneline">
+                                <em>opengl</em>读取 <em>obj</em> 文件，并用键盘和鼠标控制放大缩小和camera的角度
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="recommend-box second-recommend-box">
+                <div class="recommend-item-box type_blog clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/MASILEJFOAISEGJIAE\/article\/details\/85639958","ab":"new"}'>
+                    <div class="content">
+                        <div class="info-box d-flex align-content-center">
+                            <p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener"
+                                                   href="https://blog.csdn.net/MASILEJFOAISEGJIAE">
+					<span class="blog_title"> w8ed</span>
+					</a>
+									</span>
+                            </p>
+                            <p class="date-and-readNum oneline">
+                                <span class="hover-show">01-02</span>
+                                <span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                     alt="">
+				2134</span>
+                            </p>
+                        </div>
+                        <h4 class="text-truncate oneline">
+                            <a href="https://blog.csdn.net/MASILEJFOAISEGJIAE/article/details/85639958"
+                               target="_blank" rel="noopener"
+                               title="现代OpenGL教程（五）：obj文件和obj模型加载（imgui+OpenGL3.3）"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/MASILEJFOAISEGJIAE\/article\/details\/85639958","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param'>
+                                <!-- <span class="recommend-article-type">博文</span> -->
+                                现代<em>OpenGL</em>教程（五）：<em>obj</em>文件和<em>obj</em><em>模型</em><em>加载</em>（imgui+<em>OpenGL</em>3.3）
+                            </a>
+                        </h4>
+                        <div class="desc">
+                            <a href="https://blog.csdn.net/MASILEJFOAISEGJIAE/article/details/85639958"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param\"}","index":"1","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/MASILEJFOAISEGJIAE\/article\/details\/85639958","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param'>
+                                前言：该系列教程主要参考自网站www.<em>opengl</em><em>-</em>tutorial.org，基于开源GUI框架imgui
+                                v1.61实现，imgui自带的例子里面直接集成了glfw+gl3w环境，本系列教程将gl3w换成了glew，glew具体环境配置可参考：<em>OpenGL</em>环境配置教程：VS2012
+                                + GLEW + GLFW + GLM。教程目录（持续更新中）：现代<em>OpenGL</em>教程（一）：绘制三角形（......
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a id="commentBox" name="commentBox"></a>
+            <div class="comment-box">
+                <div class="comment-edit-box d-flex">
+                    <a id="commentsedit"></a>
+                    <div class="user-img">
+                        <a href="javascript:void(0);" rel="noopener">
+                            <img class="show_loginbox"
+                                 src="//g.csdnimg.cn/static/user-img/anonymous-User-img.png">
+                        </a>
+                    </div>
+                    <form id="commentform">
+                        <img class="comment-sofa-flag"
+                             src="https://csdnimg.cn/release/phoenix/template/new_img/commentFlag@2x.png">
+                        <textarea class="comment-content" name="comment_content"
+                                  id="comment_content" placeholder="优质评论可以帮助作者获得更高权重"
+                                  maxlength="1000"></textarea>
+                        <div class="opt-box"> <!-- d-flex -->
+                            <div id="ubbtools" class="add_code">
+                                <a href="#insertcode" code="code" target="_self"><i
+                                        class="icon iconfont icon-daima"></i></a>
+                            </div>
+                            <input type="hidden" id="comment_replyId" name="comment_replyId">
+                            <input type="hidden" id="article_id" name="article_id" value="51879737">
+                            <input type="hidden" id="comment_userId" name="comment_userId" value="">
+                            <input type="hidden" id="commentId" name="commentId" value="">
+                            <div class="dropdown" id="myDrap">
+                                <a class="dropdown-face d-flex align-items-center"
+                                   data-toggle="dropdown" role="button" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <div class="txt-selected text-truncate">添加代码片</div>
+                                    <svg class="icon d-block" aria-hidden="true">
+                                        <use xlink:href="#csdnc-triangledown"></use>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+                                    <li><a data-code="html">HTML/XML</a></li>
+                                    <li><a data-code="objc">objective-c</a></li>
+                                    <li><a data-code="ruby">Ruby</a></li>
+                                    <li><a data-code="php">PHP</a></li>
+                                    <li><a data-code="csharp">C</a></li>
+                                    <li><a data-code="cpp">C++</a></li>
+                                    <li><a data-code="javascript">JavaScript</a></li>
+                                    <li><a data-code="python">Python</a></li>
+                                    <li><a data-code="java">Java</a></li>
+                                    <li><a data-code="css">CSS</a></li>
+                                    <li><a data-code="sql">SQL</a></li>
+                                    <li><a data-code="plain">其它</a></li>
+                                </ul>
+                            </div>
+                            <div class="right-box">
+                                <span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+                                <input type="button" class="btn btn-sm btn-cancel d-none"
+                                       value="取消回复">
+                                <a data-report-click='{"mod":"1582594662_003","spm":"1001.2101.3001.4227","ab":"new"}'><input
+                                        type="submit" class="btn btn-sm btn-comment"
+                                        value="发表评论"></a>
+                            </div>
+                        </div>
+                    </form>
+                    <input type="button" class="bt-comment-show" value="评论">
+                </div>
+
+                <div class="comment-list-container">
+                    <a id="comments"></a>
+                    <div class="comment-list-box">
+                    </div>
+                    <div id="commentPage" class="pagination-box d-none"></div>
+                    <div class="opt-box text-center">
+                        <div class="btn btn-sm btn-link-blue" id="btnMoreComment"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-box insert-baidu-box">
+                <div class="recommend-item-box type_blog clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chen_kkw\/article\/details\/53509553","ab":"new"}'>
+                    <div class="content">
+                        <div class="info-box d-flex align-content-center">
+                            <p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener"
+                                                   href="https://blog.csdn.net/chen_kkw">
+					<span class="blog_title"> 旧时光 | YoungChen's 博客</span>
+					</a>
+									</span>
+                            </p>
+                            <p class="date-and-readNum oneline">
+                                <span class="hover-show">12-07</span>
+                                <span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                     alt="">
+				2万+</span>
+                            </p>
+                        </div>
+                        <h4 class="text-truncate oneline">
+                            <a href="https://blog.csdn.net/chen_kkw/article/details/53509553"
+                               target="_blank" rel="noopener" title="非常简单，教你用OpenGL读入obj模型"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chen_kkw\/article\/details\/53509553","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param'>
+                                <!-- <span class="recommend-article-type">博文</span> -->
+                                非常简单，教你用<em>OpenGL</em>读入<em>obj</em><em>模型</em> </a>
+                        </h4>
+                        <div class="desc">
+                            <a href="https://blog.csdn.net/chen_kkw/article/details/53509553"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param\"}","index":"2","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/chen_kkw\/article\/details\/53509553","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.channel_param'>
+                                最近在<em>学习</em><em>OpenGL</em>如何读入<em>obj</em><em>模型</em>的时候，发现百度出来，相应的示例程序要么跑不通、要么较复杂，初学者的我想找到个简单易懂的示例程序愣是没找到。只好自己通过谷歌<em>学习</em>之后，写了个简单的示例程序，实现了基本的读入<em>obj</em><em>模型</em>的功能，希望对于初学<em>OpenGL</em>的朋友有一些帮助。第一，配置VS2015
+                                + <em>OpenGL</em>开发环境这里我是参考的简书作者@fan2b，直通车，这位作者写的非常详细，而且配置出来的...
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box type_blog clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/ziyuanxiazai123\/article\/details\/52014321","ab":"new"}'>
+                    <div class="content">
+                        <div class="info-box d-flex align-content-center">
+                            <p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener"
+                                                   href="https://blog.csdn.net/ziyuanxiazai123">
+					<span class="blog_title"> 王定桥的专栏</span>
+					</a>
+									</span>
+                            </p>
+                            <p class="date-and-readNum oneline">
+                                <span class="hover-show">07-24</span>
+                                <span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                     alt="">
+				2万+</span>
+                            </p>
+                        </div>
+                        <h4 class="text-truncate oneline">
+                            <a href="https://blog.csdn.net/ziyuanxiazai123/article/details/52014321"
+                               target="_blank" rel="noopener" title="OpenGL学习脚印-AssImp模型加载"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/ziyuanxiazai123\/article\/details\/52014321","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param'>
+                                <!-- <span class="recommend-article-type">博文</span> -->
+                                <em>OpenGL</em><em>学习</em><em>脚印</em><em>-</em>AssImp<em>模型</em><em>加载</em>
+                            </a>
+                        </h4>
+                        <div class="desc">
+                            <a href="https://blog.csdn.net/ziyuanxiazai123/article/details/52014321"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param\"}","index":"3","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/ziyuanxiazai123\/article\/details\/52014321","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param'>
+                                写在前面上一节<em>Obj</em><em>模型</em><em>加载</em>作为<em>模型</em><em>加载</em>的基础篇，介绍了<em>模型</em>中Mesh的概念，以及从<em>Obj</em><em>模型</em>文件转换为<em>OpenGL</em>数据格式的方法。上一节绘制的结果还是很简陋，本节将给出上节承诺的酷炫的3D<em>模型</em>的<em>加载</em>方法:)。本节示例程序均可以在我的github下载。本节内容参考自1.www.learn<em>opengl</em>.com<em>Model</em><em>load</em>ing2.<em>Load</em>ingmode...
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box type_blog clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/JuniorChestnut\/article\/details\/102877625","ab":"new"}'>
+                    <div class="content">
+                        <div class="info-box d-flex align-content-center">
+                            <p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener"
+                                                   href="https://blog.csdn.net/JuniorChestnut">
+					<span class="blog_title"> JuniorChestnut的博客</span>
+					</a>
+									</span>
+                            </p>
+                            <p class="date-and-readNum oneline">
+                                <span class="hover-show">11-02</span>
+                                <span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                     alt="">
+				287</span>
+                            </p>
+                        </div>
+                        <h4 class="text-truncate oneline">
+                            <a href="https://blog.csdn.net/JuniorChestnut/article/details/102877625"
+                               target="_blank" rel="noopener" title="OpenGL模型加载"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/JuniorChestnut\/article\/details\/102877625","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param'>
+                                <!-- <span class="recommend-article-type">博文</span> -->
+                                <em>OpenGL</em><em>模型</em><em>加载</em> </a>
+                        </h4>
+                        <div class="desc">
+                            <a href="https://blog.csdn.net/JuniorChestnut/article/details/102877625"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param\"}","index":"4","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/JuniorChestnut\/article\/details\/102877625","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-4.channel_param'>
+                                一、对于没有贴图的3D<em>模型</em>（我喜欢用<em>obj</em>格式的，最古老，也最简单）。用3Dmax转换成<em>obj</em>格式的<em>模型</em>，转换过程中，如果不需要纹理贴图就不勾选（一般工业3d<em>模型</em>都不需要贴图，毕竟不需要好看），还有一个要注意的点，就是，<em>模型</em>的缩放比例。<em>模型</em>的缩放：1.
+                                先设置为1.0（在原本不知道<em>模型</em>多大的情况下）；2. 然后打开转化后的<em>obj</em>文件，可以查看到顶点信息（v–vertex）,例如顶点大多是20......
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box  recommend-download-box clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/kameiss\/5385283","ab":"new"}'>
+                    <div class="content clearfix">
+                        <div class="">
+                            <a href="https://download.csdn.net/download/kameiss/5385283"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/kameiss\/5385283","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param'>
+                                <h4 class="text-truncate oneline clearfix">
+                                    <!-- <span class="recommend-article-type">下载</span> -->
+                                    <em>openGL</em><em>加载</em>3D<em>模型</em></h4>
+                            </a>
+                            <span class="data float-right">05-15</span>
+                        </div>
+                        <a href="https://download.csdn.net/download/kameiss/5385283" target="_blank"
+                           rel="noopener"
+                           data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param\"}","index":"5","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/kameiss\/5385283","ab":"new"}'
+                           data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-5.channel_param'>
+                            <div class="desc oneline">
+                                <em>openGL</em><em>加载</em>3D<em>模型</em>，非常实用，对于<em>学习</em><em>openGL</em>的初学者很有用处
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box  recommend-download-box clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/xiaogangwang2012\/9458458","ab":"new"}'>
+                    <div class="content clearfix">
+                        <div class="">
+                            <a href="https://download.csdn.net/download/xiaogangwang2012/9458458"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/xiaogangwang2012\/9458458","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param'>
+                                <h4 class="text-truncate oneline clearfix">
+                                    <!-- <span class="recommend-article-type">下载</span> -->
+                                    <em>opengl</em><em>加载</em>并渲染<em>obj</em><em>模型</em>文件（含纹理）
+                                </h4>
+                            </a>
+                            <span class="data float-right">03-11</span>
+                        </div>
+                        <a href="https://download.csdn.net/download/xiaogangwang2012/9458458"
+                           target="_blank" rel="noopener"
+                           data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param\"}","index":"6","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/xiaogangwang2012\/9458458","ab":"new"}'
+                           data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-6.channel_param'>
+                            <div class="desc oneline">
+                                1. 环境win7 + qt5.3.1 WinGW 32bit 2. 使用glm 3. 使用孙启功的方法 4.
+                                网上下载的<em>obj</em><em>模型</em>文件 5. 我仅仅是用别人的方法和文件进行了简单的实践 6. 因为工
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box type_blog clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/yulinxx\/article\/details\/76668038","ab":"new"}'>
+                    <div class="content">
+                        <div class="info-box d-flex align-content-center">
+                            <p class="from-where">
+			<span class="blog_title_box oneline ">
+												<a target="_blank" rel="noopener"
+                                                   href="https://blog.csdn.net/yulinxx">
+					<span class="blog_title"> ...</span>
+					</a>
+									</span>
+                            </p>
+                            <p class="date-and-readNum oneline">
+                                <span class="hover-show">08-04</span>
+                                <span class="hover-hide">
+				<img src="https://csdnimg.cn/release/phoenix/template/new_img/readCountWhite.png"
+                     alt="">
+				699</span>
+                            </p>
+                        </div>
+                        <h4 class="text-truncate oneline">
+                            <a href="https://blog.csdn.net/yulinxx/article/details/76668038"
+                               target="_blank" rel="noopener" title="OpenGL -- OBJ 模型加载"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/yulinxx\/article\/details\/76668038","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param'>
+                                <!-- <span class="recommend-article-type">博文</span> -->
+                                <em>OpenGL</em> <em>-</em><em>-</em> <em>OBJ</em>
+                                <em>模型</em><em>加载</em> </a>
+                        </h4>
+                        <div class="desc">
+                            <a href="https://blog.csdn.net/yulinxx/article/details/76668038"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param\"}","index":"7","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/blog.csdn.net\/yulinxx\/article\/details\/76668038","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param'>
+                                使用: // Read our .<em>obj</em> file std::vector vertices; std::vector
+                                uvs; std::vector normals; bool res = <em>load</em><em>OBJ</em>(“suzanne.<em>obj</em>”,
+                                vertices, uvs, normals);实现:#include #include #include </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box  recommend-download-box clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yaphetshl\/11799183","ab":"new"}'>
+                    <div class="content clearfix">
+                        <div class="">
+                            <a href="https://download.csdn.net/download/yaphetshl/11799183"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yaphetshl\/11799183","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param'>
+                                <h4 class="text-truncate oneline clearfix">
+                                    <!-- <span class="recommend-article-type">下载</span> -->
+                                    Qt <em>openGL</em><em>加载</em>三维<em>模型</em></h4>
+                            </a>
+                            <span class="data float-right">09-21</span>
+                        </div>
+                        <a href="https://download.csdn.net/download/yaphetshl/11799183"
+                           target="_blank" rel="noopener"
+                           data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param\"}","index":"8","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/yaphetshl\/11799183","ab":"new"}'
+                           data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-8.channel_param'>
+                            <div class="desc oneline">
+                                可以支持<em>obj</em>格式<em>模型</em>，采用qt的框架讲<em>模型</em>显示出来。。。
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="recommend-item-box  recommend-download-box clearfix"
+                     data-report-view='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/zsstars\/807128","ab":"new"}'>
+                    <div class="content clearfix">
+                        <div class="">
+                            <a href="https://download.csdn.net/download/zsstars/807128"
+                               target="_blank" rel="noopener"
+                               data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/zsstars\/807128","ab":"new"}'
+                               data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param'>
+                                <h4 class="text-truncate oneline clearfix">
+                                    <!-- <span class="recommend-article-type">下载</span> -->
+                                    <em>obj</em><em>Load</em>三维<em>模型</em><em>加载</em></h4>
+                            </a>
+                            <span class="data float-right">11-25</span>
+                        </div>
+                        <a href="https://download.csdn.net/download/zsstars/807128" target="_blank"
+                           rel="noopener"
+                           data-report-click='{"mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param\"}","index":"9","strategy":"BlogCommendFromMachineLearnPai2","dest":"https:\/\/download.csdn.net\/download\/zsstars\/807128","ab":"new"}'
+                           data-report-query='utm_medium=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-download-BlogCommendFromMachineLearnPai2-9.channel_param'>
+                            <div class="desc oneline">
+                                <em>加载</em>.<em>obj</em>的三维<em>模型</em>到程序中，希望大家能有用
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- <div class="recommend-item-box type_hot_word">
+                <div class="content clearfix">
+                    <div class="float-left">
+                                                                            <span>
+                            <a href="https://java.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://java.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://java.csdn.net/","index":"#"}'  target="_blank">
+                            Java</a>
+                        </span>
+                                                    <span>
+                            <a href="https://c1.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://c1.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://c1.csdn.net/","index":"#"}'  target="_blank">
+                            C语言</a>
+                        </span>
+                                                    <span>
+                            <a href="https://python.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://python.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://python.csdn.net/","index":"#"}'  target="_blank">
+                            Python</a>
+                        </span>
+                                                    <span>
+                            <a href="https://cplus.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://cplus.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://cplus.csdn.net/","index":"#"}'  target="_blank">
+                            C++</a>
+                        </span>
+                                                    <span>
+                            <a href="https://csharp.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://csharp.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://csharp.csdn.net/","index":"#"}'  target="_blank">
+                            C#</a>
+                        </span>
+                                                    <span>
+                            <a href="https://vbn.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://vbn.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://vbn.csdn.net/","index":"#"}'  target="_blank">
+                            Visual Basic .NET</a>
+                        </span>
+                                                    <span>
+                            <a href="https://js.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://js.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://js.csdn.net/","index":"#"}'  target="_blank">
+                            JavaScript</a>
+                        </span>
+                                                    <span>
+                            <a href="https://php.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://php.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://php.csdn.net/","index":"#"}'  target="_blank">
+                            PHP</a>
+                        </span>
+                                                    <span>
+                            <a href="https://sql.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://sql.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://sql.csdn.net/","index":"#"}'  target="_blank">
+                            SQL</a>
+                        </span>
+                                                    <span>
+                            <a href="https://go.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://go.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://go.csdn.net/","index":"#"}'  target="_blank">
+                            Go语言</a>
+                        </span>
+                                                    <span>
+                            <a href="https://r.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://r.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://r.csdn.net/","index":"#"}'  target="_blank">
+                            R语言</a>
+                        </span>
+                                                    <span>
+                            <a href="https://assembly.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://assembly.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://assembly.csdn.net/","index":"#"}'  target="_blank">
+                            Assembly language</a>
+                        </span>
+                                                    <span>
+                            <a href="https://swift.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://swift.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://swift.csdn.net/","index":"#"}'  target="_blank">
+                            Swift</a>
+                        </span>
+                                                    <span>
+                            <a href="https://ruby.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://ruby.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://ruby.csdn.net/","index":"#"}'  target="_blank">
+                            Ruby</a>
+                        </span>
+                                                    <span>
+                            <a href="https://matlab.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://matlab.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://matlab.csdn.net/","index":"#"}'  target="_blank">
+                            MATLAB</a>
+                        </span>
+                                                    <span>
+                            <a href="https://plsql.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://plsql.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://plsql.csdn.net/","index":"#"}'  target="_blank">
+                            PL/SQL</a>
+                        </span>
+                                                    <span>
+                            <a href="https://perl.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://perl.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://perl.csdn.net/","index":"#"}'  target="_blank">
+                            Perl</a>
+                        </span>
+                                                    <span>
+                            <a href="https://vb.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://vb.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://vb.csdn.net/","index":"#"}'  target="_blank">
+                            Visual Basic</a>
+                        </span>
+                                                    <span>
+                            <a href="https://obj.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://obj.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://obj.csdn.net/","index":"#"}'  target="_blank">
+                            Objective-C</a>
+                        </span>
+                                                    <span>
+                            <a href="https://delphi.csdn.net/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://delphi.csdn.net/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://delphi.csdn.net/","index":"#"}'  target="_blank">
+                            Delphi/Object Pascal</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/unity/" data-report-click='{"mod":"1586412712_001","ab":"new","dest":"https://www.csdn.net/unity/","index":"索引#"}' data-report-view='{"mod":"1586412712_001","ab":"new","dest":"https://www.csdn.net/unity/","index":"#"}'  target="_blank">
+                            Unity3D</a>
+                        </span>
+
+                                                                            <span>
+                            <a href="https://www.csdn.net/gather_19/MtTaYg0sOS1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c# 字符串 转数组</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_19/MtTaYg1sMC1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c#调用python脚本</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_12/MtTaYg1sMi1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c# 实例 客显</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_2b/MtTaYg1sMy1ibG9n.html" target="_blank">
+                            c# 表格式输入数据</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_19/MtTaYg1sNC1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c#后台拼接</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_1c/MtTaYg1sNS1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c#读网页内容</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_1c/MtTaYg1sOC1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c# 打开一个大文件</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_1e/MtTaYg1sOS1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c#源码 oa 客户端</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_1b/MtTaYg2sMi1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c# 接送数据触发</a>
+                        </span>
+                                                    <span>
+                            <a href="https://www.csdn.net/gather_1e/MtTaYg2sMy1kb3dubG9hZAO0O0OO0O0O.html" target="_blank">
+                            c# 关于天气的事件</a>
+                        </span>
+                                                                        </div>
+                </div>
+                </div> -->
+                <div class="recommend-loading-box">
+                    <img src='https://csdnimg.cn/release/phoenix/images/feedLoading.gif'>
+                </div>
+                <!-- <div class="recommend-end-box">
+                    <p class="text-center">没有更多推荐了，<a href="https://blog.csdn.net/" class="c-blue c-blue-hover c-blue-focus">返回首页</a></p>
+                </div> -->
+            </div>
+            <div class="template-box">
+                <span>©️2020 CSDN</span>
+                <span>皮肤主题: 大白</span>
+                <span> 设计师:
+                                            CSDN官方博客                                    </span>
+                <span>
+                    <a href="https://blog.csdn.net/"
+                       class="back-home c-blue c-blue-hover c-blue-focus">返回首页</a>
+                </span>
+            </div>
+            <script src="https://csdnimg.cn/pubfooter/js/publib_footer-1.0.4.js"
+                    data-isfootertrack="false" type="text/javascript"></script>
+        </main>
+    </div>
+    <div class="recommend-right  align-items-stretch clearfix" id="rightAside">
+        <aside class="recommend-right_aside">
+            <div id="recommend-right" style="height:100%;position:fixed;">
+                <div class='d-flex flex-column aside-box groupfile' id="groupfile">
+                    <h3 class="aside-title">目录</h3>
+                    <div class="align-items-stretch group_item">
+                        <div class="pos-box">
+                            <div class="scroll-box">
+                                <div class="toc-box"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="addAdBox" style="display:none">
+                    <div id="kp_box_479" data-pid="479">
+                        <script async
+                                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- PC-博客详情页-右侧视窗300*600 -->
+                        <ins class="adsbygoogle"
+                             style="display:inline-block;width:300px;height:600px"
+                             data-ad-client="ca-pub-1076724771190722"
+                             data-ad-slot="8441704093"></ins>
+                        <script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+
+                        </script>
+                        <img class="pre-img-lasy"
+                             data-src="https://kunyu.csdn.net/1.png?p=479&a=2487&c=0&k=&d=1&t=3&u=9e1b8d07938c4f86acfa30ae10b6a18f">
+                    </div>
+                </div>
+                <div class='aside-box kind_person d-flex flex-column'>
+                    <h3 class="aside-title">分类专栏</h3>
+                    <div class="align-items-stretch kindof_item">
+                        <div class="aside-content">
+                            <ul>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_9261428.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_9261428.html">
+                                        <img src="https://img-blog.csdn.net/20151123175347458?imageView2/1/w/64/h/64/interlace/1"
+                                             alt=""
+                                             onerror="this.src='https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224'">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span
+                                                class="text">数据库应用开发</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">6篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1067268.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1067268.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140213434.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">Windows VC++程序设计</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">28篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1070068.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1070068.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span
+                                                class="text">IBM汇编语言程序设计</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">1篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1070073.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1070073.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140213434.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">数据库编程</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">7篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1100292.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1100292.html">
+                                        <img src="https://img-blog.csdnimg.cn/2019091813595558.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">Linux</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">2篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1129415.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1129415.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140037908.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">C++</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">3篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1151000.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1151000.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">php</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">2篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1636699.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1636699.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140158853.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">java基础</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">29篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_1660073.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_1660073.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140145169.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">UML</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">1篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2107037.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2107037.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140145169.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span
+                                                class="text">OpenGL学习脚印</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">32篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377483.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2377483.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190927151132530.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">web前端</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">5篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377491.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2377491.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190918140158853.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">错误列表</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">6篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2377499.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2377499.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190927151124774.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span
+                                                class="text">开发环境搭建和维护</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">4篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_2724617.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_2724617.html">
+                                        <img src="https://img-blog.csdnimg.cn/20190927151043371.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span class="text">python</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">6篇</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a class="clearfix"
+                                       data-report-click='{"mod":"popu_537","spm":"1001.2101.3001.4137","strategy":"","dest":"https://blog.csdn.net/ziyuanxiazai123/category_7130340.html","ab":"new"}'
+                                       href="https://blog.csdn.net/ziyuanxiazai123/category_7130340.html">
+                                        <img src="https://img-blog.csdnimg.cn/2019092715111047.png?x-oss-process=image/resize,m_fixed,h_224,w_224"
+                                             alt="">
+                                        <!--####是否付费-->
+                                        <span class="title oneline"><span
+                                                class="text">数据结构与算法</span>
+                                                                </span>
+                                        <!--####是否付费-->
+                                        <span class="count float-right">11篇</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </aside>
+    </div>
+
+</div>
+<div class="mask-dark"></div>
+<script>
+    var recommendCount = 8;
+    recommendCount = recommendCount > 1 ? (recommendCount + (recommendCount>6 ? 2 : 1)) : recommendCount;
+    var ChannelId = 16;
+    var articleId = "51879737";
+    var commentscount = 15;
+    var islock = false;
+    var curentUrl = "https://blog.csdn.net/ziyuanxiazai123/java/article/details/51879737";
+    var myUrl = "https://my.csdn.net/";
+    //1禁止评论，2正常
+    var commentAuth = 2;
+    //百度搜索
+    var baiduKey = "OpenGL学习脚印:模型加载初步-加载obj模型(load obj model)_王定桥的专栏-CSDN博客_qt加载obj模型";
+    //是否插入百度推荐内容
+    var needInsertBaidu = true;
+    // 代码段样式
+    var codeStyle = '';
+	var highlight = ["OpenGL","\u5b66\u4e60","\u811a\u5370","\u6a21\u578b","\u52a0\u8f7d","\u521d\u6b65","-","\u52a0\u8f7d","obj","\u6a21\u578b","load","obj","model"];//高亮数组
+
+    var share_card_url = 'https://blog.csdn.net/ziyuanxiazai123/article/shareArticleCardPage?article_id=51879737'
+    var RecommendBlogExpertList = [];
+	var articleType = 1;
+	var CopyrightContent = '';
+            var recommendRegularDomainArr = ["blog.csdn.net\/.+\/article\/details\/","download.csdn.net\/download\/","edu.csdn.net\/course\/detail\/","ask.csdn.net\/questions\/","bbs.csdn.net\/topics\/","www.csdn.net\/gather_.+\/"];
+
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/pagination/paging-3d3b805766.js"></script>
+<div class="skin-boxshadow"></div>
+<div class="pay-code">
+    <div class="pay-money">实付<span class="pay-money-span" data-nowprice='0'
+                                   data-oldprice='0.00'>0元</span></div>
+    <div class=content>
+        <div id="payCode" data-id="">
+            <div class="renovate">
+                <img src="https://csdnimg.cn/release/phoenix/static_blog/images/pay-time-out.png">
+                <span>点击重新获取</span>
+            </div>
+        </div>
+        <div class="pay-style"><span><img
+                src="https://csdnimg.cn/release/phoenix/static_blog/images/wx.png"></span><span><img
+                src="https://csdnimg.cn/release/phoenix/static_blog/images/zfb.png"></span><span><img
+                src="https://csdnimg.cn/release/phoenix/static_blog/images/JD.png"></span><span
+                class="text">扫码支付</span></div>
+    </div>
+    <div class="bt-close">
+        <svg t="1567152543821" class="icon" viewBox="0 0 1024 1024" version="1.1"
+             xmlns="http://www.w3.org/2000/svg" p-id="10924"
+             xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path d="M512 438.378667L806.506667 143.893333a52.032 52.032 0 1 1 73.6 73.621334L585.621333 512l294.485334 294.485333a52.074667 52.074667 0 0 1-73.6 73.642667L512 585.621333 217.514667 880.128a52.053333 52.053333 0 1 1-73.621334-73.642667L438.378667 512 143.893333 217.514667a52.053333 52.053333 0 1 1 73.621334-73.621334L512 438.378667z"
+                  fill="" p-id="10925"></path>
+        </svg>
+    </div>
+    <!-- <p style="margin-top: 8px;font-size: 14px;" class="text-center">支付成功即可阅读</p> -->
+    <div class="pay-balance">
+        <input type="radio" class="pay-code-radio" data-type="details">
+        <span class="span">钱包余额</span>
+        <span class="balance" style="color:#e33e33;font-size:14px;">0</span>
+        <div class="pay-code-tile">
+            <img src="https://csdnimg.cn/release/phoenix/static_blog/images/pay-help.png" alt="">
+            <div class="pay-code-content">
+                <div class="span">
+                    <p class="title">抵扣说明：</p>
+                    <p> 1.余额是钱包充值的虚拟货币，按照1:1的比例进行支付金额的抵扣。<br> 2.余额无法直接购买下载，可以购买VIP、C币套餐、付费专栏及课程。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="pay-balance-con" href="https://i.csdn.net/#/wallet/balance/recharge"
+       target="_blank"><img src="https://csdnimg.cn/release/phoenix/static_blog/images/recharge.png"
+                            alt=""><span>余额充值</span></a>
+</div>
+<div style="display:none;">
+    <img src=""
+         onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+</body>
+<script type="text/javascript"
+        src="https://csdnimg.cn/release/phoenix/production/pc_wap_highlight-db1e81323a.js"></script>
+<script type="text/javascript"
+        src="https://csdnimg.cn/release/phoenix/production/pc_wap_common-ac9b004d59.js"></script>
+<link rel="stylesheet"
+      href="https://csdnimg.cn/release/blog_editor_html/release1.6.0/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-light.css">
+<script>
+ // 全局声明
+ if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    window.csdn.sideToolbar = {
+        options: {
+            report:{
+                isShow: true,
+            },
+            qr: {
+                isShow: false,
+            }
+        }
+    }
+    $(function(){
+        $(document).on('click',"a.option-box[data-type='report']",function() {
+            window.csdn.userLogin.loadAjax(function(res){
+                showReport(false,articleTitles);
+            })
+        });
+    })
+
+</script>
+<script src="https://csdnimg.cn/release/phoenix/vendor/iconfont/csdnc-c439e66521.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/common-8b5cf01a6b.min.js"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/detail-72284da26f.min.js"></script>
+<script src="//csdnimg.cn/release/download/old_static/js/qrcode.js"></script>
+<script src="https://csdnimg.cn/release/cart/pub/1.0.4/cart_jsonp.js?v=2"></script>
+<script src="https://csdnimg.cn/release/phoenix/template/new_js/column_pay-1d16e18aa0.min.js"></script>
+
+<script src="https://g.csdnimg.cn/copyright/1.0.3/copyright.js" type="text/javascript"></script>
+<script>
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+        $('div.markdown_views')[0].className = 'markdown_views';
+    }
+
+</script>
+<script type="text/javascript"
+        src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+
+</script>
+<script src="//g.csdnimg.cn/baidu-search/1.0.3/baidu-search.js" type="text/javascript"></script>
+</html>
